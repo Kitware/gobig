@@ -1,0 +1,29 @@
+
+ - set_fact:
+   node_name: "{{ node_name|default('') }}"
+   node_range: "{{ node_range|default(0)|int }}"
+   node_list: "{{ node_list|default([]) }}"
+
+ - set_fact:
+   node_range: "{{ range(node_range) }}"
+
+#  - name: "bring up node: {{ node_name }}"
+#    shell: "{{ compose }} up -d {{ node_name }} && sleep 5"
+#    args:
+#        chdir: "{{ work_dir }}"
+#    when: node_name and not node_range
+# 
+#  - name: "bring up node: {{ item }}"
+#    shell: "{{ compose }} up -d {{ item }} && sleep 5"
+#    args:
+#        chdir: "{{ work_dir }}"
+#    when: not node_name and node_list
+#    with_items: "{{ node_list }}"
+
+ - name: "bring up node: {{ node_name }}{{ item }}"
+   shell: "{{ compose }} up -d {{ node_name }}{{ item }} && sleep 5"
+   args:
+       chdir: "{{ work_dir }}"
+   when: (node_name and node_range)
+   with_items: "{{ node_range }}"
+

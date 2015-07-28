@@ -1,0 +1,184 @@
+
+dns:
+    image: tonistiigi/dnsdock
+    volumes:
+      - /var/run/docker.sock:/run/docker.sock
+    ports:
+      - "{{ docker_dns_ip }}:53:53/udp"
+    hostname: dns
+    dns_search:
+      - {{ docker_dns_domain }}.docker
+    environment:
+      - DNSDOCK_IMAGE=dns
+
+namenode:
+    image: opadron/hadoop
+    volumes:
+      - /{{ docker_dns_domain }}/namenode:/shared
+    ports:
+      - "10000:80"
+    command: /run-namenode
+    hostname: namenode
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=namenode
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+
+resourcemanager:
+    image: opadron/hadoop
+    volumes:
+      - /{{ docker_dns_domain }}/resourcemanager:/shared
+    ports:
+      - "10030:80"
+    command: /run-resourcemanager
+    hostname: resourcemanager
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=resourcemanager
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+
+historyserver:
+    image: opadron/hadoop
+    volumes:
+      - /{{ docker_dns_domain }}/historyserver:/shared
+    ports:
+      - "10031:80"
+    command: /run-historyserver
+    hostname: historyserver
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=historyserver
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+
+webproxy:
+    image: opadron/hadoop
+    volumes:
+      - /{{ docker_dns_domain }}/webproxy:/shared
+    ports:
+      - "10032:80"
+    command: /run-webproxy
+    hostname: webproxy
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=webproxy
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+
+sparkmaster:
+    image: opadron/spark
+    volumes:
+      - /{{ docker_dns_domain }}/sparkmaster:/shared
+    ports:
+      - "10040:80"
+      - "10041:6066"
+    command: /run-sparkmaster
+    hostname: sparkmaster
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=sparkmaster
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+
+sparkshellyarn:
+    image: opadron/spark
+    volumes:
+      - /{{ docker_dns_domain }}/sparkshellyarn:/shared
+    ports:
+      - "10042:80"
+    command: pyspark --master "yarn-client"
+    hostname: sparkshellyarn
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=sparkshellyarn
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+
+sparkshell:
+    image: opadron/spark
+    volumes:
+      - /{{ docker_dns_domain }}/sparkshell:/shared
+    ports:
+      - "10043:80"
+    command: pyspark --master "spark://sparkmaster:7077"
+    hostname: sparkshell
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=sparkshell
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+
+browser:
+    image: fedora/firefox
+    ports:
+      - "5901:5901"
+    hostname: browser
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=browser
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+
+mongo:
+    image: mongo:3.0.4
+    volumes:
+      - /{{ docker_dns_domain }}/mongo:/data/db
+    ports:
+      - "27017:27017"
+    hostname: mongo
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=mongo
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+
+{% for index in range(num_hdfs_nodes | int) %}
+hdfs{{ index }}:
+    image: opadron/hadoop
+    volumes:
+      - /{{ docker_dns_domain }}/hdfs{{ index }}:/shared
+    ports:
+      - "{{ 20000 + index }}:80"
+    command: /run-datanode
+    hostname: hdfs{{ index }}
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=hdfs{{ index }}
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+{% endfor %}
+
+{% for index in range(num_hdfs_nodes | int) %}
+yarn{{ index }}:
+    image: opadron/hadoop
+    volumes:
+      - /{{ docker_dns_domain }}/yarn{{ index }}:/shared
+    ports:
+      - "{{ 30000 + index }}:80"
+    command: /run-nodemanager
+    hostname: yarn{{ index }}
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=yarn{{ index }}
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+{% endfor %}
+
+{% for index in range(num_hdfs_nodes | int) %}
+spark{{ index }}:
+    image: opadron/spark
+    volumes:
+      - /{{ docker_dns_domain }}/spark{{ index }}:/shared
+    ports:
+      - "{{ 40000 + index }}:80"
+    command: /run-sparkslave
+    hostname: spark{{ index }}
+    dns:
+      - {{ docker_dns_ip }}
+    environment:
+      - DNSDOCK_NAME=spark{{ index }}
+      - DNSDOCK_IMAGE={{ docker_dns_domain }}
+{% endfor %}
+

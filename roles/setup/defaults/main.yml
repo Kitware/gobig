@@ -1,0 +1,8 @@
+
+work_dir: ~/ansible-test-dir
+docker_dns_ip: 172.17.42.1
+docker_dns_domain: girder
+num_hdfs_nodes: 4
+num_yarn_nodes: 4
+num_spark_nodes: 4
+

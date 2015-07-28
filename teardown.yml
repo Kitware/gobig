@@ -1,0 +1,12 @@
+
+  - hosts: testhost
+    tasks:
+      - name: "determine path to docker-compose"
+        command: /usr/bin/env which docker-compose
+        register: which_compose
+        set_fact: "compose={{ which_compose.stdout }}"
+
+      - name: "stop all docker-compose containers"
+        command: "{{ compose }}" stop
+            chdir: "{{ work_dir }}"
+

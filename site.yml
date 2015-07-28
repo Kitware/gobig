@@ -1,0 +1,25 @@
+
+  - hosts: testhost
+    roles:
+      - setup
+
+      - { role: start_node,
+          node_list: [dns,
+                      namenode,
+                      resourcemanager,
+                      historyserver,
+                      webproxy,
+                      sparkmaster] }
+
+      - { role: start_node,
+          node_name: hdfs, node_range: "{{ num_hdfs_nodes }}" }
+
+      - { role: start_node,
+          node_name: yarn, node_range: "{{ num_yarn_nodes }}" }
+
+      - { role: start_node,
+          node_name: spark, node_range: "{{ num_spark_nodes }}" }
+
+      - { role: start_node, node_list: [browser, mongo] }
+
+
