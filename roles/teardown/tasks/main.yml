@@ -1,0 +1,11 @@
+
+ - name: "stop all docker-compose containers"
+   shell: "docker-compose stop || true"
+   args:
+       chdir: "{{ work_dir }}"
+
+ - name: "remove all docker-compose containers"
+   shell: "docker-compose rm --force || true"
+   args:
+       chdir: "{{ work_dir }}"
+

@@ -21,6 +21,8 @@ namenode:
     hostname: namenode
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=namenode
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
@@ -35,6 +37,8 @@ resourcemanager:
     hostname: resourcemanager
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=resourcemanager
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
@@ -49,6 +53,8 @@ historyserver:
     hostname: historyserver
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=historyserver
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
@@ -63,6 +69,8 @@ webproxy:
     hostname: webproxy
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=webproxy
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
@@ -78,6 +86,8 @@ sparkmaster:
     hostname: sparkmaster
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=sparkmaster
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
@@ -92,6 +102,8 @@ sparkshellyarn:
     hostname: sparkshellyarn
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=sparkshellyarn
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
@@ -106,6 +118,8 @@ sparkshell:
     hostname: sparkshell
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=sparkshell
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
@@ -117,6 +131,8 @@ browser:
     hostname: browser
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=browser
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
@@ -130,6 +146,8 @@ mongo:
     hostname: mongo
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=mongo
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
@@ -145,12 +163,14 @@ hdfs{{ index }}:
     hostname: hdfs{{ index }}
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=hdfs{{ index }}
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
 {% endfor %}
 
-{% for index in range(num_hdfs_nodes | int) %}
+{% for index in range(num_yarn_nodes | int) %}
 yarn{{ index }}:
     image: opadron/hadoop
     volumes:
@@ -161,12 +181,14 @@ yarn{{ index }}:
     hostname: yarn{{ index }}
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=yarn{{ index }}
       - DNSDOCK_IMAGE={{ docker_dns_domain }}
 {% endfor %}
 
-{% for index in range(num_hdfs_nodes | int) %}
+{% for index in range(num_spark_nodes | int) %}
 spark{{ index }}:
     image: opadron/spark
     volumes:
@@ -177,6 +199,8 @@ spark{{ index }}:
     hostname: spark{{ index }}
     dns:
       - {{ docker_dns_ip }}
+    dns_search:
+      - {{ docker_dns_domain }}.docker
     environment:
       - DNSDOCK_NAME=spark{{ index }}
       - DNSDOCK_IMAGE={{ docker_dns_domain }}

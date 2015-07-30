@@ -1,6 +1,9 @@
 
   - hosts: testhost
     roles:
+      - common
+      - teardown
+
       - setup
 
       - { role: start_node,
