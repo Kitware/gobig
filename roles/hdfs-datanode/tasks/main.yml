@@ -1,0 +1,26 @@
+---
+
+  - name: "[HADOOP][HDFS][SERVICE][DATA] start"
+    service:
+        name: "hdfs-datanode"
+        state: "{{ state }}"
+    when: state == "started"
+
+  - name: "[HADOOP][HDFS][SERVICE][DATA] reload"
+    service:
+        name: "hdfs-datanode"
+        state: "{{ state }}"
+    when: state == "reloaded"
+
+  - name: "[HADOOP][HDFS][SERVICE][DATA] restart"
+    service:
+        name: "hdfs-datanode"
+        state: "{{ state }}"
+    when: state == "restarted"
+
+  - name: "[HADOOP][HDFS][SERVICE][DATA] stop"
+    service:
+        name: "hdfs-datanode"
+        state: "{{ state }}"
+    when: state == "stopped"
+

@@ -2,10 +2,10 @@
   - hosts: hdfs-namenodes
     become: yes
     roles:
-      - { role: "hdfs-namenode", state: "started" }
+      - { role: "hdfs-namenode", state: "stopped" }
 
   - hosts: hdfs-datanodes
     become: yes
     roles:
-      - { role: "hdfs-datanode", state: "started" }
+      - { role: "hdfs-datanode", state: "stopped" }
 

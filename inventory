@@ -1,12 +1,5 @@
 
-[testhost]
-aqueti-play
+[hdfs-namenodes]
 
-[testhost:vars]
-yarn_nodes=8
-hdfs_nodes=5
-spark_nodes=2
-work_dir=~/ansible-test-dir
-dns_ip=172.17.42.1
-dns_domain=gobig
+[hdfs-datanodes]
 

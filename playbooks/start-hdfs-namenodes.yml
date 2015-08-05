@@ -4,8 +4,3 @@
     roles:
       - { role: "hdfs-namenode", state: "started" }
 
-  - hosts: hdfs-datanodes
-    become: yes
-    roles:
-      - { role: "hdfs-datanode", state: "started" }
-

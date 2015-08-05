@@ -1,0 +1,10 @@
+---
+
+    hdfs_user: "hdfs"
+    hdfs_group: "hadoop"
+    hdfs_crypt_pass: ""
+    hdfs_data_root: "/data/hdfs"
+
+    state: "started"
+    format: false
+

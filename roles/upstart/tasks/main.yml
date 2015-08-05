@@ -1,0 +1,22 @@
+---
+
+  - name: "[UPSTART][SERVICE][GROUP] create"
+    group:
+        name: "{{ group }}"
+        state: "present"
+        system: "yes"
+
+  - name: "[UPSTART][SERVICE][USER] create"
+    user:
+        group: "{{ group }}"
+        name: "{{ user }}"
+        state: "present"
+        system: "yes"
+
+  - name: "[UPSTART][SERVICE][CONF] generate"
+    template:
+        src: "service.conf.j2"
+        dest: "/etc/init/{{ name|mandatory }}.conf"
+        backup: "yes"
+        mode: 0644
+
