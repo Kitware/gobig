@@ -1,6 +1,0 @@
-
- - hosts: testhost
-   roles:
-     - common
-     - teardown
-

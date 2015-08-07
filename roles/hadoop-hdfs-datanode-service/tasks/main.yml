@@ -1,0 +1,7 @@
+---
+
+  - name: "hadoop | service | hdfs | datanode | notify"
+    shell: "true"
+    notify: "hadoop | service | hdfs | datanode"
+    when: state != "stopped" and state != "absent"
+

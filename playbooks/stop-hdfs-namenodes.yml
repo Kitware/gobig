@@ -1,6 +1,0 @@
-
-  - hosts: hdfs-namenodes
-    become: yes
-    roles:
-      - { role: "hdfs-namenode", state: "stopped" }
-

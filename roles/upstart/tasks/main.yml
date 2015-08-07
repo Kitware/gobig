@@ -1,19 +1,19 @@
 ---
 
-  - name: "[UPSTART][SERVICE][GROUP] create"
+  - name: "service | group | create"
     group:
         name: "{{ group }}"
         state: "present"
         system: "yes"
 
-  - name: "[UPSTART][SERVICE][USER] create"
+  - name: "service | user | create"
     user:
         group: "{{ group }}"
         name: "{{ user }}"
         state: "present"
         system: "yes"
 
-  - name: "[UPSTART][SERVICE][CONF] generate"
+  - name: "service | conf | generate"
     template:
         src: "service.conf.j2"
         dest: "/etc/init/{{ name|mandatory }}.conf"

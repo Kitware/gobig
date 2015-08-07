@@ -1,0 +1,90 @@
+---
+
+  - name: "hadoop | hdfs | install whois"
+    apt: name=whois state=present update_cache=yes
+    when: hdfs_crypt_pass == "" and state != "absent"
+
+  - name: "hadoop | hdfs | group | create"
+    group:
+        name: "{{ hdfs_group }}"
+        state: "present"
+        system: "yes"
+    when: state != "absent"
+
+  - name: "hadoop | hdfs | user | password | generate"
+    shell: "echo | mkpasswd --method=SHA-512 -s"
+    register: mkpasswd
+    when: hdfs_crypt_pass == "" and state != "absent"
+
+  - name: "hadoop | hdfs | user | password | record"
+    set_fact: hdfs_crypt_pass={{ mkpasswd.stdout }}
+    when: hdfs_crypt_pass == "" and state != "absent"
+
+  - name: "hadoop | hdfs | user | create"
+    user:
+        generate_ssh_key: yes
+        group: "{{ hdfs_group }}"
+        name: "{{ hdfs_user }}"
+        password: "{{ hdfs_crypt_pass }}"
+        state: present
+        system: yes
+    when: state != "absent"
+
+  - name: "hadoop | hdfs | user | sshkey | add"
+    become_user: "{{ hdfs_user }}"
+    authorized_key:
+        user: "{{ hdfs_user }}"
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    when: state != "absent"
+
+  - name: "hadoop | hdfs | conf | owner | set"
+    file:
+        recurse: yes
+        path: "{{ hadoop_prefix }}"
+        group: "{{ hdfs_group }}"
+        mode: 0776
+        owner: "{{ hdfs_user }}"
+    when: state != "absent"
+
+  - name: "hadoop | hdfs | conf | xml | set"
+    template:
+        src: "{{ item }}.xml.j2"
+        dest: "{{ hadoop_conf }}/{{ item }}.xml"
+    with_items:
+      - core-site
+      - hdfs-site
+    when: state != "absent"
+
+  - name: "hadoop | hdfs | conf | env | set"
+    lineinfile:
+        dest: "{{ hadoop_conf }}/hadoop-env.sh"
+        regexp: "^(export )?{{ item.key }}"
+        line: "export {{ item.key }}=\"{{ item.value }}\""
+        state: present
+    with_items:
+      - { key: "HADOOP_CONF_DIR", value: "{{ hadoop_conf }}" }
+      - { key: "JAVA_HOME", value: "/usr/lib/jvm/java-7-openjdk-amd64" }
+    when: state != "absent"
+
+  - name: "hadoop | hdfs | fs | root | delete"
+    file:
+        path: "{{ hdfs_data_root }}/{{ item }}"
+        state: absent
+    with_items:
+      - namenode
+      - datanode
+    when: remove_data_root
+
+  - name: "hadoop | hdfs | fs | root | create "
+    file:
+        path: "{{ hdfs_data_root }}/{{ item }}"
+        state: directory
+        group: "{{ hdfs_group }}"
+        owner: "{{ hdfs_user }}"
+        mode: 0750
+    with_items:
+      - namenode
+      - datanode
+    when: state != "absent"
+    notify: "hadoop | hdfs | fs | format"
+
