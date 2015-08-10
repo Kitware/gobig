@@ -1,13 +1,12 @@
 ---
 
-  - name: "hadoop | hdfs | fs | format | notify"
+  - name: hadoop | hdfs | fs | format | notify
     shell: "true"
-    notify:
-      - "hadoop | hdfs | fs | format"
+    notify: hadoop | hdfs | fs | format
     when: state != "stopped" and state != "absent"
 
-  - name: "hadoop | service | hdfs | namenode | notify"
+  - name: hadoop | service | hdfs | namenode | notify
     shell: "true"
-    notify: "hadoop | service | hdfs | namenode"
+    notify: hadoop | service | hdfs | namenode
     when: state != "absent"
 

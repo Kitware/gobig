@@ -1,9 +1,13 @@
 
-  - hosts: hdfs-namenode
+  - hosts: namenodes
     roles:
-      - { role: "hadoop-hdfs-namenode", state: "started" }
+      - role: hadoop-hdfs-namenode
+        hdfs_namenode_group: namenodes
+        state: started
 
-  - hosts: hdfs-datanode
+  - hosts: datanodes
     roles:
-      - { role: "hadoop-hdfs-datanode", state: "started" }
+      - role: hadoop-hdfs-datanode
+        hdfs_namenode_group: namenodes
+        state: started
 

@@ -1,8 +1,8 @@
 ---
 
 dependencies:
-  - {role: hadoop-hdfs-variables}
-  - {role: hadoop-hdfs-datanode-handlers}
-  - {role: hadoop-hdfs-datanode-service-install}
-  - {role: hadoop-hdfs-datanode-service}
+  - role: hadoop-hdfs-variables
+  - role: hadoop-hdfs-datanode-handlers
+  - role: hadoop-hdfs-datanode-service-install
+  - role: hadoop-hdfs-datanode-service
 

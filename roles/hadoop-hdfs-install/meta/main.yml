@@ -1,6 +1,6 @@
 ---
 
 dependencies:
-  - {role: hadoop-hdfs-variables}
-  - {role: hadoop-install}
+  - role: hadoop-hdfs-variables
+  - role: hadoop-install
 

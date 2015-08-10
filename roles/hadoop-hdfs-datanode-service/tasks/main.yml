@@ -1,7 +1,7 @@
 ---
 
-  - name: "hadoop | service | hdfs | datanode | notify"
+  - name: hadoop | service | hdfs | datanode | notify
     shell: "true"
-    notify: "hadoop | service | hdfs | datanode"
+    notify: hadoop | service | hdfs | datanode
     when: state != "absent"
 

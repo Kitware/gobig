@@ -5,9 +5,9 @@
 
 <property>
  <name>fs.defaultFS</name>
-<value>hdfs://{% for host in groups["hdfs-namenode"] -%}
+<value>hdfs://{% for host in groups[hdfs_namenode_group] -%}
 {%- set ip=(hostvars[host]
-                    ['ansible_eth0']
+                    ['ansible_' + hdfs_net_interface]
                     ['ipv4']
                     ['address']) %}
 {%- if not loop.first %},{% endif %}{{ ip }}:8020
@@ -15,7 +15,7 @@
 
 <property>
  <name>io.buffer.size</name>
-<value>131072</value></property>
+<value>{{ hdfs_io_buffer_size }}</value></property>
 
 </configuration>
 

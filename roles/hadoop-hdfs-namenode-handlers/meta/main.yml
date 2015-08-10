@@ -1,5 +1,5 @@
 ---
 
 dependencies:
-  - { role: hadoop-hdfs-variables }
+  - role: hadoop-hdfs-variables
 

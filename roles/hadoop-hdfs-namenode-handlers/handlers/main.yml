@@ -1,53 +1,16 @@
 ---
 
-  - name: "hadoop | hdfs | fs | format"
+  - name: hadoop | hdfs | fs | format
     become_user: "{{ hdfs_user }}"
-    shell: "{{ hadoop_prefix }}/bin/hdfs namenode                             \
-                -format -{{ 'force' if (format|bool) else 'nonInteractive' }} \
-                    || true"
+    shell: >
+        {{ hadoop_prefix }}/bin/hdfs namenode -format
+        {{ '-force' if (format|bool) else '-nonInteractive' }} || true
     register: format_result
-    failed_when: "'Error' in format_result.stderr"
+    failed_when: >
+        'Error' in format_result.stderr
 
-  - name: "hadoop | hdfs | fs | format | force"
-    become_user: "{{ hdfs_user }}"
-    shell: "{{ hadoop_prefix }}/bin/hdfs namenode -format -force"
-    register: format_result
-    failed_when: "'Error' in format_result.stderr"
-
-  - name: "hadoop | hdfs | fs | format | noforce"
-    become_user: "{{ hdfs_user }}"
-    shell: "{{ hadoop_prefix }}/bin/hdfs namenode -format -nonInteractive"
-    register: format_result
-    failed_when: "'Error' in format_result.stderr"
-
-
-  - name: "hadoop | service | hdfs | namenode"
+  - name: hadoop | service | hdfs | namenode
     service:
-        name: "hdfs-namenode"
+        name: hdfs-namenode
         state: "{{ state }}"
-    ignore_errors: true
-
-  - name: "hadoop | service | hdfs | namenode | reload"
-    service:
-        name: "hdfs-namenode"
-        state: "reloaded"
-    ignore_errors: true
-
-  - name: "hadoop | service | hdfs | namenode | restart"
-    service:
-        name: "hdfs-namenode"
-        state: "restarted"
-    ignore_errors: true
-
-  - name: "hadoop | service | hdfs | namenode | start"
-    service:
-        name: "hdfs-namenode"
-        state: "started"
-    ignore_errors: true
-
-  - name: "hadoop | service | hdfs | namenode | stop"
-    service:
-        name: "hdfs-namenode"
-        state: "stopped"
-    ignore_errors: true
 

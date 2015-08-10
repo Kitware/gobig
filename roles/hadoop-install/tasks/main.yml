@@ -1,6 +1,6 @@
 ---
 
-  - name: "hadoop | deps | install"
+  - name: hadoop | deps | install
     apt: name={{ item }} state=present update_cache=yes
     with_items:
       - apt-utils
@@ -14,51 +14,49 @@
       - wget
     when: state != "absent"
 
-  - name: "hadoop | service | hdfs | need to stop?"
+  - name: hadoop | service | hdfs | logic flags | compute
     set_fact:
         remove_data_root: "{{ (state == 'absent' or format) }}"
         remove_install_root: "{{ state == 'absent' }}"
+        stop_hdfs_services: >
+            {{ (state == 'absent' or format) and
+               inventory_hostname in groups.get(hdfs_namenode_group, []) }}
 
-  - name: "hadoop | service | hdfs | datanode | stop | notify"
-    shell: "true"
-    notify: "hadoop | service | hdfs | datanode | stop"
-    when: >
-        {{ (remove_data_root|bool) and
-           inventory_hostname in groups['hdfs-datanode'] }}
+  - name: hadoop | service | hdfs | datanode | stop
+    service:
+        name: hdfs-datanode
+        state: stopped
+    ignore_errors: true
+    when: stop_hdfs_services|bool
 
-  - meta: flush_handlers
+  - name: hadoop | service | hdfs | namenode | stop
+    service:
+        name: hdfs-namenode
+        state: stopped
+    when: stop_hdfs_services|bool
 
-  - name: "hadoop | service | hdfs | namenode | stop | notify"
-    shell: "true"
-    notify: "hadoop | service | hdfs | namenode | stop"
-    when: >
-        {{ (remove_data_root|bool) and
-            inventory_hostname in groups['hdfs-namenode'] }}
-
-  - meta: flush_handlers
-
-  - name: "hadoop | install root | delete"
+  - name: hadoop | install root | delete
     file:
         path: "{{ hadoop_install_root }}"
         state: absent
     when: remove_install_root|bool
 
-  - name: "hadoop | install root | create"
+  - name: hadoop | install root | create
     file:
         path: "{{ hadoop_install_root }}"
         state: directory
     when: state != "absent"
 
-  - name: "hadoop | pkg | download"
+  - name: hadoop | pkg | download
     get_url:
         url: "http://archive.apache.org/dist/hadoop/core/\
-            hadoop-{{ hadoop_version }}/\
-            hadoop-{{ hadoop_version }}.tar.gz"
+              hadoop-{{ hadoop_version }}/\
+              hadoop-{{ hadoop_version }}.tar.gz"
         dest: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}.tar.gz"
         force: no
     when: state != "absent"
 
-  - name: "hadoop | pkg | unpack"
+  - name: hadoop | pkg | unpack
     unarchive:
         copy: no
         creates: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}"
@@ -67,19 +65,19 @@
         src: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}.tar.gz"
     when: state != "absent"
 
-  - name: "hadoop | prefix | record"
+  - name: hadoop | prefix | record
     set_fact:
         hadoop_prefix: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}"
     when: state != "absent"
 
-  - name: "hadoop | conf | record"
-    set_fact: "hadoop_conf={{ hadoop_prefix }}/etc/hadoop"
+  - name: hadoop | conf | record
+    set_fact: hadoop_conf={{ hadoop_prefix }}/etc/hadoop
     when: state != "absent"
 
-  - name: "hadoop | log | perms | set"
+  - name: hadoop | log | perms | set
     file:
         path: "{{ hadoop_prefix }}/logs"
-        mode: 0777
+        mode: 0750
         state: directory
     when: state != "absent"
 

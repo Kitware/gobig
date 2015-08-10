@@ -2,12 +2,12 @@
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
 {%- set ip=(hostvars[inventory_hostname]
-                    ["ansible_eth0"]
+                    ["ansible_" + hdfs_net_interface]
                     ["ipv4"]
                     ["address"]) -%}
 
-{%- set first_namenode_ip=(hostvars[groups["hdfs-namenode"][0]]
-                                   ["ansible_eth0"]
+{%- set first_namenode_ip=(hostvars[groups[hdfs_namenode_group][0]]
+                                   ["ansible_" + hdfs_net_interface]
                                    ["ipv4"]
                                    ["address"]) -%}
 
@@ -15,7 +15,7 @@
 
 <property>
  <name>dfs.replication</name>
-<value>3</value></property>
+<value>{{ hdfs_block_replication }}</value></property>
 
 <property>
  <name>dfs.permissions.enabled</name>
@@ -43,7 +43,7 @@
 
 <property>
  <name>dfs.blocksize</name>
-<value>268435456</value></property>
+<value>{{ hdfs_block_replication }}</value></property>
 
 <property>
  <name>dfs.namenode.handler.count</name>

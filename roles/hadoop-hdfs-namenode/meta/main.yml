@@ -1,8 +1,8 @@
 ---
 
 dependencies:
-  - {role: hadoop-hdfs-variables}
-  - {role: hadoop-hdfs-namenode-handlers}
-  - {role: hadoop-hdfs-namenode-service-install}
-  - {role: hadoop-hdfs-namenode-service}
+  - role: hadoop-hdfs-variables
+  - role: hadoop-hdfs-namenode-handlers
+  - role: hadoop-hdfs-namenode-service-install
+  - role: hadoop-hdfs-namenode-service
 

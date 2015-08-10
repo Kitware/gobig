@@ -1,32 +1,7 @@
 ---
 
-  - name: "hadoop | service | hdfs | datanode"
+  - name: hadoop | service | hdfs | datanode
     service:
-        name: "hdfs-datanode"
+        name: hdfs-datanode
         state: "{{ state }}"
-    ignore_errors: true
-
-  - name: "hadoop | service | hdfs | datanode | reload"
-    service:
-        name: "hdfs-datanode"
-        state: "reloaded"
-    ignore_errors: true
-
-  - name: "hadoop | service | hdfs | datanode | restart"
-    service:
-        name: "hdfs-datanode"
-        state: "restarted"
-    ignore_errors: true
-
-  - name: "hadoop | service | hdfs | datanode | start"
-    service:
-        name: "hdfs-datanode"
-        state: "started"
-    ignore_errors: true
-
-  - name: "hadoop | service | hdfs | datanode | stop"
-    service:
-        name: "hdfs-datanode"
-        state: "stopped"
-    ignore_errors: true
 
