@@ -73,7 +73,7 @@
     with_items:
       - namenode
       - datanode
-    when: remove_data_root
+    when: remove_data_root|bool
 
   - name: "hadoop | hdfs | fs | root | create "
     file:

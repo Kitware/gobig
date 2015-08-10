@@ -9,5 +9,5 @@
   - name: "hadoop | service | hdfs | namenode | notify"
     shell: "true"
     notify: "hadoop | service | hdfs | namenode"
-    when: state != "stopped" and state != "absent"
+    when: state != "absent"
 
