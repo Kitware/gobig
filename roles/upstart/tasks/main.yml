@@ -1,18 +1,5 @@
 ---
 
-  - name: service | group | create
-    group:
-        name: "{{ group }}"
-        state: present
-        system: yes
-
-  - name: service | user | create
-    user:
-        group: "{{ group }}"
-        name: "{{ user }}"
-        state: present
-        system: yes
-
   - name: service | conf | generate
     template:
         src: service.conf.j2
