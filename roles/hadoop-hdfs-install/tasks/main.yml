@@ -42,7 +42,7 @@
         recurse: yes
         path: "{{ hadoop_prefix }}"
         group: "{{ hdfs_group }}"
-        mode: 0776
+        mode: 0775
         owner: "{{ hdfs_user }}"
     when: state != "absent"
 
@@ -83,7 +83,7 @@
         state: directory
         group: "{{ hdfs_group }}"
         owner: "{{ hdfs_user }}"
-        mode: 0750
+        mode: 0775
     with_items:
       - namenode
       - datanode
