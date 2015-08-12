@@ -2,12 +2,12 @@
   - hosts: namenodes
     roles:
       - role: hadoop-hdfs-namenode
-        hdfs_namenode_group: namenodes
+        hdfs_namenode_ansible_group: namenodes
         state: started
 
   - hosts: datanodes
     roles:
       - role: hadoop-hdfs-datanode
-        hdfs_namenode_group: namenodes
+        hdfs_namenode_ansible_group: namenodes
         state: started
 

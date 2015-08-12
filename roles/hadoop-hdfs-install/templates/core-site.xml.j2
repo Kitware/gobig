@@ -5,7 +5,7 @@
 
 <property>
  <name>fs.defaultFS</name>
-<value>hdfs://{% for host in groups[hdfs_namenode_group] -%}
+<value>hdfs://{% for host in groups[hdfs_namenode_ansible_group] -%}
 {%- set ip=(hostvars[host]
                     ['ansible_' + hdfs_net_interface]
                     ['ipv4']

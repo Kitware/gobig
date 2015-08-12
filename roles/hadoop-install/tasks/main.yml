@@ -6,7 +6,8 @@
         remove_install_root: "{{ state == 'absent' }}"
         stop_hdfs_services: >
             {{ (state == 'absent' or (format|bool)) and
-               inventory_hostname in groups.get(hdfs_namenode_group, []) }}
+               inventory_hostname in
+                   groups.get(hdfs_namenode_ansible_group, []) }}
         do_install: >
             {{state == "present" or state == "stopped" or
               state == "started" or state == "restarted" or

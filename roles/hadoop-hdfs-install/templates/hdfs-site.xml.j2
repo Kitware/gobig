@@ -6,7 +6,7 @@
                     ["ipv4"]
                     ["address"]) -%}
 
-{%- set first_namenode_ip=(hostvars[groups[hdfs_namenode_group][0]]
+{%- set first_namenode_ip=(hostvars[groups[hdfs_namenode_ansible_group][0]]
                                    ["ansible_" + hdfs_net_interface]
                                    ["ipv4"]
                                    ["address"]) -%}
