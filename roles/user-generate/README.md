@@ -8,33 +8,44 @@ and add the new user's ssh key to its own list of authorized keys.
 
 #### Variables
 
-|Name        |Default    |Description                                |
-|:-----------|:---------:|:------------------------------------------|
-|name        |(required) |name of the new user                       |
-|crypt_pass  |(generated)|hash of the password to use for the user   |
-|state       |present    |state of the user                          |
-|group       |`name`     |name of the new user's group               |
-|system      |false      |whether to create a system user            |
-|system_group|`system`   |whether to create a system group           |
+|Name         |Default    |Description                                         |
+|:------------|:---------:|:---------------------------------------------------|
+|name         |(required) |name of the new user                                |
+|crypt_pass   |(generated)|SHA-512 hash of the user's password                 |
+|state        |present    |state of the user                                   |
+|local_ssh_key|(optional) |local key to add to the user's authorized keys list |
+|group        |`name`     |name of the new user's group                        |
+|system       |false      |whether to create a system user                     |
+|system_group |`system`   |whether to create a system group                    |
+|force        |false      |whether to replace a preexisting user               |
 
 #### Notes
 
   - By default, the hash for a blank password is used when creating
     a new user, disabling password login.
 
+  - If provided, the ssh-key in `local_ssh_key` will be added to the user's list
+    of authorized keys as well as its own generated key.
+
   - `state` can be "absent", or "present".
+
+  - By default, a new user will not be created if one with the same name already
+    exists.  Set `force` to "true" to replace a preexisting user of the same
+    name.
 
 #### Examples
 
 Create a new non-system user, "bob".  It will be placed in a non-system group
 also named "bob".  The user will not be able to log in using a password.  The
-user will have a generated ssh-key that will also be added to its own list of
-authorized keys.
+user will have a generated ssh-key whose public key will be added to its own
+list of authorized keys.  The public key of the local user running ansible will
+be added, as well.
 ```YAML
   - hosts: all
     roles:
       - role: user-generate
         name: bob
+        local_ssh_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 ```
 
 Remove "bob"

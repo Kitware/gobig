@@ -1,29 +1,36 @@
 ---
 
+  - name: user | probe
+    user:
+        name: "{{ name }}"
+        state: present
+    register: probe
+
   - name: facts | set
     set_fact:
         group: "{{ group|default(name) }}"
         system_group: "{{ (system_group|default(system))|bool }}"
+        make_user: "{{ (probe.changed|bool) or (force|bool) }}"
 
   - name: pkg | whois | install
     apt: name=whois state=present update_cache=yes
-    when: state == "present" and crypt_pass == ""
+    when: state == "present" and crypt_pass == "" and (make_user|bool)
 
   - name: group | create
     group:
         name: "{{ group }}"
         state: present
         system: "{{ system_group|bool }}"
-    when: state == "present"
+    when: state == "present" and (make_user|bool)
 
   - name: user | password | generate
     shell: echo | mkpasswd --method=SHA-512 -s
     register: mkpasswd
-    when: state == "present" and crypt_pass == ""
+    when: state == "present" and crypt_pass == "" and (make_user|bool)
 
   - name: user | password | record
     set_fact: crypt_pass={{ mkpasswd.stdout }}
-    when: state == "present" and crypt_pass == ""
+    when: state == "present" and crypt_pass == "" and (make_user|bool)
 
   - name: user | remove
     user:
@@ -39,12 +46,20 @@
         password: "{{ crypt_pass }}"
         state: present
         system: "{{ system|bool }}"
-    when: state == "present"
+    when: state == "present" and (make_user|bool)
+    register: new_user
 
-  - name: user | sshkey | add
+  - name: user | remote sshkey | add
     become_user: "{{ name }}"
     authorized_key:
         user: "{{ name }}"
-        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-    when: state == "present"
+        key: "{{ new_user.ssh_public_key }}"
+    when: state == "present" and (make_user|bool)
+
+  - name: user | local sshkey | add
+    become_user: "{{ name }}"
+    authorized_key:
+        user: "{{ name }}"
+        key: "{{ local_ssh_key }}"
+    when: state == "present" and local_ssh_key != "" and (make_user|bool)
 
