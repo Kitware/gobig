@@ -1,5 +1,9 @@
 
-# Go Big Cluster
+# GoBig
+
+Provisioning big data applications with Resonant
+
+# GoBig Cluster
 
 Collection of Ansible roles useful for provisioning a variety of services over
 clusters for HPC and data-intensive applications.
