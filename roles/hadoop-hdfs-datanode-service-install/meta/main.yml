@@ -10,5 +10,5 @@ dependencies:
     description: Hadoop Distributed Filesystem Data Node Service
     command: >
         "{{ hadoop_prefix }}/bin/hdfs" --config "{{ hadoop_conf }}" datanode
-    when: state != 'absent'
+    when: do_install|bool
 

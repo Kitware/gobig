@@ -5,8 +5,6 @@
     notify: hadoop | hdfs | fs | format
     when: notify_format|bool
 
-    when: state != "absent"
-
   - name: hadoop | service | hdfs | namenode | notify
     shell: "true"
     notify: hadoop | service | hdfs | namenode
