@@ -7,7 +7,7 @@
         group: "{{ hdfs_group }}"
         mode: 0775
         owner: "{{ hdfs_user }}"
-    when: state != "absent"
+    when: do_install|bool
 
   - name: hadoop | hdfs | conf | xml | set
     template:
@@ -16,7 +16,7 @@
     with_items:
       - core-site
       - hdfs-site
-    when: state != "absent"
+    when: do_install|bool
 
   - name: hadoop | hdfs | conf | env | set
     lineinfile:
@@ -29,7 +29,7 @@
         value: "{{ hadoop_conf }}"
       - key: JAVA_HOME
         value: /usr/lib/jvm/java-7-openjdk-amd64
-    when: state != "absent"
+    when: do_install|bool
 
   - name: hadoop | hdfs | fs | root | delete
     file:
@@ -50,6 +50,6 @@
     with_items:
       - namenode
       - datanode
-    when: state != "absent"
+    when: do_install|bool
     notify: hadoop | hdfs | fs | format
 

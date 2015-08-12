@@ -1,5 +1,23 @@
 ---
 
+  - name: hadoop | service | hdfs | logic flags | compute
+    set_fact:
+        remove_data_root: "{{ state == 'absent' }}"
+        remove_install_root: "{{ state == 'absent' }}"
+        stop_hdfs_services: >
+            {{ (state == 'absent' or (format|bool)) and
+               inventory_hostname in groups.get(hdfs_namenode_group, []) }}
+        do_install: >
+            {{state == "present" or state == "stopped" or
+              state == "started" or state == "restarted" or
+              state == "reloaded"}}
+        notify_services: >
+            {{state == "stopped" or state == "started" or
+              state == "restarted" or state == "reloaded"}}
+        notify_format: >
+            {{state == "present" or state == "started" or
+              state == "restarted" or state == "reloaded"}}
+
   - name: hadoop | deps | install
     apt: name={{ item }} state=present update_cache=yes
     with_items:
@@ -12,15 +30,7 @@
       - tar
       - gzip
       - wget
-    when: state != "absent"
-
-  - name: hadoop | service | hdfs | logic flags | compute
-    set_fact:
-        remove_data_root: "{{ (state == 'absent' or format) }}"
-        remove_install_root: "{{ state == 'absent' }}"
-        stop_hdfs_services: >
-            {{ (state == 'absent' or format) and
-               inventory_hostname in groups.get(hdfs_namenode_group, []) }}
+    when: do_install|bool
 
   - name: hadoop | service | hdfs | datanode | stop
     service:
@@ -45,7 +55,7 @@
     file:
         path: "{{ hadoop_install_root }}"
         state: directory
-    when: state != "absent"
+    when: do_install|bool
 
   - name: hadoop | pkg | download
     get_url:
@@ -54,7 +64,7 @@
               hadoop-{{ hadoop_version }}.tar.gz"
         dest: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}.tar.gz"
         force: no
-    when: state != "absent"
+    when: do_install|bool
 
   - name: hadoop | pkg | unpack
     unarchive:
@@ -63,21 +73,21 @@
         dest: "{{ hadoop_install_root }}"
         mode: 0776
         src: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}.tar.gz"
-    when: state != "absent"
+    when: do_install|bool
 
   - name: hadoop | prefix | record
     set_fact:
         hadoop_prefix: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}"
-    when: state != "absent"
+    when: do_install|bool
 
   - name: hadoop | conf | record
     set_fact: hadoop_conf={{ hadoop_prefix }}/etc/hadoop
-    when: state != "absent"
+    when: do_install|bool
 
   - name: hadoop | log | perms | set
     file:
         path: "{{ hadoop_prefix }}/logs"
         mode: 0750
         state: directory
-    when: state != "absent"
+    when: do_install|bool
 
