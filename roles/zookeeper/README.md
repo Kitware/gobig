@@ -29,8 +29,8 @@ Provisions and manages a zookeeper node
   - `state` can be any one of "absent", "present", "stopped", "started",
     "reloaded", or "restarted".
 
-  - By default, the hash of a randomly generated password is used when creating
-    a new zookeeper user.
+  - By default, the hash for a blank password is used when creating
+    a new zookeeper user, disabling password login.
 
   - zookeeper is installed under
     `zookeeper_install_root`/zookeeper-`zookeeper_version`.
