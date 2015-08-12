@@ -1,0 +1,7 @@
+---
+
+dependencies:
+  - role: zookeeper-variables
+  - role: zookeeper-install
+  - role: zookeeper-service-install
+

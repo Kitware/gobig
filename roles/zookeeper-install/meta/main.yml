@@ -1,0 +1,12 @@
+---
+
+dependencies:
+  - role: zookeeper-variables
+  - role: user-generate
+    name: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    crypt_pass: "{{ zookeeper_crypt_pass }}"
+    system: true
+    state: present
+    when: do_install|bool
+

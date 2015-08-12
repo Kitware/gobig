@@ -1,0 +1,25 @@
+
+tickTime={{ zookeeper_tick_time }}
+initLimit={{ zookeeper_init_limit }}
+syncLimit={{ zookeeper_sync_limit }}
+dataDir={{ zookeeper_data_root }}
+clientPort={{ zookeeper_client_port }}
+{% if zookeeper_max_client_connections > 0 %}
+maxClientCnxns={{ zookeeper_max_client_connections }}
+{% endif %}
+{% if zookeeper_autopurge %}
+autopurge.snapRetainCount={{ zookeeper_autopurge_retain }}
+autopurge.purgeInterval={{ zookeeper_autopurge_interval }}
+{% endif %}
+{% for ansible_host in (groups[zookeeper_ansible_group]|sort) %}
+{% if loop.first %}
+
+{% endif %}
+{%- set zookeeper_id=hostvars[ansible_host].local_zookeeper_id %}
+{%- set ip=(hostvars[ansible_host]
+                    ['ansible_' + zookeeper_net_interface]
+                    ['ipv4']
+                    ['address']) %}
+server.{{ zookeeper_id }}={{ ip }}:2888:3888
+{% endfor %}
+
