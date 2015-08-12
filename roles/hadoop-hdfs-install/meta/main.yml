@@ -3,4 +3,9 @@
 dependencies:
   - role: hadoop-hdfs-variables
   - role: hadoop-install
+  - role: user-generate
+    name: "{{ hdfs_user }}"
+    group: "{{ hdfs_group }}"
+    system: true
+    state: present
 
