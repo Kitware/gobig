@@ -35,8 +35,8 @@ roles.
 
 #### Notes
 
-  - By default, the hash of a randomly generated password is used when creating
-    a new Hadoop user.
+  - By default, the hash for a blank password is used when creating
+    a new Hadoop user, disabling password login.
 
   - `state` can be any one of "absent", "present", "stopped", "started",
     "reloaded", or "restarted".

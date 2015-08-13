@@ -1,0 +1,100 @@
+---
+
+  - name: zookeeper | deps | install
+    apt: name={{ item }} state=present update_cache=yes
+    with_items:
+      - adduser
+      - apt-utils
+      - openjdk-7-jre-headless
+      - openssh-client
+      - openssh-server
+      - rsync
+      - sudo
+      - tar
+      - gzip
+      - wget
+    when: do_install|bool
+
+  - name: zookeeper | service | stop
+    service:
+        name: zookeeper
+        state: stopped
+    ignore_errors: true
+    when: stop_zookeeper_services|bool
+
+  - name: zookeeper | install root | delete
+    file:
+        path: "{{ zookeeper_install_root }}"
+        state: absent
+    when: remove_install_root|bool
+
+  - name: zookeeper | data dir | delete
+    file:
+        path: "{{ zookeeper_data_root }}"
+        state: absent
+    when: remove_data_root|bool
+
+  - name: zookeeper | install root | create
+    file:
+        path: "{{ zookeeper_install_root }}"
+        state: directory
+    when: do_install|bool
+
+  - name: zookeeper | data dir | create
+    file:
+        path: "{{ zookeeper_data_root }}"
+        state: directory
+        group: "{{ zookeeper_group }}"
+        owner: "{{ zookeeper_user }}"
+        mode: 0750
+    when: do_install|bool
+
+  - name: zookeeper | pkg | download
+    get_url:
+        url: "http://archive.apache.org/dist/zookeeper/\
+              zookeeper-{{ zookeeper_version }}/\
+              zookeeper-{{ zookeeper_version }}.tar.gz"
+        dest: "{{ zookeeper_install_root }}/\
+               zookeeper-{{ zookeeper_version }}.tar.gz"
+        force: no
+    when: do_install|bool
+
+  - name: zookeeper | pkg | unpack
+    unarchive:
+        copy: no
+        creates: "{{ zookeeper_install_root }}/\
+                  zookeeper-{{ zookeeper_version }}"
+        dest: "{{ zookeeper_install_root }}"
+        mode: 0755
+        src: "{{ zookeeper_install_root }}/\
+              zookeeper-{{ zookeeper_version }}.tar.gz"
+    when: do_install|bool
+
+  - name: zookeeper | log | perms | set
+    file:
+        path: "{{ zookeeper_prefix }}/logs"
+        mode: 0750
+        state: directory
+    when: do_install|bool
+
+  - name: zookeeper | conf | owner | set
+    file:
+        recurse: yes
+        path: "{{ zookeeper_prefix }}"
+        group: "{{ zookeeper_group }}"
+        mode: 0775
+        owner: "{{ zookeeper_user }}"
+    when: do_install|bool
+
+  - name: zookeeper | conf | set
+    template:
+        src: "{{ item.name }}.j2"
+        dest: "{{ item.dir }}/{{ item.name }}"
+    with_items:
+      - name: zoo.cfg
+        dir: "{{ zookeeper_conf }}"
+      - name: myid
+        dir: "{{ zookeeper_data_root }}"
+
+    when: do_install|bool
+

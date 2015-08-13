@@ -1,0 +1,39 @@
+---
+
+  - name: zookeeper | service | logic flags | compute
+    set_fact:
+        remove_data_root: "{{ state == 'absent' }}"
+        remove_install_root: "{{ state == 'absent' }}"
+        stop_zookeeper_services: "{{ state == 'absent' }}"
+        do_install: >
+            {{ state == "present" or state == "stopped" or
+               state == "started" or state == "restarted" or
+               state == "reloaded" }}
+        notify_services: >
+            {{ state == "stopped" or state == "started"
+            or state == "restarted" or state == "reloaded" }}
+
+  - name: zookeeper | prefix | record
+    set_fact:
+        zookeeper_prefix: "{{ zookeeper_install_root }}/\
+                           zookeeper-{{ zookeeper_version }}"
+    when: do_install|bool
+
+  - name: zookeeper | conf | record
+    set_fact: zookeeper_conf={{ zookeeper_prefix }}/conf
+    when: do_install|bool
+
+  - name: zookeeper | local ID | compute
+    set_fact:
+        local_zookeeper_id: >
+            {{ (groups[zookeeper_ansible_group]|sort).index(
+                inventory_hostname) + 1 }}
+    when: do_install|bool
+
+  - name: zookeeper | classpath | set
+    set_fact:
+        zookeeper_classpath: "{{ zookeeper_conf }}:\
+                              {{ zookeeper_prefix }}/dist-maven/*:\
+                              {{ zookeeper_prefix }}/lib/*"
+    when: do_install|bool
+
