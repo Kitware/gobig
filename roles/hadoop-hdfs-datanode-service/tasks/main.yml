@@ -3,5 +3,5 @@
   - name: hadoop | service | hdfs | datanode | notify
     shell: "true"
     notify: hadoop | service | hdfs | datanode
-    when: state != "absent"
+    when: notify_services|bool
 
