@@ -44,6 +44,13 @@
     file:
         path: "{{ zookeeper_data_root }}"
         state: directory
+        mode: 0755
+    when: do_install|bool
+
+  - name: zookeeper | data dir | owner | set
+    file:
+        path: "{{ zookeeper_data_root }}"
+        state: directory
         group: "{{ zookeeper_group }}"
         owner: "{{ zookeeper_user }}"
         mode: 0750

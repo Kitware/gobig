@@ -44,12 +44,22 @@
     file:
         path: "{{ hdfs_data_root }}/{{ item }}"
         state: directory
-        group: "{{ hdfs_group }}"
-        owner: "{{ hdfs_user }}"
         mode: 0775
     with_items:
       - namenode
       - datanode
     when: do_install|bool
     notify: hadoop | hdfs | fs | format
+
+  - name: hadoop | hdfs | fs | root | owner | set
+    file:
+        path: "{{ hdfs_data_root }}/{{ item }}"
+        state: directory
+        group: "{{ hdfs_group }}"
+        owner: "{{ hdfs_user }}"
+        mode: 0770
+    with_items:
+      - namenode
+      - datanode
+    when: do_install|bool
 
