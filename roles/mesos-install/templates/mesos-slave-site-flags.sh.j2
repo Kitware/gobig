@@ -1,0 +1,35 @@
+
+export MESOS_CONTAINERIZERS="{{ mesos_containerizers }}"
+{% if mesos_default_container_image != "" %}
+export MESOS_DEFAULT_CONTAINER_IMAGE="{{ mesos_default_container_image }}"
+{% endif %}
+{% if mesos_default_container_info != "" %}
+export MESOS_DEFAULT_CONTAINER_INFO="{{ mesos_default_container_info }}"
+{% endif %}
+{% if mesos_hadoop_home != "" %}
+export MESOS_HADOOP_HOME="{{ mesos_hadoop_home }}"
+export HADOOP_HOME="{{ mesos_hadoop_home }}"
+{% endif %}
+export MESOS_EXTERNAL_LOG_FILE="/var/lib/mesos-slave.log"
+export MESOS_WORK_DIR="{{ mesos_data_root }}/slave"
+export MESOS_LOG_DIR="{{ mesos_prefix }}/logs"
+export MESOS_LOGGING_LEVEL="INFO"
+export MESOS_PORT="{{ mesos_slave_port }}"
+export MESOS_DISK_WATCH_INTERVAL="{{ mesos_disk_watch_interval }}"
+export MESOS_DOCKER_REMOVE_DELAY="{{ mesos_docker_remove_delay }}"
+export MESOS_DOCKER_MESOS_IMAGE="{{ mesos_docker_mesos_image }}"
+export MESOS_DOCKER_STOP_TIMEOUT="{{ mesos_docker_stop_timeout }}"
+export MESOS_SANDBOX_DIRECTORY="{{ mesos_sandbox_directory }}"
+export MESOS_EXECUTOR_REGISTRATION_TIMEOUT="{{ mesos_executor_registration_timeout }}"
+export MESOS_EXECUTOR_SHUTDOWN_GRACE_PERIOD="{{ mesos_executor_shutdown_grace_period }}"
+export MESOS_GC_DELAY="{{ mesos_gc_delay }}"
+export MESOS_OVERSUBSCRIBED_RESOURCES_INTERVAL="{{ mesos_oversubscribed_resources_interval }}"
+export MESOS_PERF_DURATION="{{ mesos_perf_duration }}"
+export MESOS_PERF_INTERVAL"{{ mesos_perf_interval }}"
+export MESOS_QOS_CORRECTION_INTERVAL_MIN="{{ mesos_qos_correction_interval_min }}"
+export MESOS_RECOVERY_TIMEOUT="{{ mesos_recovery_timeout }}"
+export MESOS_REGISTRATION_BACKOFF_FACTOR="{{ mesos_registration_backoff_factor }}"
+export MESOS_RESOURCE_MONITORING_INTERVAL="{{ mesos_resource_monitoring_interval }}"
+export MESOS_FETCHER_CACHE_SIZE="{{ mesos_fetcher_cache_size }}"
+export MESOS_FETCHER_CACHE_DIR="{{ mesos_fetcher_cache_dir }}"
+

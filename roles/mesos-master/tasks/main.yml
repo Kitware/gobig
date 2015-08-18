@@ -1,0 +1,8 @@
+---
+
+  - name: mesos | service | master
+    service:
+        name: mesos-master
+        state: "{{ state }}"
+    when: notify_services|bool
+

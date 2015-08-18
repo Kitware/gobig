@@ -1,0 +1,12 @@
+---
+
+dependencies:
+  - role: mesos-variables
+  - role: user-generate
+    name: "{{ mesos_user }}"
+    group: "{{ mesos_group }}"
+    crypt_pass: "{{ mesos_crypt_pass }}"
+    system: true
+    state: present
+    when: do_install|bool
+
