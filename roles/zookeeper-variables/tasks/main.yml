@@ -46,7 +46,9 @@
     set_fact:
         local_zookeeper_id: >
             {{ (groups[zookeeper_ansible_group]|sort).index(
-                inventory_hostname) + 1 }}
+                inventory_hostname) + 1
+                    if inventory_hostname in groups[zookeeper_ansible_group]
+                    else 255 }}
     when: do_install|bool
 
   - name: zookeeper | classpath | set
