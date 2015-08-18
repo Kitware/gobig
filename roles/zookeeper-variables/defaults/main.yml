@@ -20,4 +20,5 @@
     zookeeper_autopurge_interval: 1
 
     state: started
+    recompile: false
 

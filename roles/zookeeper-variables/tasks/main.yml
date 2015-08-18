@@ -23,6 +23,25 @@
     set_fact: zookeeper_conf={{ zookeeper_prefix }}/conf
     when: do_install|bool
 
+  - name: zookeeper | build | probe
+    stat:
+        path: "{{ zookeeper_prefix }}/build"
+    register: build_probe
+    when: do_install|bool
+
+  - name: zookeeper | build | flag | compute
+    set_fact:
+        do_compile: >
+            {{ (do_install|bool) and
+                (not (build_probe.stat.exists|bool) or (recompile|bool)) }}
+    when: do_install|bool
+
+  - name: zookeeper | local ID | probe
+    stat:
+        path: "{{ zookeeper_data_root }}/myid"
+    register: local_id_probe
+    when: do_install|bool
+
   - name: zookeeper | local ID | compute
     set_fact:
         local_zookeeper_id: >

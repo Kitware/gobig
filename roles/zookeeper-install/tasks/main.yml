@@ -5,7 +5,12 @@
     with_items:
       - adduser
       - apt-utils
+      - build-essential
+      - autoconf
+      - libcppunit-dev
+      - libtool
       - openjdk-7-jre-headless
+      - openjdk-7-jdk
       - openssh-client
       - openssh-server
       - rsync
@@ -76,6 +81,32 @@
         src: "{{ zookeeper_install_root }}/\
               zookeeper-{{ zookeeper_version }}.tar.gz"
     when: do_install|bool
+
+  - name: zookeeper | build | dir | create
+    file:
+        path: "{{ zookeeper_prefix }}/build"
+        mode: 0750
+        state: directory
+    when: do_compile|bool
+
+  - name: zookeeper | build | reconfigure
+    shell: autoreconf -if
+    args:
+        chdir: "{{ zookeeper_prefix }}/src/c"
+    when: do_compile|bool
+
+  - name: zookeeper | build | configure
+    shell: >
+        ./configure "--prefix={{ zookeeper_prefix }}"
+    args:
+        chdir: "{{ zookeeper_prefix }}/src/c"
+    when: do_compile|bool
+
+  - name: zookeeper | build | compile
+    shell: make && make install
+    args:
+        chdir: "{{ zookeeper_prefix }}/src/c"
+    when: do_compile|bool
 
   - name: zookeeper | log | perms | set
     file:
