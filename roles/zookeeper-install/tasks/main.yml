@@ -3,7 +3,6 @@
   - name: zookeeper | deps | install
     apt: name={{ item }} state=present update_cache=yes
     with_items:
-      - adduser
       - apt-utils
       - build-essential
       - autoconf
@@ -120,7 +119,7 @@
         recurse: yes
         path: "{{ zookeeper_prefix }}"
         group: "{{ zookeeper_group }}"
-        mode: 0775
+        mode: 0755
         owner: "{{ zookeeper_user }}"
     when: do_install|bool
 
