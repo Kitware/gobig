@@ -90,6 +90,10 @@ This section applies to the `mesos-master` and `mesos-slave` roles.
 
 Install/Configure/Start.  Note that this example groups master and slave nodes
 together during installation to avoid making two sequential compilation passes.
+The nodes are assinged to mesos-master (`MM`), mesos-slave (`MS`), and
+mesos-common (`MC`) groups.  Zookeeper is installed on all nodes running mesos,
+but only the mesos master nodes run Zookeeper services.
+
 ```YAML
   - hosts: all
     vars:
