@@ -23,6 +23,7 @@ Provisions and manages a zookeeper node
 |zookeeper_autopurge             |false          |whether to purge old snapshots and transaction logs                          |
 |zookeeper_autopurge_retain      |3              |number of the most recent snapshots and transaction logs to retain           |
 |zookeeper_autopurge_interval    |1              |autopurge interval (in ticks)                                                |
+|recompile                       |false          |whether to force recompilation of zookeeper's C bindings                     |
 
 #### Notes
 
@@ -49,7 +50,7 @@ Install/Configure/Start
   - hosts: zookeepers
     roles:
       - role: zookeeper
-        hdfs_namenode_ansible_group: zookeepers
+        zookeeper_ansible_group: zookeepers
         state: started
 ```
 
@@ -58,7 +59,7 @@ Stop/Remove
   - hosts: zookeepers
     roles:
       - role: zookeeper
-        hdfs_namenode_ansible_group: zookeepers
+        zookeeper_ansible_group: zookeepers
         state: absent
 ```
 

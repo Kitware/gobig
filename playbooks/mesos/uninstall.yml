@@ -1,0 +1,16 @@
+---
+
+  - hosts: mesos-master-nodes
+    roles:
+      - role: mesos-master
+        mesos_master_ansible_group: mesos-master-nodes
+        zookeeper_ansible_group: mesos-master-nodes
+        state: absent
+
+  - hosts: mesos-slave-nodes
+    roles:
+      - role: mesos-slave
+        mesos_master_ansible_group: mesos-master-nodes
+        zookeeper_ansible_group: mesos-master-nodes
+        state: absent
+

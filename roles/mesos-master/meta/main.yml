@@ -1,0 +1,7 @@
+---
+
+dependencies:
+  - role: mesos-variables
+  - role: mesos-install
+  - role: mesos-master-service-install
+

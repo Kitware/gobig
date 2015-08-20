@@ -1,0 +1,14 @@
+---
+
+dependencies:
+  - role: mesos-variables
+  - role: upstart
+    name: mesos-master
+    user: "{{ mesos_user }}"
+    group: "{{ mesos_group }}"
+    description: Mesos Distributed Systems Kernel Master Service
+    command: >
+        "{{ mesos_prefix }}/build/bin/mesos-master.sh"
+        "--ip=$( {{ mesos_prefix }}/build/bin/discover-ip.sh )"
+    when: do_install|bool
+

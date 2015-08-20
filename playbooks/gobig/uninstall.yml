@@ -1,0 +1,23 @@
+---
+
+  - include: assign-groups.yml
+
+  - hosts: MC
+    roles:
+      - role: mesos-install
+        mesos_master_ansible_group: MM
+        zookeeper_ansible_group: ZK
+        state: absent
+
+  - hosts: ZK
+    roles:
+      - role: zookeeper-install
+        zookeeper_ansible_group: ZK
+        state: absent
+
+  - hosts: HC
+    roles:
+      - role: hadoop-hdfs-install
+        hdfs_namenode_ansible_group: HN
+        state: absent
+

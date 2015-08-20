@@ -3,9 +3,13 @@
   - name: zookeeper | deps | install
     apt: name={{ item }} state=present update_cache=yes
     with_items:
-      - adduser
       - apt-utils
+      - build-essential
+      - autoconf
+      - libcppunit-dev
+      - libtool
       - openjdk-7-jre-headless
+      - openjdk-7-jdk
       - openssh-client
       - openssh-server
       - rsync
@@ -44,6 +48,13 @@
     file:
         path: "{{ zookeeper_data_root }}"
         state: directory
+        mode: 0755
+    when: do_install|bool
+
+  - name: zookeeper | data dir | owner | set
+    file:
+        path: "{{ zookeeper_data_root }}"
+        state: directory
         group: "{{ zookeeper_group }}"
         owner: "{{ zookeeper_user }}"
         mode: 0750
@@ -70,6 +81,32 @@
               zookeeper-{{ zookeeper_version }}.tar.gz"
     when: do_install|bool
 
+  - name: zookeeper | build | dir | create
+    file:
+        path: "{{ zookeeper_prefix }}/build"
+        mode: 0750
+        state: directory
+    when: do_compile|bool
+
+  - name: zookeeper | build | reconfigure
+    shell: autoreconf -if
+    args:
+        chdir: "{{ zookeeper_prefix }}/src/c"
+    when: do_compile|bool
+
+  - name: zookeeper | build | configure
+    shell: >
+        ./configure "--prefix={{ zookeeper_prefix }}"
+    args:
+        chdir: "{{ zookeeper_prefix }}/src/c"
+    when: do_compile|bool
+
+  - name: zookeeper | build | compile
+    shell: make && make install
+    args:
+        chdir: "{{ zookeeper_prefix }}/src/c"
+    when: do_compile|bool
+
   - name: zookeeper | log | perms | set
     file:
         path: "{{ zookeeper_prefix }}/logs"
@@ -82,7 +119,7 @@
         recurse: yes
         path: "{{ zookeeper_prefix }}"
         group: "{{ zookeeper_group }}"
-        mode: 0775
+        mode: 0755
         owner: "{{ zookeeper_user }}"
     when: do_install|bool
 

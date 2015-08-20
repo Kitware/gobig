@@ -1,0 +1,29 @@
+---
+
+  - hosts: all
+    vars:
+        hdfs_namenodes: namenodes
+        hdfs_datanodes: datanodes
+        zookeepers: zookeepers
+        mesos_masters: masters
+        mesos_slaves: slaves
+
+        namenode_set: "{{ groups.get(hdfs_namenodes, []) }}"
+        datanode_set: "{{ groups.get(hdfs_datanodes, []) }}"
+        hadoop_set: "{{ namenode_set | union(datanode_set) }}"
+
+        master_set: "{{ groups.get(mesos_masters, []) }}"
+        slave_set: "{{ groups.get(mesos_slaves, []) }}"
+        mesos_set: "{{ master_set | union(slave_set) }}"
+
+        zookeeper_set: "{{ groups.get(zookeepers, []) | union(mesos_set) }}"
+
+    tasks:
+      - group_by: key={{ inventory_hostname in namenode_set  and "HN" or "x" }}
+      - group_by: key={{ inventory_hostname in datanode_set  and "HD" or "x" }}
+      - group_by: key={{ inventory_hostname in hadoop_set    and "HC" or "x" }}
+      - group_by: key={{ inventory_hostname in zookeeper_set and "ZK" or "x" }}
+      - group_by: key={{ inventory_hostname in master_set    and "MM" or "x" }}
+      - group_by: key={{ inventory_hostname in slave_set     and "MS" or "x" }}
+      - group_by: key={{ inventory_hostname in mesos_set     and "MC" or "x" }}
+

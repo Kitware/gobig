@@ -1,3 +1,4 @@
+---
 
   - hosts: namenodes
     roles:
