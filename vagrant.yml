@@ -1,0 +1,4 @@
+- hosts: all
+  roles:
+    - role: vagrant
+      iface: eth1
