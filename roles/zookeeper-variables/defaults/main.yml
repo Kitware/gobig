@@ -1,14 +1,14 @@
 ---
 
     zookeeper_version: 3.4.6
-    zookeeper_install_root: /opt/zookeeper
+    zookeeper_install_root: ""
 
     zookeeper_user: zookeeper
     zookeeper_group: zookeeper
     zookeeper_crypt_pass: ""
     zookeeper_net_interface: eth0
 
-    zookeeper_data_root: /data/zookeeper
+    zookeeper_data_root: ""
 
     zookeeper_tick_time: 2000
     zookeeper_init_limit: 10

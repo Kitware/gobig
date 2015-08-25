@@ -11,8 +11,8 @@ Provisions and manages a zookeeper node
 |zookeeper_group                 |zookeeper      |group to run the zookeeper service as                                        |
 |zookeeper_crypt_pass            |(generated)    |hash of the password to use for the user                                     |
 |zookeeper_version               |3.4.6          |version of zookeeper to deploy                                               |
-|zookeeper_install_root          |/opt/zookeeper |root directory to install zookeeper under                                    |
-|zookeeper_data_root             |/data/zookeeper|root directory for the zookeeper data files                                  |
+|zookeeper_install_root          |(generated)    |root directory to install zookeeper under                                    |
+|zookeeper_data_root             |(generated)    |root directory for the zookeeper data files                                  |
 |zookeeper_ansible_group         |(required)     |ansible group name for the zookeeper nodes                                   |
 |zookeeper_net_interface         |eth0           |interface on which to bind                                                   |
 |zookeeper_tick_time             |2000           |duration of one "tick" (in milliseconds)                                     |
@@ -33,8 +33,10 @@ Provisions and manages a zookeeper node
   - By default, the hash for a blank password is used when creating
     a new zookeeper user, disabling password login.
 
-  - zookeeper is installed under
-    `zookeeper_install_root`/zookeeper-`zookeeper_version`.
+  - By default, zookeeper is installed under /opt/zookeeper/`zookeeper-version`.
+
+  - By default, zookeeper's data is stored under
+    /data/zookeeper/`zookeeper-version`.
 
   - The `zookeeper_ansible_group` variable provides zookeeper nodes with
     awareness of each other, which is necessary for configuration and
