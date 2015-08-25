@@ -16,6 +16,8 @@
         slave_set: "{{ groups.get(mesos_slaves, []) }}"
         mesos_set: "{{ master_set | union(slave_set) }}"
 
+        spark_set: "{{ master_set }}"
+
         zookeeper_set: "{{ groups.get(zookeepers, []) | union(mesos_set) }}"
 
     tasks:
@@ -26,4 +28,5 @@
       - group_by: key={{ inventory_hostname in master_set    and "MM" or "x" }}
       - group_by: key={{ inventory_hostname in slave_set     and "MS" or "x" }}
       - group_by: key={{ inventory_hostname in mesos_set     and "MC" or "x" }}
+      - group_by: key={{ inventory_hostname in spark_set     and "SP" or "x" }}
 

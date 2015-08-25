@@ -18,4 +18,5 @@ clusters for HPC and data-intensive applications.
   - [upstart](doc/upstart.md)
   - [user-generate](doc/user-generate.md)
   - [zookeeper](doc/zookeeper.md)
+  - [spark](doc/spark.md)
 

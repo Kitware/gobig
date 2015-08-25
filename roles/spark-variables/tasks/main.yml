@@ -1,0 +1,48 @@
+---
+
+  - name: spark | service | logic flags | compute
+    set_fact:
+        remove_data_root: "{{ state == 'absent' }}"
+        remove_install_root: "{{ state == 'absent' }}"
+        stop_spark_services: "{{ state == 'absent' }}"
+        do_install: >
+            {{ state == "present" or state == "stopped" or
+               state == "started" or state == "restarted" or
+               state == "reloaded" }}
+        notify_services: >
+            {{ state == "stopped" or state == "started"
+            or state == "restarted" or state == "reloaded" }}
+
+
+  - name: spark | install root | default | set
+    set_fact:
+        spark_install_root: /opt/spark/{{ spark_version }}
+    when: spark_install_root == ""
+
+  - name: spark | install root | parent | probe
+    shell: dirname "{{ spark_install_root }}"
+    register: parent_probe
+
+  - name: spark | install root | parent | record
+    set_fact:
+        spark_install_parent: "{{ parent_probe.stdout }}"
+
+  - name: spark | data root | default | set
+    set_fact:
+        spark_data_root: /data/spark/{{ spark_version }}
+    when: spark_data_root == ""
+
+  - name: spark | conf | record
+    set_fact: spark_conf={{ spark_install_root }}/conf
+
+  - name: spark | install root | probe
+    stat:
+        path: "{{ spark_install_root }}"
+    register: install_root_probe
+
+  - name: spark | install root | flag | record
+    set_fact:
+        create_install_root: >
+            {{ (do_install|bool) and
+                (not (install_root_probe.stat.exists|bool)) }}
+
