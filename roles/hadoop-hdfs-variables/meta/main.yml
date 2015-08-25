@@ -2,5 +2,4 @@
 
 dependencies:
   - role: hadoop-variables
-  - role: hadoop-hdfs-variables
 

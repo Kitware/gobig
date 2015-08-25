@@ -1,12 +1,7 @@
 ---
 
-  - name: hadoop | hdfs | fs | format | notify
-    shell: "true"
-    notify: hadoop | hdfs | fs | format
-    when: notify_format|bool
-
-  - name: hadoop | service | hdfs | namenode | notify
-    shell: "true"
-    notify: hadoop | service | hdfs | namenode
-    when: notify_services|bool
+  - name: hadoop | service | hdfs | namenode
+    service:
+        name: hdfs-namenode
+        state: "{{ state }}"
 

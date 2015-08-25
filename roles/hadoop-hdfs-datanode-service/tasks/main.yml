@@ -1,7 +1,7 @@
 ---
 
-  - name: hadoop | service | hdfs | datanode | notify
-    shell: "true"
-    notify: hadoop | service | hdfs | datanode
-    when: notify_services|bool
+  - name: hadoop | service | hdfs | datanode
+    service:
+        name: hdfs-datanode
+        state: "{{ state }}"
 
