@@ -141,8 +141,23 @@ class HostsFileFilterFunction(object):
 
         return result.getvalue()
 
+def zk_url(list, hostvars, net_interface, client_port):
+    net_interface_key = "ansible_{}".format(net_interface)
+    return "".join((
+        "zk://",
+        ":{},".format(str(client_port)).join(
+            hostvars[host]
+                    [net_interface_key]
+                    ["ipv4"]
+                    ["address"]
+            for host in list),
+        ":",
+        str(client_port),
+    ))
+
 class FilterModule(object):
     def filters(self):
         return {"hosts_file_entries": hosts_file_entries,
-                "hosts_file_filter": HostsFileFilterFunction()}
+                "hosts_file_filter": HostsFileFilterFunction(),
+                "zk_url": zk_url}
 

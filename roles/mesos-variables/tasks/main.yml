@@ -17,9 +17,9 @@
   - name: mesos | quorum | url | compute
     set_fact:
         mesos_zookeeper_url: >
-            zk://{{ groups[zookeeper_ansible_group]|join(
-                ":" + (zookeeper_client_port|string) + ",")
-            }}:{{ zookeeper_client_port }}/mesos/{{ mesos_cluster_name }}
+            {{ groups[zookeeper_ansible_group] |
+                zk_url(hostvars, zookeeper_net_interface, zookeeper_client_port)
+                }}/mesos/{{ mesos_cluster_name }}
 
   - name: mesos | quorum | count | compute
     set_fact:
