@@ -8,7 +8,7 @@ dependencies:
     group: "{{ mesos_group }}"
     description: Mesos Distributed Systems Kernel Master Service
     command: >
-        "{{ mesos_prefix }}/build/bin/mesos-master.sh"
-        "--ip=$( {{ mesos_prefix }}/build/bin/discover-ip.sh )"
+        "{{ mesos_install_root }}/build/bin/mesos-master.sh"
+        "--ip=$( {{ mesos_install_root }}/build/bin/discover-ip.sh )"
     when: do_install|bool
 

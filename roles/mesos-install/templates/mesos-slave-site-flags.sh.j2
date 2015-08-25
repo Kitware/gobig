@@ -12,7 +12,7 @@ export HADOOP_HOME="{{ mesos_hadoop_home }}"
 {% endif %}
 export MESOS_EXTERNAL_LOG_FILE="/var/lib/mesos-slave.log"
 export MESOS_WORK_DIR="{{ mesos_data_root }}/slave"
-export MESOS_LOG_DIR="{{ mesos_prefix }}/logs"
+export MESOS_LOG_DIR="{{ mesos_install_root }}/logs"
 export MESOS_LOGGING_LEVEL="INFO"
 export MESOS_PORT="{{ mesos_slave_port }}"
 export MESOS_DISK_WATCH_INTERVAL="{{ mesos_disk_watch_interval }}"

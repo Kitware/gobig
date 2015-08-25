@@ -14,8 +14,8 @@ This section applies to the `mesos-master` and `mesos-slave` roles.
 |mesos_group                            |mesos             |group to run the mesos services as                                                              |
 |mesos_crypt_pass                       |(generated)       |hash of the password to use for the user                                                        |
 |mesos_version                          |0.21.0            |version of mesos to deploy                                                                      |
-|mesos_install_root                     |/opt/mesos        |root directory to install mesos under                                                           |
-|mesos_data_root                        |/data/mesos       |root directory for the mesos data files                                                         |
+|mesos_install_root                     |(generated)       |root directory to install mesos under                                                           |
+|mesos_data_root                        |(generated)       |root directory for the mesos data files                                                         |
 |mesos_ansible_group                    |(required)        |ansible group name for the mesos nodes                                                          |
 |zookeeper_ansible_group                |(required)        |ansible group name for the zookeeper nodes                                                      |
 |mesos_net_interface                    |eth0              |interface on which to bind                                                                      |
@@ -62,8 +62,9 @@ This section applies to the `mesos-master` and `mesos-slave` roles.
   - By default, the hash for a blank password is used when creating
     a new mesos user, disabling password login.
 
-  - mesos is installed under
-    `mesos_install_root`/mesos-`mesos_version`.
+  - By default, mesos is installed under /opt/mesos/`mesos_version`.
+
+  - By default, mesos's data is stored under /data/mesos/`mesos_version`.
 
   - The `mesos_master_ansible_group` variable provides mesos slave nodes with
     the knowledge of which master nodes to report to.
@@ -72,7 +73,7 @@ This section applies to the `mesos-master` and `mesos-slave` roles.
     knowledge of which zookeeper nodes to use for leader election.
 
   - The zookeeper registry information for the mesos cluster is stored under
-    zk://`zookeeper_nodes`/mesos/`mesos_cluster_name`.
+    `mesos_zookeeper_url`/`mesos_cluster_name`.
 
   - If not provided, `mesos_quorum` is set to the smallest integer value that is
     greater than half the number of mesos master nodes, i.e.:
