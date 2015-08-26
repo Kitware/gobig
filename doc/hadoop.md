@@ -9,19 +9,19 @@ roles.
 
 |Name                       |Default    |Description                                |
 |:--------------------------|:---------:|:------------------------------------------|
-|hdfs_user                  |hdfs       |user to run HDFS services as               |
-|hdfs_group                 |hadoop     |group to run HDFS services as              |
-|hdfs_crypt_pass            |(generated)|hash of the password to use for the user   |
-|hadoop_version             |2.7.1      |version of hadoop to deploy                |
+|format                     |false      |whether to (re)format the filesystem       |
 |hadoop_install_root        |(generated)|root directory to install hadoop under     |
-|hdfs_data_root             |(generated)|root directory for the HDFS files          |
-|hdfs_namenode_ansible_group|(required) |ansible group name for the HDFS name nodes |
-|hdfs_net_interface         |eth0       |interface on which to bind                 |
+|hadoop_version             |2.7.1      |version of hadoop to deploy                |
 |hdfs_block_replication     |3          |replication factor                         |
 |hdfs_block_size            |268435456  |block size in bytes                        |
+|hdfs_crypt_pass            |(generated)|hash of the password to use for the user   |
+|hdfs_data_root             |(generated)|root directory for the HDFS files          |
+|hdfs_group                 |hadoop     |group to run HDFS services as              |
 |hdfs_io_buffer_size        |131072     |IO buffer size in bytes                    |
+|hdfs_namenode_ansible_group|(required) |ansible group name for the HDFS name nodes |
+|hdfs_net_interface         |eth0       |interface on which to bind                 |
+|hdfs_user                  |hdfs       |user to run HDFS services as               |
 |state                      |started    |state of the service                       |
-|format                     |false      |whether to (re)format the filesystem       |
 
 #### Notes
 
