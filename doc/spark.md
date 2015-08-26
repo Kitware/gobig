@@ -61,9 +61,9 @@ Provisions and manages a spark node running over mesos
     currently supported by these roles.
 
   - See the
-    [spark.apache.org/docs/latest/configuration.html#available_properties](spark configuration)
+    [spark configuration](http://spark.apache.org/docs/latest/configuration.html#available-properties)
     and
-    [spark.apache.org/docs/latest/running-on-mesos.html#configuration](spark mesos)
+    [spark mesos](http://spark.apache.org/docs/latest/running-on-mesos.html#configuration)
     documentation pages for more information about the various spark-dictated
     defaults.
 
@@ -81,7 +81,7 @@ Install/Configure/Start
 ```
 
 Stop/Remove
-```
+```YAML
   - hosts: spark-nodes
     roles:
       - role: spark
