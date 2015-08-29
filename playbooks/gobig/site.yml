@@ -20,6 +20,8 @@
         mesos_master_ansible_group: MM
         zookeeper_ansible_group: ZK
         state: present
+      - role: ssh-known-hosts
+        ssh_known_hosts_ansible_group: MS
 
   - hosts: HN
     roles:
