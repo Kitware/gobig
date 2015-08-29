@@ -6,6 +6,9 @@ The `ssh-known-hosts` role generates a list of ssh host keys on each host in a
 play.  Each host in the list recognizes each other host and thus do not need to
 prompt for host key verification when establishing an ssh connection.
 
+The combination of this role and the [ssh-key-exchange](ssh-key-exchange.md)
+role allows for prompt-free, password-less login among participating hosts.
+
 #### Variables
 
 |Name                         |Default   |Description                                    |

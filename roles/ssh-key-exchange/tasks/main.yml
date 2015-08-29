@@ -1,0 +1,25 @@
+---
+
+  - name: logic flags | probe
+    set_fact:
+        fetch_key: >
+            {{ inventory_hostname in groups[ssh_key_exchange_ansible_group] }}
+
+  - name: ssh-key | probe
+    become_user: "{{ user }}"
+    shell: cat ~/.ssh/id_rsa.pub
+    register: ssh_key_probe
+    when: fetch_key|bool
+
+  - name: ssh-key | record
+    set_fact:
+        ssh_key: "{{ ssh_key_probe.stdout }}"
+    when: fetch_key|bool
+
+  - name: key exchange
+    become_user: "{{ user }}"
+    authorized_key:
+        user: "{{ user }}"
+        key: "{{ hostvars[item]['ssh_key'] }}"
+    with_items: "{{ groups[ssh_key_exchange_ansible_group] }}"
+
