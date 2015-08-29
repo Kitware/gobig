@@ -41,25 +41,32 @@
   - name: user | create
     user:
         generate_ssh_key: yes
+        name: "{{ name }}"
+        state: present
+    when: state == "present"
+    register: new_user
+
+  - name: user | amend
+    user:
+        generate_ssh_key: yes
         group: "{{ group }}"
         name: "{{ name }}"
         password: "{{ crypt_pass }}"
         state: present
         system: "{{ system|bool }}"
     when: state == "present" and (make_user|bool)
-    register: new_user
 
   - name: user | remote sshkey | add
     become_user: "{{ name }}"
     authorized_key:
         user: "{{ name }}"
         key: "{{ new_user.ssh_public_key }}"
-    when: state == "present" and (make_user|bool)
+    when: state == "present"
 
   - name: user | local sshkey | add
     become_user: "{{ name }}"
     authorized_key:
         user: "{{ name }}"
         key: "{{ local_ssh_key }}"
-    when: state == "present" and local_ssh_key != "" and (make_user|bool)
+    when: state == "present" and local_ssh_key != ""
 
