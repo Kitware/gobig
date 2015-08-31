@@ -1,6 +1,6 @@
 
 ### ssh-key-exchange
-Exchange a set of public ssh keys amoung several hosts
+Exchange a set of public ssh keys among several hosts
 
 The `ssh-key-exchange` role exhanges a set of a user's public ssh keys among
 several ansible hosts, populating the user's `authorized_keys` file on each.
