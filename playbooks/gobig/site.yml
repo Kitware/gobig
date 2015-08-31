@@ -53,3 +53,7 @@
         mesos_master_ansible_group: MM
         state: started
 
+  - hosts: UM
+    roles:
+      - role: uvcmetrics
+        state: present
