@@ -20,6 +20,13 @@
         mesos_master_ansible_group: MM
         zookeeper_ansible_group: ZK
         state: present
+      - role: ssh-known-hosts
+        ssh_known_hosts_ansible_group: MC
+      - role: user-generate
+        name: ubuntu
+      - role: ssh-key-exchange
+        user: ubuntu
+        ssh_key_exchange_ansible_group: MC
 
   - hosts: HN
     roles:
