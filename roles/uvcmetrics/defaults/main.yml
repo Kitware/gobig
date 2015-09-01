@@ -1,5 +1,5 @@
 ---
-
+    uvcdat_version: "master"
     uvcdat_src_path: "/opt/uvcdat-src"
     uvcdat_build_path: "/opt/uvcdat-build"
-    uvcdat_install_path: "/opt/uvcdat"
+    uvcdat_install_path: "/opt/uvcdat/{{ uvcdat_version }}"

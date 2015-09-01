@@ -25,7 +25,7 @@
       repo: git://github.com/UV-CDAT/uvcdat.git
       dest: "{{ uvcdat_src_path }}"
       accept_hostkey: yes
-      version: master
+      version: "{{ uvcdat_version }}"
       force: yes
 
   - name: uvcmetrics | conf | branch | set
@@ -51,6 +51,6 @@
       chdir: "{{ uvcdat_build_path }}"
 
   - name: uvcmetrics | uvcdat | build
-    command: make -j3
+    command: make -j{{ ansible_processor_cores }}
     args:
       chdir: "{{ uvcdat_build_path }}"
