@@ -13,9 +13,9 @@ role allows for prompt-free, password-less login among participating hosts.
 
 |Name                         |Default   |Description                                    |
 |:----------------------------|:--------:|:----------------------------------------------|
-|user                         |(system)  |user whose known hosts file is to be generated |
 |ssh_known_hosts_ansible_group|(required)|ansible group name for the participating hosts |
 |ssh_known_hosts_net_interface|eth0      |interface whose ip is used as the hostname     |
+|user                         |(system)  |user whose known hosts file is to be generated |
 
 #### Notes
 

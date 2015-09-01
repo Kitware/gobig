@@ -14,8 +14,8 @@ allows for prompt-free, password-less login among participating hosts.
 
 |Name                          |Default   |Description                                          |
 |:-----------------------------|:--------:|:----------------------------------------------------|
-|user                          |(required)|user whose authorized keys files are to be populated |
 |ssh_key_exchange_ansible_group|(required)|ansible group name for the participating hosts       |
+|user                          |(required)|user whose authorized keys files are to be populated |
 
 #### Examples
 
