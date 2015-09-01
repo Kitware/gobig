@@ -1,0 +1,6 @@
+---
+
+    extra_entries: {}
+    hosts_file_net_interface: eth0
+    state: present
+

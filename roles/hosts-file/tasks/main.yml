@@ -1,0 +1,18 @@
+---
+
+  - name: hosts file | update
+    lineinfile:
+        dest: /etc/hosts
+        regexp: "^{{ item[0]|regex_escape() }}"
+        line: >
+            {{ item[0] }} {{ item[1]|join(" ") }}
+        state: >
+            {{ "present" if item[0] in ("127.0.0.1", "::1") else state }}
+    with_items: >
+        {{  groups[hosts_file_ansible_group]
+          | hosts_file_entries(hosts_file_net_interface,
+                               hostvars,
+                               extra_entries,
+                               ansible_nodename,
+                               ansible_hostname) }}
+
