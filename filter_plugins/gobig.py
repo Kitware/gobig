@@ -11,10 +11,13 @@ def _get_items(x, *items):
 
 def hosts_file_entries(host_list,
                        net_interface,
+                       domain,
                        host_vars,
                        extra_entries,
+                       local_entries,
+                       hostname,
                        nodename,
-                       hostname):
+                       fqdn):
     import itertools as it
 
     net_interface_key = "ansible_{}".format(net_interface)
@@ -23,18 +26,29 @@ def hosts_file_entries(host_list,
     loopback_entries = [( set(["localhost",
                                "localhost.localdomain",
                                "localhost4",
-                               "localhost4.localdomain4",
-                               nodename,
-                               hostname])
+                               "localhost4.localdomain4"
+                              ] + ([hostname,
+                                    nodename,
+                                    fqdn] + ([hostname+"."+domain,
+                                              nodename+"."+domain]
+                                             if domain else [])
+                                   if local_entries else []))
+
                         | set(extra_entries.get("127.0.0.1", [])) ),
 
                         ( set(["localhost",
                              "localhost.localdomain",
                              "localhost6",
-                             "localhost6.localdomain6",
-                             nodename,
-                             hostname])
-                        | set(extra_entries.get("127.0.0.1", [])) )]
+                             "localhost6.localdomain6"
+
+                              ] + ([hostname,
+                                    nodename,
+                                    fqdn] + ([hostname+"."+domain,
+                                              nodename+"."+domain]
+                                             if domain else [])
+                                   if local_entries else []))
+
+                        | set(extra_entries.get("::1", [])) )]
 
     address_to_host_list = dict(
         it.chain.from_iterable(
@@ -48,7 +62,11 @@ def hosts_file_entries(host_list,
                                    "address"),
 
                         [host_vars[host]["ansible_hostname"],
-                         host_vars[host]["ansible_nodename"]]
+                         host_vars[host]["ansible_nodename"],
+                         host_vars[host]["ansible_fqdn"]
+                        ] + ([host_vars[host]["ansible_hostname"]+"."+domain,
+                              host_vars[host]["ansible_nodename"]+"."+domain]
+                             if domain else [])
                     )
                     for host in host_list
                 )
@@ -67,11 +85,64 @@ def hosts_file_entries(host_list,
     remaining_entries = [extra_entries[ip] for ip in remaining_keys]
 
     result = zip(loopback_keys + host_keys + remaining_keys,
-                 map(list, loopback_entries + host_entries + remaining_entries))
+                 map(lambda x: sorted(list(x)),
+                     loopback_entries + host_entries + remaining_entries))
 
     return result
 
+class HostsFileFilterFunction(object):
+    def __init__(self):
+        import re
+        self.RE_ENTRY = re.compile(r'''^[0-9\.\:/]+[ \t][^ \t]+''')
+
+    def __call__(self,
+                 hosts_file_contents,
+                 host_list,
+                 domain,
+                 host_vars,
+                 extra_entries,
+                 hostname,
+                 nodename,
+                 fqdn):
+
+        from cStringIO import StringIO
+
+        hosts = ( set([hostname, nodename, fqdn])
+                | set([hostname+"."+domain, nodename+"."+domain]
+                      if domain else [])
+                | set.union(*[
+                    set([host_vars[host]["ansible_hostname"],
+                         host_vars[host]["ansible_nodename"],
+                         host_vars[host]["ansible_fqdn"]])
+                    for host in host_list])
+                | (
+                    set.union(*[
+                        set([host_vars[host]["ansible_hostname"]+"."+domain,
+                             host_vars[host]["ansible_nodename"]+"."+domain])
+                        for host in host_list])
+                    if domain else set([]))
+                | (
+                    set.union(*[set(extra_aliases)
+                                for extra_aliases in extra_entries])
+                    if extra_entries else set([])))
+
+        result = StringIO()
+        for line in hosts_file_contents.split('\n'):
+            m = self.RE_ENTRY.match(line)
+
+            if m is not None:
+                tokens = filter(lambda x: x not in hosts, line.split())
+
+                if len(tokens) < 2: continue
+                line = " ".join(tokens)
+
+            result.write(line)
+            result.write('\n')
+
+        return result.getvalue()
+
 class FilterModule(object):
     def filters(self):
-        return {"hosts_file_entries": hosts_file_entries}
+        return {"hosts_file_entries": hosts_file_entries,
+                "hosts_file_filter": HostsFileFilterFunction()}
 
