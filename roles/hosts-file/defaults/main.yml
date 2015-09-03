@@ -1,0 +1,10 @@
+---
+
+    extra_entries: {}
+    extra_clear_entries: {}
+    local_entries: false
+    domain: ""
+    hosts_file_net_interface: eth0
+    hosts_file_clear_ansible_group: ""
+    state: present
+
