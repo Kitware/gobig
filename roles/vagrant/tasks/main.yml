@@ -1,5 +1,0 @@
-- name: Create the hosts file for all machines
-  template:
-    src: etc/hosts.j2
-    dest: /etc/hosts
-    

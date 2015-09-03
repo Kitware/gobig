@@ -13,13 +13,6 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "ubuntu/trusty64"
 
-  # In order to allow addressing via hostname we use the vagrant hostmanager plugin,
-  # This will add each node's hostname to the launching systems /etc/hosts file
-  config.hostmanager.enabled = true
-  config.hostmanager.manage_host = true
-  config.hostmanager.include_offline = true
-
-
   # Generate a single name node
   config.vm.define "name" do |node|
     node.vm.network :forwarded_port, guest: 22, host: 2220, id: 'ssh'
@@ -51,21 +44,24 @@ Vagrant.configure(2) do |config|
             "all:children" => ["namenodes", "datanodes"]
           }
 
-        # Debian based boxes with vagrant add a host entry like:
-        # /etc/hosts:
-        # 127.0.1.1 data-01.cluster.dev
-        #
-        # This causes the hdfs web interface and several other
-        # hdfs internal services to bind to 127.0.1.1.  Instead
-        # We use the vagrant.yml file to generate our own
-        # /etc/hosts file.
+
+        # Configure hostfiles
         config.vm.provision "ansible" do |ansible|
            ansible.groups = groups
            ansible.limit = 'all'
            ansible.sudo = true
-           ansible.playbook = "vagrant.yml"
-         end
+           ansible.verbose = "v"
+           # The private network by default binds to eth1
+           ansible.extra_vars = {
+             hosts_file_net_interface: "eth1"
+           }
+           
+           ansible.playbook = "playbooks/misc/hosts-file.yml"
 
+           
+        end
+
+        
         # Launch the gobig provisioning scripts       
          config.vm.provision "ansible" do |ansible|
            ansible.groups = groups
@@ -77,7 +73,7 @@ Vagrant.configure(2) do |config|
              hdfs_net_interface: "eth1"
            }
            
-           ansible.playbook = "hadoop-hdfs-site.yml"
+           ansible.playbook = "playbooks/hadoop-hdfs/site.yml"
            
          end
       end
