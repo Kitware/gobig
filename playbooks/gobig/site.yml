@@ -60,3 +60,11 @@
         mesos_master_ansible_group: MM
         state: started
 
+  - hosts: SP
+    roles:
+      - role: spark
+        hdfs_namenode_ansible_group: HN
+        zookeeper_ansible_group: ZK
+        mesos_master_ansible_group: MM
+        state: started
+

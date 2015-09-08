@@ -1,24 +1,5 @@
 ---
 
-  - name: hadoop | service | hdfs | logic flags | compute
-    set_fact:
-        remove_data_root: "{{ state == 'absent' }}"
-        remove_install_root: "{{ state == 'absent' }}"
-        stop_hdfs_services: >
-            {{ (state == 'absent' or (format|bool)) and
-               inventory_hostname in
-                   groups.get(hdfs_namenode_ansible_group, []) }}
-        do_install: >
-            {{state == "present" or state == "stopped" or
-              state == "started" or state == "restarted" or
-              state == "reloaded"}}
-        notify_services: >
-            {{state == "stopped" or state == "started" or
-              state == "restarted" or state == "reloaded"}}
-        notify_format: >
-            {{state == "present" or state == "started" or
-              state == "restarted" or state == "reloaded"}}
-
   - name: hadoop | deps | install
     apt: name={{ item }} state=present update_cache=yes
     with_items:
@@ -38,13 +19,14 @@
         name: hdfs-datanode
         state: stopped
     ignore_errors: true
-    when: stop_hdfs_services|bool
+    when: stop_services|bool
 
   - name: hadoop | service | hdfs | namenode | stop
     service:
         name: hdfs-namenode
         state: stopped
-    when: stop_hdfs_services|bool
+    ignore_errors: true
+    when: stop_services|bool
 
   - name: hadoop | install root | delete
     file:
@@ -52,10 +34,26 @@
         state: absent
     when: remove_install_root|bool
 
-  - name: hadoop | install root | create
+  - name: hadoop | install parent | create
     file:
-        path: "{{ hadoop_install_root }}"
+        path: "{{ hadoop_install_parent }}"
         state: directory
+    when: do_install|bool
+
+  - name: hadoop | data root | create
+    file:
+        path: "{{ hadoop_data_root }}"
+        state: directory
+        mode: 0755
+    when: do_install|bool
+
+  - name: hadoop | data root | owner | set
+    file:
+        path: "{{ hadoop_data_root }}"
+        state: directory
+        owner: "{{ hadoop_user }}"
+        group: "{{ hadoop_group }}"
+        mode: 0775
     when: do_install|bool
 
   - name: hadoop | pkg | download
@@ -63,32 +61,33 @@
         url: "http://archive.apache.org/dist/hadoop/core/\
               hadoop-{{ hadoop_version }}/\
               hadoop-{{ hadoop_version }}.tar.gz"
-        dest: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}.tar.gz"
+        dest: "{{ hadoop_install_parent }}/hadoop-{{ hadoop_version }}.tar.gz"
         force: no
-    when: do_install|bool
+    when: create_install_root|bool
 
   - name: hadoop | pkg | unpack
     unarchive:
         copy: no
-        creates: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}"
-        dest: "{{ hadoop_install_root }}"
+        creates: "{{ hadoop_install_parent }}/hadoop-{{ hadoop_version }}"
+        dest: "{{ hadoop_install_parent }}"
         mode: 0776
-        src: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}.tar.gz"
-    when: do_install|bool
+        src: "{{ hadoop_install_parent }}/hadoop-{{ hadoop_version }}.tar.gz"
+    when: create_install_root|bool
 
-  - name: hadoop | prefix | record
-    set_fact:
-        hadoop_prefix: "{{ hadoop_install_root }}/hadoop-{{ hadoop_version }}"
-    when: do_install|bool
-
-  - name: hadoop | conf | record
-    set_fact: hadoop_conf={{ hadoop_prefix }}/etc/hadoop
-    when: do_install|bool
+  - name: hadoop | pkg | unpack | rename
+    shell: >
+        mv
+        "{{ hadoop_install_parent }}/hadoop-{{ hadoop_version }}"
+        "{{ hadoop_install_root }}"
+    when: create_install_root|bool
+    changed_when: >
+        (hadoop_install_parent + "/hadoop-" + hadoop_version) !=
+        hadoop_install_root
 
   - name: hadoop | log | perms | set
     file:
-        path: "{{ hadoop_prefix }}/logs"
-        mode: 0750
+        path: "{{ hadoop_install_root }}/logs"
+        mode: 0755
         state: directory
     when: do_install|bool
 

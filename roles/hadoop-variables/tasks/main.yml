@@ -1,0 +1,51 @@
+---
+
+  - name: hadoop | logic flags | compute
+    set_fact:
+        remove_data_root: "{{ state == 'absent' }}"
+        remove_install_root: "{{ state == 'absent' }}"
+        stop_services: >
+            {{ state == 'absent' }}
+        do_install: >
+            {{state == "present" or state == "stopped" or
+              state == "started" or state == "restarted" or
+              state == "reloaded"}}
+        notify_services: >
+            {{state == "stopped" or state == "started" or
+              state == "restarted" or state == "reloaded"}}
+        notify_format: >
+            {{state == "present" or state == "started" or
+              state == "restarted" or state == "reloaded"}}
+
+  - name: hadoop | install root | default | set
+    set_fact:
+        hadoop_install_root: /opt/hadoop/{{ hadoop_version }}
+    when: hadoop_install_root == ""
+
+  - name: hadoop | install root | parent | probe
+    shell: dirname "{{ hadoop_install_root }}"
+    register: parent_probe
+
+  - name: hadoop | install root | parent | record
+    set_fact:
+        hadoop_install_parent: "{{ parent_probe.stdout }}"
+
+  - name: hadoop | data root | default | set
+    set_fact:
+        hadoop_data_root: /data/hadoop/{{ hadoop_version }}
+    when: hadoop_data_root == ""
+
+  - name: hadoop | conf | record
+    set_fact: hadoop_conf={{ hadoop_install_root }}/etc/hadoop
+
+  - name: hadoop | install root | probe
+    stat:
+        path: "{{ hadoop_install_root }}"
+    register: install_root_probe
+
+  - name: hadoop | install root | flag | record
+    set_fact:
+        create_install_root: >
+            {{ (do_install|bool) and
+                (not (install_root_probe.stat.exists|bool)) }}
+

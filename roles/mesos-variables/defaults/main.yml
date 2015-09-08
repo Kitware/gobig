@@ -1,14 +1,14 @@
 ---
 
     mesos_version: 0.21.0
-    mesos_install_root: /opt/mesos
+    mesos_install_root: ""
 
     mesos_user: mesos
     mesos_group: mesos
     mesos_crypt_pass: ""
     mesos_net_interface: eth0
 
-    mesos_data_root: /data/mesos
+    mesos_data_root: ""
     recompile: false
 
     mesos_cluster_name: mesos

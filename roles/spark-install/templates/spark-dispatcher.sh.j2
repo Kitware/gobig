@@ -1,0 +1,11 @@
+#! /usr/bin/env sh
+
+source "{{ spark_install_root }}/sbin/spark-config.sh"
+source "{{ spark_install_root }}/bin/load-spark-env.sh"
+
+"{{ spark_install_root }}/bin/spark-class"                      \
+    org.apache.spark.deploy.mesos.MesosClusterDispatcher        \
+    --master "mesos://{{ mesos_zookeeper_url }}"                \
+    --host "$( "{{ spark_install_root }}/bin/discover-ip.sh" )" \
+    --port "{{ spark_dispatcher_port }}"
+

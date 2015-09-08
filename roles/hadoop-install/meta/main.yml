@@ -1,7 +1,10 @@
 ---
 
 dependencies:
-  - role: hadoop-hdfs-variables
-  - role: hadoop-hdfs-namenode-handlers
-  - role: hadoop-hdfs-datanode-handlers
+  - role: hadoop-variables
+  - role: user-generate
+    name: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+    system: true
+    state: present
 

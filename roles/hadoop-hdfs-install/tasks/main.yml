@@ -3,7 +3,7 @@
   - name: hadoop | hdfs | conf | owner | set
     file:
         recurse: yes
-        path: "{{ hadoop_prefix }}"
+        path: "{{ hadoop_install_root }}"
         group: "{{ hdfs_group }}"
         mode: 0775
         owner: "{{ hdfs_user }}"
@@ -44,12 +44,11 @@
     file:
         path: "{{ hdfs_data_root }}/{{ item }}"
         state: directory
-        mode: 0775
+        mode: 0755
     with_items:
       - namenode
       - datanode
     when: do_install|bool
-    notify: hadoop | hdfs | fs | format
 
   - name: hadoop | hdfs | fs | root | owner | set
     file:
@@ -57,9 +56,27 @@
         state: directory
         group: "{{ hdfs_group }}"
         owner: "{{ hdfs_user }}"
-        mode: 0770
+        mode: 0775
     with_items:
       - namenode
       - datanode
     when: do_install|bool
+
+  - name: hadoop | hdfs | fs | format
+    become_user: "{{ hdfs_user }}"
+    shell: >
+        {{ hadoop_install_root }}/bin/hdfs namenode -format
+        {{ '-force' if (format|bool) else '-nonInteractive' }}
+    ignore_errors: true
+    register: format_result
+    failed_when: >
+        'Error' in format_result.stderr
+    when: do_format
+
+  - name: hadoop | hdfs | fs | format | record
+    become_user: "{{ hdfs_user }}"
+    file:
+        path: "{{ hdfs_data_root }}/namenode/formatted"
+        state: touch
+    when: do_format
 

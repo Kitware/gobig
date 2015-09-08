@@ -1,7 +1,0 @@
----
-
-  - name: hadoop | service | hdfs | datanode
-    service:
-        name: hdfs-datanode
-        state: "{{ state }}"
-

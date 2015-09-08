@@ -1,14 +1,15 @@
 ---
 
 dependencies:
+  - role: hadoop-variables
   - role: hadoop-hdfs-variables
-  - role: hadoop-hdfs-install
   - role: upstart
     name: hdfs-datanode
     user: "{{ hdfs_user }}"
     group: "{{ hdfs_group }}"
     description: Hadoop Distributed Filesystem Data Node Service
     command: >
-        "{{ hadoop_prefix }}/bin/hdfs" --config "{{ hadoop_conf }}" datanode
+        "{{ hadoop_install_root }}/bin/hdfs"
+        --config "{{ hadoop_conf }}" datanode
     when: do_install|bool
 

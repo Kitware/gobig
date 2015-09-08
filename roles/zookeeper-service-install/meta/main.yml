@@ -9,7 +9,7 @@ dependencies:
     description: Zookeeper High-Reliability Distributed Coordination Service
     command: >
         java -cp "{{ zookeeper_classpath }}"
-        "-Dzookeeper.log.dir={{ zookeeper_prefix }}/logs"
+        "-Dzookeeper.log.dir={{ zookeeper_install_root }}/logs"
         "-Dzookeeper.root.logger=INFO,CONSOLE,ROLLINGFILE"
         org.apache.zookeeper.server.quorum.QuorumPeerMain
         "{{ zookeeper_conf }}/zoo.cfg"

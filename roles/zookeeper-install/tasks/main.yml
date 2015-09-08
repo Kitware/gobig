@@ -24,7 +24,7 @@
         name: zookeeper
         state: stopped
     ignore_errors: true
-    when: stop_zookeeper_services|bool
+    when: stop_services|bool
 
   - name: zookeeper | install root | delete
     file:
@@ -32,32 +32,32 @@
         state: absent
     when: remove_install_root|bool
 
-  - name: zookeeper | data dir | delete
+  - name: zookeeper | data root | delete
     file:
         path: "{{ zookeeper_data_root }}"
         state: absent
     when: remove_data_root|bool
 
-  - name: zookeeper | install root | create
+  - name: zookeeper | install parent | create
     file:
-        path: "{{ zookeeper_install_root }}"
+        path: "{{ zookeeper_install_parent }}"
         state: directory
     when: do_install|bool
 
-  - name: zookeeper | data dir | create
+  - name: zookeeper | data root | create
     file:
         path: "{{ zookeeper_data_root }}"
         state: directory
         mode: 0755
     when: do_install|bool
 
-  - name: zookeeper | data dir | owner | set
+  - name: zookeeper | data root | owner | set
     file:
         path: "{{ zookeeper_data_root }}"
         state: directory
         group: "{{ zookeeper_group }}"
         owner: "{{ zookeeper_user }}"
-        mode: 0750
+        mode: 0775
     when: do_install|bool
 
   - name: zookeeper | pkg | download
@@ -65,59 +65,69 @@
         url: "http://archive.apache.org/dist/zookeeper/\
               zookeeper-{{ zookeeper_version }}/\
               zookeeper-{{ zookeeper_version }}.tar.gz"
-        dest: "{{ zookeeper_install_root }}/\
+        dest: "{{ zookeeper_install_parent }}/\
                zookeeper-{{ zookeeper_version }}.tar.gz"
         force: no
-    when: do_install|bool
+    when: create_install_root|bool
 
   - name: zookeeper | pkg | unpack
     unarchive:
         copy: no
-        creates: "{{ zookeeper_install_root }}/\
+        creates: "{{ zookeeper_install_parent }}/\
                   zookeeper-{{ zookeeper_version }}"
-        dest: "{{ zookeeper_install_root }}"
+        dest: "{{ zookeeper_install_parent }}"
         mode: 0755
-        src: "{{ zookeeper_install_root }}/\
+        src: "{{ zookeeper_install_parent }}/\
               zookeeper-{{ zookeeper_version }}.tar.gz"
-    when: do_install|bool
+    when: create_install_root|bool
+
+  - name: zookeeper | pkg | unpack | rename
+    shell: >
+        mv
+        "{{ zookeeper_install_parent }}/zookeeper-{{ zookeeper_version }}"
+        "{{ zookeeper_install_root }}"
+    when: create_install_root|bool
+    changed_when: >
+        (zookeeper_install_parent + "/zookeeper-" + zookeeper_version) !=
+        zookeeper_install_root
 
   - name: zookeeper | build | dir | create
     file:
-        path: "{{ zookeeper_prefix }}/build"
-        mode: 0750
+        path: "{{ zookeeper_install_root }}/build"
+        mode: 0755
         state: directory
     when: do_compile|bool
 
   - name: zookeeper | build | reconfigure
     shell: autoreconf -if
     args:
-        chdir: "{{ zookeeper_prefix }}/src/c"
+        chdir: "{{ zookeeper_install_root }}/src/c"
     when: do_compile|bool
 
   - name: zookeeper | build | configure
     shell: >
-        ./configure "--prefix={{ zookeeper_prefix }}"
+        ./configure "--prefix={{ zookeeper_install_root }}"
     args:
-        chdir: "{{ zookeeper_prefix }}/src/c"
+        chdir: "{{ zookeeper_install_root }}/src/c"
     when: do_compile|bool
 
   - name: zookeeper | build | compile
     shell: make && make install
     args:
-        chdir: "{{ zookeeper_prefix }}/src/c"
+        chdir: "{{ zookeeper_install_root }}/src/c"
     when: do_compile|bool
 
   - name: zookeeper | log | perms | set
     file:
-        path: "{{ zookeeper_prefix }}/logs"
-        mode: 0750
+        path: "{{ zookeeper_install_root }}/logs"
+        mode: 0755
         state: directory
     when: do_install|bool
 
   - name: zookeeper | conf | owner | set
     file:
         recurse: yes
-        path: "{{ zookeeper_prefix }}"
+        path: "{{ zookeeper_install_root }}"
         group: "{{ zookeeper_group }}"
         mode: 0755
         owner: "{{ zookeeper_user }}"
@@ -132,6 +142,5 @@
         dir: "{{ zookeeper_conf }}"
       - name: myid
         dir: "{{ zookeeper_data_root }}"
-
     when: do_install|bool
 

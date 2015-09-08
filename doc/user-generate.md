@@ -10,14 +10,14 @@ and add the new user's ssh key to its own list of authorized keys.
 
 |Name         |Default    |Description                                         |
 |:------------|:---------:|:---------------------------------------------------|
-|name         |(required) |name of the new user                                |
 |crypt_pass   |(generated)|SHA-512 hash of the user's password                 |
-|state        |present    |state of the user                                   |
-|local_ssh_key|(optional) |local key to add to the user's authorized keys list |
+|force        |false      |whether to replace a preexisting user               |
 |group        |`name`     |name of the new user's group                        |
+|local_ssh_key|(optional) |local key to add to the user's authorized keys list |
+|name         |(required) |name of the new user                                |
+|state        |present    |state of the user                                   |
 |system       |false      |whether to create a system user                     |
 |system_group |`system`   |whether to create a system group                    |
-|force        |false      |whether to replace a preexisting user               |
 
 #### Notes
 
