@@ -60,6 +60,11 @@
         mesos_master_ansible_group: MM
         state: started
 
+  - hosts: UM
+    roles:
+      - role: uvcmetrics
+        state: present
+
   - hosts: SP
     roles:
       - role: spark
@@ -67,4 +72,3 @@
         zookeeper_ansible_group: ZK
         mesos_master_ansible_group: MM
         state: started
-

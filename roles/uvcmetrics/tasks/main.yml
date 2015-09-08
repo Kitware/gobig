@@ -1,0 +1,56 @@
+---
+
+  - name: uvcmetrics | deps | install
+    apt: name={{ item }} state=present update_cache=yes
+    with_items:
+      - git
+      - gfortran
+      - g++
+      - libffi-dev
+      - libsqlite-dev
+      - libssl-dev
+      - libbz2-dev
+      - libexpat-dev
+      - ncurses-dev
+      - curl
+      - make
+      - wget
+      - libjpeg-dev
+      - libpng-dev
+      - m4
+      - cmake
+
+  - name: uvcmetrics | uvcdat | checkout
+    git:
+      repo: git://github.com/UV-CDAT/uvcdat.git
+      dest: "{{ uvcdat_src_path }}"
+      accept_hostkey: yes
+      version: "{{ uvcdat_version }}"
+      force: yes
+
+  - name: uvcmetrics | conf | branch | set
+    lineinfile:
+      dest: "{{ uvcdat_src_path }}/CMake/cdat_modules/uvcmetrics_pkg.cmake"
+      state: present
+      regexp: 'set\(UVCMETRICS_BRANCH'
+      line: 'set(UVCMETRICS_BRANCH devel)'
+
+  - name: uvcmetrics | build dir | create
+    file: path={{ uvcdat_build_path }} state=directory mode=0755
+
+  - name: uvcmetrics | uvcdat | configure
+    command: >
+      cmake
+      -DCDAT_BUILD_WEB=ON
+      -DCDAT_BUILD_GUI=OFF
+      -DCDAT_BUILD_OSMESA=ON
+      -DCDAT_BUILD_OFFSCREEN=ON
+      -DCMAKE_INSTALL_PREFIX={{ uvcdat_install_path }}
+      {{ uvcdat_src_path }}
+    args:
+      chdir: "{{ uvcdat_build_path }}"
+
+  - name: uvcmetrics | uvcdat | build
+    command: make -j{{ ansible_processor_cores }}
+    args:
+      chdir: "{{ uvcdat_build_path }}"
