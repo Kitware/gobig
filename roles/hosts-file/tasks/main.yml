@@ -1,0 +1,50 @@
+---
+
+  - name: logic flags | compute
+    set_fact:
+        do_clear: >
+            {{ hosts_file_clear_ansible_group != "" }}
+
+  - name: hosts file | probe
+    command: cat /etc/hosts
+    register: hosts_probe
+    when: "{{ do_clear|bool }}"
+
+  - name: hosts file | filter
+    set_fact:
+        filtered_hosts: >
+            {{ hosts_probe.stdout|hosts_file_filter(
+                groups[hosts_file_clear_ansible_group],
+                domain,
+                hostvars,
+                extra_clear_entries,
+                ansible_hostname,
+                ansible_nodename,
+                ansible_fqdn) }}
+    when: "{{ do_clear|bool }}"
+
+  - name: hosts file | clear
+    copy:
+        content: "{{ filtered_hosts }}"
+        dest: /etc/hosts
+    when: "{{ do_clear|bool }}"
+
+  - name: hosts file | amend
+    lineinfile:
+        dest: /etc/hosts
+        regexp: "^{{ item[0]|regex_escape() }}"
+        line: >
+            {{ item[0] }} {{ item[1]|join(" ") }}
+        state: >
+            {{ "present" if item[0] in ("127.0.0.1", "::1") else state }}
+    with_items: >
+        {{  groups[hosts_file_ansible_group]
+          | hosts_file_entries(hosts_file_net_interface,
+                               domain,
+                               hostvars,
+                               extra_entries,
+                               local_entries|bool,
+                               ansible_hostname,
+                               ansible_nodename,
+                               ansible_fqdn) }}
+

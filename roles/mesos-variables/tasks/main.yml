@@ -4,7 +4,7 @@
     set_fact:
         remove_data_root: "{{ state == 'absent' }}"
         remove_install_root: "{{ state == 'absent' }}"
-        stop_mesos_services: "{{ state == 'absent' }}"
+        stop_services: "{{ state == 'absent' }}"
         do_install: >
             {{ state == "present" or state == "stopped" or
                state == "started" or state == "restarted" or
@@ -13,13 +13,41 @@
             {{ state == "stopped" or state == "started"
             or state == "restarted" or state == "reloaded" }}
 
+  - name: mesos | install root | default | set
+    set_fact:
+        mesos_install_root: /opt/mesos/{{ mesos_version }}
+    when: mesos_install_root == ""
+
+  - name: mesos | install root | parent | probe
+    shell: dirname "{{ mesos_install_root }}"
+    register: parent_probe
+
+  - name: mesos | install root | parent | record
+    set_fact:
+        mesos_install_parent: "{{ parent_probe.stdout }}"
+
+  - name: mesos | data root | default | set
+    set_fact:
+        mesos_data_root: /data/mesos/{{ mesos_version }}
+    when: mesos_data_root == ""
+
+  - name: mesos | install root | probe
+    stat:
+        path: "{{ mesos_install_root }}"
+    register: install_root_probe
+
+  - name: mesos | install root | flag | record
+    set_fact:
+        create_install_root: >
+            {{ (do_install|bool) and
+                (not (install_root_probe.stat.exists|bool)) }}
 
   - name: mesos | quorum | url | compute
     set_fact:
         mesos_zookeeper_url: >
-            zk://{{ groups[zookeeper_ansible_group]|join(
-                ":" + (zookeeper_client_port|string) + ",")
-            }}:{{ zookeeper_client_port }}/mesos/{{ mesos_cluster_name }}
+            {{ groups[zookeeper_ansible_group] |
+                zk_url(hostvars, zookeeper_net_interface, zookeeper_client_port)
+                }}/{{ mesos_cluster_name }}
 
   - name: mesos | quorum | count | compute
     set_fact:
@@ -27,14 +55,9 @@
             {{ (groups[zookeeper_ansible_group]|length)//2 + 1 }}
     when: mesos_quorum == 0
 
-  - name: mesos | prefix | record
-    set_fact:
-        mesos_prefix: "{{ mesos_install_root }}/\
-                           mesos-{{ mesos_version }}"
-
   - name: mesos | build | probe
     stat:
-        path: "{{ mesos_prefix }}/build"
+        path: "{{ mesos_install_root }}/build"
     when: do_install|bool
     register: build_probe
 

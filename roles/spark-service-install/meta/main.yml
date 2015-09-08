@@ -1,0 +1,12 @@
+---
+
+dependencies:
+  - role: spark-variables
+  - role: upstart
+    name: spark-dispatcher
+    user: "{{ mesos_user }}"
+    group: "{{ mesos_group }}"
+    description: Spark Mesos Cluster Dispatcher Service
+    command: "{{ spark_install_root }}/bin/spark-dispatcher.sh"
+    when: do_install|bool
+

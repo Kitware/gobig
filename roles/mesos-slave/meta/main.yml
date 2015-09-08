@@ -4,4 +4,5 @@ dependencies:
   - role: mesos-variables
   - role: mesos-install
   - role: mesos-slave-service-install
+  - role: mesos-slave-service
 

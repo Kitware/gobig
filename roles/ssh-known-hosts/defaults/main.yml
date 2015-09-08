@@ -1,0 +1,5 @@
+---
+
+    user: ""
+    ssh_known_hosts_net_interface: eth0
+

@@ -8,51 +8,51 @@ This section applies to the `mesos-master` and `mesos-slave` roles.
 
 |Name                                   |Default           |Description                                                                                     |
 |:--------------------------------------|:----------------:|:-----------------------------------------------------------------------------------------------|
-|state                                  |started           |state of the service                                                                            |
-|recompile                              |false             |whether to force recompilation of mesos                                                         |
-|mesos_user                             |mesos             |user to run the mesos services as                                                               |
-|mesos_group                            |mesos             |group to run the mesos services as                                                              |
-|mesos_crypt_pass                       |(generated)       |hash of the password to use for the user                                                        |
-|mesos_version                          |0.21.0            |version of mesos to deploy                                                                      |
-|mesos_install_root                     |/opt/mesos        |root directory to install mesos under                                                           |
-|mesos_data_root                        |/data/mesos       |root directory for the mesos data files                                                         |
-|mesos_ansible_group                    |(required)        |ansible group name for the mesos nodes                                                          |
-|zookeeper_ansible_group                |(required)        |ansible group name for the zookeeper nodes                                                      |
-|mesos_net_interface                    |eth0              |interface on which to bind                                                                      |
-|mesos_cluster_name                     |mesos             |name of the cluster                                                                             |
-|mesos_master_port                      |5050              |port on which mesos masters should listen for connections                                       |
-|mesos_slave_port                       |5051              |port on which mesos slaves should listen for connections                                        |
-|mesos_quorum                           |(computed)        |minimum size of a mesos quorum                                                                  |
-|mesos_slave_ping_timeout               |15secs            |duration within which each slave is expected to respond to a ping from the master               |
-|mesos_offer_timeout                    |30secs            |duration after which an offer is rescinded from a framework                                     |
-|mesos_registry_fetch_timeout           |1mins             |duration within which a registry fetch must complete                                            |
-|mesos_registry_store_timeout           |5secs             |duration within which a registry store must complete                                            |
-|mesos_slave_reregister_timeout         |10mins            |duration within which all slaves are expected to re-register with a newly-elected master leader |
-|mesos_zookeeper_session_timeout        |10secs            |zookeeper session timeout                                                                       |
-|mesos_executor_registration_timeout    |1mins             |duration within which an executor must register with its slave                                  |
-|mesos_recovery_timeout                 |15mins            |duration within which a slave must recover                                                      |
-|mesos_executor_shutdown_grace_period   |5secs             |duration to wait for an executor to shut down                                                   |
-|mesos_max_slave_ping_timeouts          |5                 |number of times a slave can fail to respond to a ping from the master                           |
-|mesos_allocator                        |HierarchicalDRF   |allocator to use for resource allocation to frameworks                                          |
 |mesos_allocation_interval              |1secs             |amount of time to wait between performing batch allocations                                     |
+|mesos_allocator                        |HierarchicalDRF   |allocator to use for resource allocation to frameworks                                          |
+|mesos_ansible_group                    |(required)        |ansible group name for the mesos nodes                                                          |
+|mesos_cluster_name                     |mesos             |name of the cluster                                                                             |
+|mesos_containerizers                   |mesos             |containerizers to be used by mesos                                                              |
+|mesos_crypt_pass                       |(generated)       |hash of the password to use for the user                                                        |
+|mesos_data_root                        |(generated)       |root directory for the mesos data files                                                         |
+|mesos_default_container_image          |""                |default container image to use if not specified by a task                                       |
+|mesos_default_container_info           |""                |default, JSON-formatted object for executors                                                    |
 |mesos_disk_watch_interval              |1mins             |frequency with which disk usage is checked                                                      |
+|mesos_docker_mesos_image               |""                |docker image used to launch the mesos slave instance                                            |
+|mesos_docker_remove_delay              |6hrs              |duration after which a stopped docker container is removed                                      |
+|mesos_docker_stop_timeout              |0secs             |duration after which a stopped container is killed                                              |
+|mesos_executor_registration_timeout    |1mins             |duration within which an executor must register with its slave                                  |
+|mesos_executor_shutdown_grace_period   |5secs             |duration to wait for an executor to shut down                                                   |
+|mesos_fetcher_cache_dir                |/tmp/mesos/fetch  |root directory for the fetcher caches (one subdirectory per slave)                              |
+|mesos_fetcher_cache_size               |2147483648        |size of the fetcher cache in bytes (default: 2 GiB)                                             |
+|mesos_gc_delay                         |1weeks            |maximum duration to wait before cleaning up executor directories                                |
+|mesos_group                            |mesos             |group to run the mesos services as                                                              |
+|mesos_hadoop_home                      |""                |location of hadoop (for fetching framework executors from HDFS)                                 |
+|mesos_install_root                     |(generated)       |root directory to install mesos under                                                           |
+|mesos_master_port                      |5050              |port on which mesos masters should listen for connections                                       |
+|mesos_max_slave_ping_timeouts          |5                 |number of times a slave can fail to respond to a ping from the master                           |
+|mesos_net_interface                    |eth0              |interface on which to bind                                                                      |
+|mesos_offer_timeout                    |30secs            |duration after which an offer is rescinded from a framework                                     |
 |mesos_oversubscribed_resources_interval|15secs            |frequency with which slaves update the master with the oversubscribed resources available       |
 |mesos_perf_duration                    |10secs            |duration of a perf stat sample                                                                  |
 |mesos_perf_interval                    |1mins             |frequency with which a perf stat sample is obtained                                             |
-|mesos_resource_monitoring_interval     |1secs             |frequency with which executor resource usage is measured                                        |
 |mesos_qos_correction_interval_min      |0secs             |maximum frequency with which slaves poll and carry out QoS corrections                          |
-|mesos_gc_delay                         |1weeks            |maximum duration to wait before cleaning up executor directories                                |
-|mesos_hadoop_home                      |""                |location of hadoop (for fetching framework executors from HDFS)                                 |
+|mesos_quorum                           |(computed)        |minimum size of a mesos quorum                                                                  |
+|mesos_recovery_timeout                 |15mins            |duration within which a slave must recover                                                      |
 |mesos_registration_backoff_factor      |1secs             |backoff factor at which slaves attempt to re-register with a newly-elected master leader        |
-|mesos_fetcher_cache_size               |2147483648        |size of the fetcher cache in bytes (default: 2 GiB)                                             |
-|mesos_fetcher_cache_dir                |/tmp/mesos/fetch  |root directory for the fetcher caches (one subdirectory per slave)                              |
-|mesos_containerizers                   |mesos             |containerizers to be used by mesos                                                              |
-|mesos_default_container_image          |""                |default container image to use if not specified by a task                                       |
-|mesos_default_container_info           |""                |default, JSON-formatted object for executors                                                    |
-|mesos_docker_remove_delay              |6hrs              |duration after which a stopped docker container is removed                                      |
-|mesos_docker_mesos_image               |""                |docker image used to launch the mesos slave instance                                            |
-|mesos_docker_stop_timeout              |0secs             |duration after which a stopped container is killed                                              |
+|mesos_registry_fetch_timeout           |1mins             |duration within which a registry fetch must complete                                            |
+|mesos_registry_store_timeout           |5secs             |duration within which a registry store must complete                                            |
+|mesos_resource_monitoring_interval     |1secs             |frequency with which executor resource usage is measured                                        |
 |mesos_sandbox_directory                |/mnt/mesos/sandbox|absolute path for the directory in the container where the sandbox is mapped to                 |
+|mesos_slave_ping_timeout               |15secs            |duration within which each slave is expected to respond to a ping from the master               |
+|mesos_slave_port                       |5051              |port on which mesos slaves should listen for connections                                        |
+|mesos_slave_reregister_timeout         |10mins            |duration within which all slaves are expected to re-register with a newly-elected master leader |
+|mesos_user                             |mesos             |user to run the mesos services as                                                               |
+|mesos_version                          |0.21.0            |version of mesos to deploy                                                                      |
+|mesos_zookeeper_session_timeout        |10secs            |zookeeper session timeout                                                                       |
+|recompile                              |false             |whether to force recompilation of mesos                                                         |
+|state                                  |started           |state of the service                                                                            |
+|zookeeper_ansible_group                |(required)        |ansible group name for the zookeeper nodes                                                      |
 
 #### Notes
 
@@ -62,8 +62,9 @@ This section applies to the `mesos-master` and `mesos-slave` roles.
   - By default, the hash for a blank password is used when creating
     a new mesos user, disabling password login.
 
-  - mesos is installed under
-    `mesos_install_root`/mesos-`mesos_version`.
+  - By default, mesos is installed under /opt/mesos/`mesos_version`.
+
+  - By default, mesos's data is stored under /data/mesos/`mesos_version`.
 
   - The `mesos_master_ansible_group` variable provides mesos slave nodes with
     the knowledge of which master nodes to report to.
@@ -72,7 +73,7 @@ This section applies to the `mesos-master` and `mesos-slave` roles.
     knowledge of which zookeeper nodes to use for leader election.
 
   - The zookeeper registry information for the mesos cluster is stored under
-    zk://`zookeeper_nodes`/mesos/`mesos_cluster_name`.
+    `mesos_zookeeper_url`/`mesos_cluster_name`.
 
   - If not provided, `mesos_quorum` is set to the smallest integer value that is
     greater than half the number of mesos master nodes, i.e.:

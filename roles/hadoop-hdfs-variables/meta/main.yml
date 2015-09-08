@@ -1,0 +1,5 @@
+---
+
+dependencies:
+  - role: hadoop-variables
+

@@ -1,0 +1,10 @@
+---
+
+  - hosts: all
+    roles:
+      - role: spark
+        hdfs_namenode_ansible_group: namenodes
+        zookeeper_ansible_group: zookeepers
+        mesos_master_ansible_group: masters
+        state: started
+
