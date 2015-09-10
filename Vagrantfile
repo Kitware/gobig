@@ -37,10 +37,18 @@ Vagrant.configure(2) do |config|
       groups[role] << name
     end
 
+    # Make sure 'ports' is available
+    params['ports'] ||= []
 
     config.vm.define name do |node|
+
+      # Set port forwarding from ports
+      params['ports'].each do |id, ports|
+        guest, host = ports.split(":")
+        node.vm.network :forwarded_port, guest: guest, host: host, id: id
+      end
+
       node.vm.network :forwarded_port, guest: 22, host: 2220 + i, id: 'ssh'
-      # TODO Do port forwarding here
       node.vm.network "private_network", ip: "192.168.33.2#{i}", netmask: "255.255.255.0"
       node.vm.hostname = "#{name}.#{domain}"
       node.vm.provider "virtualbox" do |vb|
