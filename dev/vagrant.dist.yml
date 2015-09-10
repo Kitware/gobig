@@ -1,0 +1,26 @@
+domain: "cluster.dev"
+ansible:
+  verbose: ""
+  plays:
+    - 
+      verbose: "v"
+      playbook: "playbooks/hadoop-hdfs/site.yml"
+      
+nodes:
+  head:
+    memory: 2048
+    cpus: 2
+    roles:
+      - namenodes
+      - datanodes
+  data-01:
+    memory: 2048
+    cups: 2
+    roles:
+      - datanodes
+  data-02:
+    memory: 2048
+    cups: 2
+    roles:
+      - datanodes
+
