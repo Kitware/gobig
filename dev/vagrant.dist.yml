@@ -2,7 +2,12 @@ domain: "cluster.dev"
 ansible:
   verbose: ""
   plays:
-    - playbook: "playbooks/hadoop-hdfs/site.yml"
+    - playbook: "playbooks/gobig/site.yml"
+# Plays may also define playbook specific variables
+# (currently only 'verbose')
+#   -
+#     verbose: "v"
+#     playbook: "playbooks/gobig/site.yml"
 nodes:
   head:
     memory: 2048
@@ -10,15 +15,26 @@ nodes:
     roles:
       - namenodes
       - datanodes
-    ports:
-      hdfs: 50080:50080
+      - zookeepers
+      - masters
+      - slaves
+# External port Forwarding may be set like so:
+#    ports:
+#      hdfs: 50080:50080
   data-01:
     memory: 2048
-    cups: 2
+    cpus: 2
     roles:
       - datanodes
+      - zookeepers
+      - masters
+      - slaves
   data-02:
     memory: 2048
-    cups: 2
+    cpus: 2
     roles:
       - datanodes
+      - zookeepers
+      - masters
+      - slaves
+

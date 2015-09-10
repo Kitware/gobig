@@ -6,6 +6,8 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 
+require 'yaml'
+
 Vagrant.configure(2) do |config|
 
   # The number of datanodes to launch
@@ -28,16 +30,19 @@ Vagrant.configure(2) do |config|
 
   groups = {}
 
+  # Node index,  cannot use nc['nodes'].each_with_index because configs
+  # are lazy loaded See: https://docs.vagrantup.com/v2/vagrantfile/tips.html
+  i = 0
   # Loop over node definitions
-  nc['nodes'].each_with_index do |(name, params), i|
-    # Only provision after all nodes have been spun up.
+  nc['nodes'].each do |name, params|
 
+    # Add node to group roles
     params['roles'].each do |role|
       groups[role] ||= []
       groups[role] << name
     end
 
-    # Make sure 'ports' is available
+    # Make sure 'ports' config section is available
     params['ports'] ||= []
 
     config.vm.define name do |node|
@@ -55,53 +60,56 @@ Vagrant.configure(2) do |config|
         vb.memory = params["memory"] || 2048
         vb.cpus = params["cups"] || 2
       end
-    end
 
-    if i == nc['nodes'].length - 1
-      groups['all:children'] = groups.keys
+      # Only provision after all nodes have been spun up.
+      if i == nc['nodes'].length - 1
+        groups['all:children'] = groups.keys
 
-      # ap:  ansible paramaters
-      ap = nc['ansible']
+        # ap:  ansible paramaters
+        ap = nc['ansible']
 
-      # Ensure plays exists
-      ap['plays'] ||= []
+        # Ensure plays exists
+        ap['plays'] ||= []
 
-      # The private network by default binds to eth1,  this apparently
-      # Cannot be changed - some of these extra vars may not be
-      # nessisary based on what roles are being used. We set them all
-      # here to ease the configuration burdern on the user.
-      extra_vars = {
-        hdfs_net_interface: "eth1",
-        hosts_file_net_interface: "eth1",
-        mesos_net_interface: "eth1",
-        spark_net_interface: "eth1",
-        zookeeper_net_interface: "eth1"
-      }
-
-      # Vagrant requires configuration of host files
-      # So this provisioning block is not optional
-      config.vm.provision "ansible" do |ansible|
-        ansible.groups = groups
-        ansible.sudo = true
-        ansible.limit = 'all'
-        ansible.verbose = ap['verbose'] || nil
-        ansible.extra_vars = extra_vars
-        ansible.playbook = "playbooks/misc/hosts-file.yml"
-      end
-
-      # Loop through plays and run each provisioner
-      ap['plays'].each do |play|
+        # The private network by default binds to eth1,  this apparently
+        # Cannot be changed - some of these extra vars may not be
+        # nessisary based on what roles are being used. We set them all
+        # here to ease the configuration burdern on the user.
+        extra_vars = {
+          hdfs_net_interface: "eth1",
+          hosts_file_net_interface: "eth1",
+          mesos_net_interface: "eth1",
+          spark_net_interface: "eth1",
+          zookeeper_net_interface: "eth1"
+        }
+        
+        # Vagrant requires configuration of host files
+        # So this provisioning block is not optional
         config.vm.provision "ansible" do |ansible|
           ansible.groups = groups
-          ansible.limit = 'all'
           ansible.sudo = true
-          ansible.verbose = play['verbose'] || ap['verbose'] || nil
+          ansible.limit = 'all'
+          ansible.verbose = ap['verbose'] || nil
           ansible.extra_vars = extra_vars
-          ansible.playbook = play['playbook']
+          ansible.playbook = "playbooks/misc/hosts-file.yml"
         end
-
+        
+        # Loop through plays and run each provisioner
+        ap['plays'].each do |play|
+          config.vm.provision "ansible" do |ansible|
+            ansible.groups = groups
+            ansible.limit = 'all'
+            ansible.sudo = true
+            ansible.verbose = play['verbose'] || ap['verbose'] || nil
+            ansible.extra_vars = extra_vars
+            ansible.playbook = play['playbook']
+          end
+          
+        end
+        
       end
-
-    end
+      # Update node index
+      i += 1
+      end
   end
 end
