@@ -1,0 +1,41 @@
+domain: "cluster.dev"
+ansible:
+  verbose: ""
+  plays:
+    - playbook: "playbooks/gobig/site.yml"
+# Plays may also define playbook specific variables
+# (currently only 'verbose')
+#   -
+#     verbose: "v"
+#     playbook: "playbooks/gobig/site.yml"
+nodes:
+  head:
+    memory: 8192
+    cpus: 2
+    roles:
+      - namenodes
+      - datanodes
+      - zookeepers
+      - masters
+      - slaves
+      - uvcmetrics
+# External port Forwarding may be set like so:
+# Where 'hdfs'  is the :id  and the ports are guest:host
+#    ports:
+#      hdfs: 50080:50080
+  data-01:
+    memory: 8192
+    cpus: 2
+    roles:
+      - datanodes
+      - zookeepers
+      - masters
+      - slaves
+  data-02:
+    memory: 8192
+    cpus: 2
+    roles:
+      - datanodes
+      - zookeepers
+      - masters
+      - slaves
