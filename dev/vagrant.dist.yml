@@ -10,7 +10,7 @@ ansible:
 #     playbook: "playbooks/gobig/site.yml"
 nodes:
   head:
-    memory: 2048
+    memory: 8192
     cpus: 2
     roles:
       - namenodes
@@ -19,10 +19,11 @@ nodes:
       - masters
       - slaves
 # External port Forwarding may be set like so:
+# Where 'hdfs'  is the :id  and the ports are guest:host  
 #    ports:
 #      hdfs: 50080:50080
   data-01:
-    memory: 2048
+    memory: 8192
     cpus: 2
     roles:
       - datanodes
@@ -30,7 +31,7 @@ nodes:
       - masters
       - slaves
   data-02:
-    memory: 2048
+    memory: 8192
     cpus: 2
     roles:
       - datanodes
