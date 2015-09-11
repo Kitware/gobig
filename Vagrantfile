@@ -82,7 +82,7 @@ Vagrant.configure(2) do |config|
           spark_net_interface: "eth1",
           zookeeper_net_interface: "eth1"
         }
-        
+
         # Vagrant requires configuration of host files
         # So this provisioning block is not optional
         config.vm.provision "ansible" do |ansible|
@@ -93,7 +93,7 @@ Vagrant.configure(2) do |config|
           ansible.extra_vars = extra_vars
           ansible.playbook = "playbooks/misc/hosts-file.yml"
         end
-        
+
         # Loop through plays and run each provisioner
         ap['plays'].each do |play|
           config.vm.provision "ansible" do |ansible|
@@ -104,9 +104,9 @@ Vagrant.configure(2) do |config|
             ansible.extra_vars = extra_vars
             ansible.playbook = play['playbook']
           end
-          
+
         end
-        
+
       end
       # Update node index
       i += 1

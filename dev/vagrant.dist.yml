@@ -18,8 +18,9 @@ nodes:
       - zookeepers
       - masters
       - slaves
+      - uvcmetrics
 # External port Forwarding may be set like so:
-# Where 'hdfs'  is the :id  and the ports are guest:host  
+# Where 'hdfs'  is the :id  and the ports are guest:host
 #    ports:
 #      hdfs: 50080:50080
   data-01:
@@ -38,4 +39,3 @@ nodes:
       - zookeepers
       - masters
       - slaves
-

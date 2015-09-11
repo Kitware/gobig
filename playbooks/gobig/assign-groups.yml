@@ -7,7 +7,8 @@
         zookeepers: zookeepers
         mesos_masters: masters
         mesos_slaves: slaves
-
+        uvcmetrics: uvcmetrics
+        
         namenode_set: "{{ groups.get(hdfs_namenodes, []) }}"
         datanode_set: "{{ groups.get(hdfs_datanodes, []) }}"
         hadoop_set: "{{ namenode_set | union(datanode_set) }}"
