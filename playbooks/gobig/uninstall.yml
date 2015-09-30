@@ -15,6 +15,11 @@
         hdfs_namenode_ansible_group: HN
         state: absent
 
+  - hosts: NJ
+    roles:
+      - role: nodejs
+        state: absent
+
   - hosts: UM
     roles:
       - role: uvcmetrics

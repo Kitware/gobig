@@ -28,6 +28,11 @@
         user: ubuntu
         ssh_key_exchange_ansible_group: MC
 
+  - hosts: NJ
+    roles:
+      - role: nodejs
+        state: present
+
   - hosts: UM
     roles:
       - role: uvcmetrics
