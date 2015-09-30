@@ -16,6 +16,7 @@ clusters for HPC and data-intensive applications.
   - [mongodb](doc/mongodb.md)
   - [nodejs](doc/nodejs.md)
   - [rabbitmq](doc/rabbitmq.md)
+  - [romanesco](doc/romanesco.md)
   - [ssh-key-exchange](doc/ssh-key-exchange.md)
   - [ssh-known-hosts](doc/ssh-known-hosts.md)
   - [upstart](doc/upstart.md)

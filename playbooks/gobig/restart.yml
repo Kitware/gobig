@@ -90,3 +90,9 @@
       - role: rabbitmq
         state: restarted
 
+  - hosts: RM
+    roles:
+      - role: romanesco
+        rabbitmq_ansible_group: RQ
+        state: restarted
+

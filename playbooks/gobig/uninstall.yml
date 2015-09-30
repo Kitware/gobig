@@ -50,3 +50,9 @@
       - role: rabbitmq
         state: absent
 
+  - hosts: RM
+    roles:
+      - role: romanesco
+        rabbitmq_ansible_group: RQ
+        state: absent
+

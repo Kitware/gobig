@@ -1,0 +1,8 @@
+---
+
+  - hosts: romanesco
+    roles:
+      - role: romanesco
+        rabbitmq_ansible_group: rabbitmq
+        state: absent
+
