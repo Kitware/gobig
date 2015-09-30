@@ -46,3 +46,13 @@
             {{ (do_install|bool) and
                 (not (install_root_probe.stat.exists|bool)) }}
 
+  - name: spark | hadoop profile | compute
+    set_fact:
+        hadoop_profile: >
+            hadoop-{{
+                       "1" if (hadoop_version | version_compare("2.2.0", "<"))
+                else "2.2" if (hadoop_version | version_compare("2.3.0", "<"))
+                else "2.3" if (hadoop_version | version_compare("2.4.0", "<"))
+                else "2.4" if (hadoop_version | version_compare("2.5.0", "<"))
+                else "2.6" }}
+
