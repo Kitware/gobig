@@ -1,0 +1,12 @@
+---
+
+  - hosts: girder
+    roles:
+      - role: girder
+        mongodb_ansible_group: mongodb
+        rabbitmq_ansible_group: rabbitmq
+        hdfs_namenode_ansible_group: namenodes
+        girder_admin_user: girder
+        girder_admin_password: girder
+        state: absent
+

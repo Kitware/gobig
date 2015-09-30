@@ -2,6 +2,7 @@
 
   - hosts: all
     vars:
+        girder: girder
         hdfs_datanodes: datanodes
         hdfs_namenodes: namenodes
         mesos_masters: masters
@@ -13,6 +14,8 @@
         uvcmetrics: uvcmetrics
         zookeepers: zookeepers
 
+
+        girder_set: "{{ groups.get(girder, []) }}"
         datanode_set: "{{ groups.get(hdfs_datanodes, []) }}"
         namenode_set: "{{ groups.get(hdfs_namenodes, []) }}"
 
@@ -30,9 +33,10 @@
         uvcmetrics_set: "{{ groups.get(uvcmetrics, []) }}"
         zookeeper_set: "{{ groups.get(zookeepers, []) | union(mesos_set) }}"
 
-        nodejs_set: "{{ romanesco_set }}"
+        nodejs_set: "{{ romanesco_set | union(girder_set) }}"
 
     tasks:
+      - group_by: key={{ inventory_hostname in girder_set     and "GD" or "x" }}
       - group_by: key={{ inventory_hostname in datanode_set   and "HD" or "x" }}
       - group_by: key={{ inventory_hostname in namenode_set   and "HN" or "x" }}
 

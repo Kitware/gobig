@@ -56,3 +56,13 @@
         rabbitmq_ansible_group: RQ
         state: absent
 
+  - hosts: GD
+    roles:
+      - role: girder
+        mongodb_ansible_group: MG
+        rabbitmq_ansible_group: RQ
+        hdfs_namenode_ansible_group: HN
+        girder_admin_user: girder
+        girder_admin_password: girder
+        state: absent
+
