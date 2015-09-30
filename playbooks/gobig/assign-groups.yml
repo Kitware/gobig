@@ -6,6 +6,7 @@
         hdfs_namenodes: namenodes
         mesos_masters: masters
         mesos_slaves: slaves
+        mongodb: mongodb
         spark: spark
         uvcmetrics: uvcmetrics
         zookeepers: zookeepers
@@ -20,6 +21,7 @@
 
         mesos_set: "{{ master_set | union(slave_set) }}"
 
+        mongodb_set: "{{ groups.get(mongodb, []) }}"
         spark_set: "{{ groups.get(spark, []) | union(mesos_set) }}"
         uvcmetrics_set: "{{ groups.get(uvcmetrics, []) }}"
         zookeeper_set: "{{ groups.get(zookeepers, []) | union(mesos_set) }}"
@@ -35,6 +37,7 @@
 
       - group_by: key={{ inventory_hostname in mesos_set      and "MC" or "x" }}
 
+      - group_by: key={{ inventory_hostname in mongodb_set    and "MG" or "x" }}
       - group_by: key={{ inventory_hostname in spark_set      and "SP" or "x" }}
       - group_by: key={{ inventory_hostname in uvcmetrics_set and "UM" or "x" }}
       - group_by: key={{ inventory_hostname in zookeeper_set  and "ZK" or "x" }}

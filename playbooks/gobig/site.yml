@@ -74,3 +74,9 @@
         zookeeper_ansible_group: ZK
         mesos_master_ansible_group: MM
         state: started
+
+  - hosts: MG
+    roles:
+      - role: mongodb
+        state: started
+

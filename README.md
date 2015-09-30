@@ -13,6 +13,7 @@ clusters for HPC and data-intensive applications.
   - [hdfs-datanode](doc/hadoop.md)
   - [mesos-master](doc/mesos.md)
   - [mesos-slave](doc/mesos.md)
+  - [mongodb](doc/mongodb.md)
   - [ssh-key-exchange](doc/ssh-key-exchange.md)
   - [ssh-known-hosts](doc/ssh-known-hosts.md)
   - [upstart](doc/upstart.md)

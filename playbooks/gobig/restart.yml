@@ -75,3 +75,8 @@
         mesos_master_ansible_group: MM
         state: restarted
 
+  - hosts: MG
+    roles:
+      - role: mongodb
+        state: restarted
+
