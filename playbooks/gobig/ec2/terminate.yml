@@ -1,0 +1,16 @@
+---
+
+  - hosts: localhost
+    connection: local
+    gather_facts: false
+    become: false
+    pre_tasks:
+      - include: pod_config.yml
+    roles:
+      - role: ec2-pod
+        default_ssh_key: "{{ ec2_pod_spec.key }}"
+        name: gobig
+        state: absent
+        rules: "{{ ec2_pod_spec.rules }}"
+        hosts: "{{ ec2_pod_spec.hosts }}"
+
