@@ -1,0 +1,7 @@
+
+  - hosts: all
+    roles:
+      - role: ssh-key-exchange
+        user: gobig
+        ssh_key_exchange_ansible_group: all
+
