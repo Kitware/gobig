@@ -1,0 +1,7 @@
+
+  - hosts: all
+    roles:
+      - role: git-cache
+        repo: git://github.com/kitware/gobig.git
+        variable_prefix: gobig
+
