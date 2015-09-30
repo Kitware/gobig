@@ -28,44 +28,44 @@
         user: ubuntu
         ssh_key_exchange_ansible_group: MC
 
-
   - hosts: UM
     roles:
       - role: uvcmetrics
         state: present
         uvcdat_version: 3ff13b4c8834941ce3abf0b823e262a6cdccdae0
 
+
   - hosts: HN
     roles:
       - role: hadoop-hdfs-namenode
         hdfs_namenode_ansible_group: HN
-        state: started
+        state: restarted
 
   - hosts: HD
     roles:
       - role: hadoop-hdfs-datanode
         hdfs_namenode_ansible_group: HN
-        state: started
+        state: restarted
 
   - hosts: ZK
     roles:
       - role: zookeeper
         zookeeper_ansible_group: ZK
-        state: started
+        state: restarted
 
   - hosts: MM
     roles:
       - role: mesos-master
         zookeeper_ansible_group: ZK
         mesos_master_ansible_group: MM
-        state: started
+        state: restarted
 
   - hosts: MS
     roles:
       - role: mesos-slave
         zookeeper_ansible_group: ZK
         mesos_master_ansible_group: MM
-        state: started
+        state: restarted
 
   - hosts: SP
     roles:
@@ -73,4 +73,5 @@
         hdfs_namenode_ansible_group: HN
         zookeeper_ansible_group: ZK
         mesos_master_ansible_group: MM
-        state: started
+        state: restarted
+

@@ -2,14 +2,6 @@
 
   - include: assign-groups.yml
 
-  - hosts: SP
-    roles:
-      - role: spark-install
-        hdfs_namenode_ansible_group: HN
-        zookeeper_ansible_group: ZK
-        mesos_master_ansible_group: MM
-        state: absent
-
   - hosts: MC
     roles:
       - role: mesos-install
@@ -17,15 +9,29 @@
         zookeeper_ansible_group: ZK
         state: absent
 
-  - hosts: ZK
-    roles:
-      - role: zookeeper-install
-        zookeeper_ansible_group: ZK
-        state: absent
-
   - hosts: HC
     roles:
       - role: hadoop-hdfs-install
         hdfs_namenode_ansible_group: HN
+        state: absent
+
+  - hosts: UM
+    roles:
+      - role: uvcmetrics
+        state: absent
+        uvcdat_version: 3ff13b4c8834941ce3abf0b823e262a6cdccdae0
+
+  - hosts: ZK
+    roles:
+      - role: zookeeper
+        zookeeper_ansible_group: ZK
+        state: absent
+
+  - hosts: SP
+    roles:
+      - role: spark
+        hdfs_namenode_ansible_group: HN
+        zookeeper_ansible_group: ZK
+        mesos_master_ansible_group: MM
         state: absent
 
