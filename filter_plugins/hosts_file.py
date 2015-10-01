@@ -18,6 +18,29 @@ def hosts_file_entries(host_list,
                        hostname,
                        nodename,
                        fqdn):
+    """creates a table of entries suitable for including in a host's /etc/hosts
+    file
+
+    The return value is a list of ``address, alias_list`` pairs where
+    ``address`` is the address for the given hosts file entry and ``alias_list``
+    is a list of hostname aliases.  The addresses are based on the local IP
+    address- and the hostname aliases on the self-reported hostnames- from each
+    host in ``host_list``.
+
+    :param host_list: the list of ansible hosts to include in the result
+    :param net_interface: the net interface from which to sample IP addresses
+    :param domain: optional domain to append to host aliases
+    :param host_vars: ansible host_vars object
+    :param extra_entries: list of additional entries to include in the result
+    :param local_entries: boolean controlling whether to include entries for
+                          the current host's loopback device.
+    :param hostname: current host's hostname (ansible_hostname)
+    :param nodename: current host's nodename (ansible_nodename)
+    :param fqdn: current host's fully qualified domain name (ansible_fqdn)
+
+    :returns: the list of entries to insert into a host's /etc/hosts file
+    """
+
     import itertools as it
 
     net_interface_key = "ansible_{}".format(net_interface)
@@ -104,6 +127,28 @@ class HostsFileFilterFunction(object):
                  hostname,
                  nodename,
                  fqdn):
+        """filters the current contents of a host's /etc/hosts file in
+        preperation for adding new entries
+
+        Processes the current contents of a host's /etc/hosts file looking for
+        mappings that assign a host alias managed by the ``hosts_file`` role.
+        The returned results are the contents of the hosts file with such
+        mappings removed.
+
+        :param hosts_file_contents: current contents of the host's /etc/hosts
+                                    file
+        :param host_list: the list of ansible hosts to include in the filtering
+                          process
+        :param domain: optional domain to append to filtered host aliases
+        :param host_vars: ansible host_vars object
+        :param extra_entries: list of additional entries to include in the 
+                              filtering
+        :param hostname: current host's hostname (ansible_hostname)
+        :param nodename: current host's nodename (ansible_nodename)
+        :param fqdn: current host's fully qualified domain name (ansible_fqdn)
+
+        :returns: the filtered contents of the host's /etc/hosts file
+        """
 
         from cStringIO import StringIO
 
