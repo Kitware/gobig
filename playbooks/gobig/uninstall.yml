@@ -35,3 +35,8 @@
         mesos_master_ansible_group: MM
         state: absent
 
+  - hosts: MG
+    roles:
+      - role: mongodb
+        state: absent
+
