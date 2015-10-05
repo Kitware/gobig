@@ -28,6 +28,8 @@
         uvcmetrics_set: "{{ groups.get(uvcmetrics, []) }}"
         zookeeper_set: "{{ groups.get(zookeepers, []) | union(mesos_set) }}"
 
+        nodejs_set: []
+
     tasks:
       - group_by: key={{ inventory_hostname in datanode_set   and "HD" or "x" }}
       - group_by: key={{ inventory_hostname in namenode_set   and "HN" or "x" }}
@@ -44,4 +46,6 @@
       - group_by: key={{ inventory_hostname in spark_set      and "SP" or "x" }}
       - group_by: key={{ inventory_hostname in uvcmetrics_set and "UM" or "x" }}
       - group_by: key={{ inventory_hostname in zookeeper_set  and "ZK" or "x" }}
+
+      - group_by: key={{ inventory_hostname in nodejs_set     and "NJ" or "x" }}
 
