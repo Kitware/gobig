@@ -80,3 +80,8 @@
       - role: mongodb
         state: started
 
+  - hosts: RQ
+    roles:
+      - role: rabbitmq
+        state: started
+

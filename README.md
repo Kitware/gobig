@@ -14,6 +14,7 @@ clusters for HPC and data-intensive applications.
   - [mesos-master](doc/mesos.md)
   - [mesos-slave](doc/mesos.md)
   - [mongodb](doc/mongodb.md)
+  - [rabbitmq](doc/rabbitmq.md)
   - [ssh-key-exchange](doc/ssh-key-exchange.md)
   - [ssh-known-hosts](doc/ssh-known-hosts.md)
   - [upstart](doc/upstart.md)

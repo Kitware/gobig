@@ -40,3 +40,8 @@
       - role: mongodb
         state: absent
 
+  - hosts: RQ
+    roles:
+      - role: rabbitmq
+        state: absent
+

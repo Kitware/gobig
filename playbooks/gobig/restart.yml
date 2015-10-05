@@ -80,3 +80,8 @@
       - role: mongodb
         state: restarted
 
+  - hosts: RQ
+    roles:
+      - role: rabbitmq
+        state: restarted
+
