@@ -27,7 +27,6 @@
       - libtool
       - m4
       - make
-      - mongodb
       - ncurses-dev
       - openjdk-7-jdk
       - openjdk-7-jre-headless
