@@ -80,9 +80,9 @@
     get_url:
         url: "http://archive.apache.org/dist/spark/\
               spark-{{ spark_version }}/\
-              spark-{{ spark_version }}-bin-without-hadoop.tgz"
+              spark-{{ spark_version }}-bin-{{ hadoop_profile }}.tgz"
         dest: "{{ spark_install_parent }}/\
-               spark-{{ spark_version }}-bin-without-hadoop.tgz"
+               spark-{{ spark_version }}-bin-{{ hadoop_profile }}.tgz"
         force: no
     when: create_install_root|bool
 
@@ -90,23 +90,23 @@
     unarchive:
         copy: no
         creates: "{{ spark_install_parent }}/\
-                  spark-{{ spark_version }}-bin-without-hadoop"
+                  spark-{{ spark_version }}-bin-{{ hadoop_profile }}"
         dest: "{{ spark_install_parent }}"
         mode: 0755
         src: "{{ spark_install_parent }}/\
-              spark-{{ spark_version }}-bin-without-hadoop.tgz"
+              spark-{{ spark_version }}-bin-{{ hadoop_profile }}.tgz"
     when: create_install_root|bool
 
   - name: spark | pkg | unpack | rename
     shell: "mv \"{{ spark_install_parent }}/\
-        spark-{{ spark_version }}-bin-without-hadoop\" \
+        spark-{{ spark_version }}-bin-{{ hadoop_profile }}\" \
         \"{{ spark_install_root }}\""
     when: create_install_root|bool
     changed_when: >
         (spark_install_parent +
             "/spark-" +
             spark_version +
-            "-bin-without-hadoop") != spark_install_root
+            "-bin-{{ hadoop_profile }}") != spark_install_root
 
   - name: spark | log | perms | set
     file:

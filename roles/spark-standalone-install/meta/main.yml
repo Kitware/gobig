@@ -1,7 +1,7 @@
 ---
 
 dependencies:
-  - role: hadoop-variables
+  - { role: hadoop-variables, when: hadoop_profile == 'without-hadoop' }
   - role: spark-standalone-variables
   - role: user-generate
     name: "{{ spark_user }}"

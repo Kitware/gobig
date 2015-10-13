@@ -4,29 +4,32 @@ Provisions and manages a spark node running over mesos
 
 #### Variables
 
-|Name                                 |Default       |Description                                                                  |
-|:------------------------------------|:------------:|:----------------------------------------------------------------------------|
-|slave_group                          |(all)         |Hosts where executors will be launched                                       | 
-|spark_broadcast_compress             |(sparkdefault)|whether to compress broadcast variables before sending them                  |
-|spark_cores_max                      |(sparkdefault)|maximum limit of total CPU cores to request for an application               |
-|spark_crypt_pass                     |(generated)   |hash of the password to use for the user                                     |
-|spark_data_root                      |(generated)   |root directory for the spark data files                                      |
-|spark_dispatcher_port                |7077          |port on which the spark cluster dispatcher service should listen             |
-|spark_driver_cores                   |(sparkdefault)|number of cores to use for the driver process                                |
-|spark_driver_memory                  |(sparkdefault)|amount of memory to use for the driver process                               |
-|spark_executor_memory                |(sparkdefault)|amount of memory to use per executor process                                 |
-|spark_group                          |spark         |group to install spark as                                                    |
-|spark_install_root                   |(generated)   |root directory to install spark under                                        |
-|spark_local_dir                      |(sparkdefault)|directory to use for "scratch" space in spark                                |
-|spark_log_conf                       |(sparkdefault)|logs the effective SparkConf as INFO when started                            |
-|spark_net_interface                  |eth0          |interface on which to bind                                                   |
-|spark_rdd_compress                   |(sparkdefault)|whether to compress serialized RDD partitions                                |
-|spark_user                           |spark         |user to install spark as                                                     |
-|spark_version                        |1.4.1         |version of spark to deploy                                                   |
-|spark_webui_port                     |(sparkdefault)|port for the spark application's dashboard                                   |
-|state                                |started       |state of the service                                                         |
+|Name                                 |Default         |Description                                                                  |
+|:------------------------------------|:--------------:|:----------------------------------------------------------------------------|
+|hadoop_profile                       |(without-hadoop)|Hadoop profile (e.g.,  hadoop2.4, hadoop2.6, etc)                            |
+|slave_group                          |(all)           |Hosts where executors will be launched                                       | 
+|spark_broadcast_compress             |(sparkdefault)  |whether to compress broadcast variables before sending them                  |
+|spark_cores_max                      |(sparkdefault)  |maximum limit of total CPU cores to request for an application               |
+|spark_crypt_pass                     |(generated)     |hash of the password to use for the user                                     |
+|spark_data_root                      |(generated)     |root directory for the spark data files                                      |
+|spark_dispatcher_port                |7077            |port on which the spark cluster dispatcher service should listen             |
+|spark_driver_cores                   |(sparkdefault)  |number of cores to use for the driver process                                |
+|spark_driver_memory                  |(sparkdefault)  |amount of memory to use for the driver process                               |
+|spark_executor_memory                |(sparkdefault)  |amount of memory to use per executor process                                 |
+|spark_group                          |spark           |group to install spark as                                                    |
+|spark_install_root                   |(generated)     |root directory to install spark under                                        |
+|spark_local_dir                      |(sparkdefault)  |directory to use for "scratch" space in spark                                |
+|spark_log_conf                       |(sparkdefault)  |logs the effective SparkConf as INFO when started                            |
+|spark_net_interface                  |eth0            |interface on which to bind                                                   |
+|spark_rdd_compress                   |(sparkdefault)  |whether to compress serialized RDD partitions                                |
+|spark_user                           |spark           |user to install spark as                                                     |
+|spark_version                        |1.5.1           |version of spark to deploy                                                   |
+|spark_webui_port                     |(sparkdefault)  |port for the spark application's dashboard                                   |
+|state                                |started         |state of the service                                                         |
 
 #### Notes
+  - The default hadoop_profile `without-hadoop` assumes that you have
+    already installed hadoop using the hadoop-hdfs-* roles
 
   - `state` can be any one of "absent", "present", "stopped", "started",
     "reloaded", or "restarted".
