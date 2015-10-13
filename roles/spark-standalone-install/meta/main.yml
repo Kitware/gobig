@@ -1,0 +1,12 @@
+---
+
+dependencies:
+  - role: hadoop-variables
+  - role: spark-standalone-variables
+  - role: user-generate
+    name: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+    crypt_pass: "{{ spark_crypt_pass }}"
+    system: true
+    state: present
+    when: do_install|bool

@@ -1,0 +1,11 @@
+---
+
+dependencies:
+  - role: spark-standalone-variables
+  - role: upstart
+    name: spark-dispatcher
+    user: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+    description: Spark Cluster Dispatcher Service
+    command: "{{ spark_install_root }}/sbin/start-all.sh"
+    when: do_install|bool

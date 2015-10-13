@@ -1,0 +1,7 @@
+---
+
+- name: spark | conf | slaves
+  template:
+    src: slaves.j2
+    dest: "{{ spark_conf }}/slaves"
+    mode: "0644"

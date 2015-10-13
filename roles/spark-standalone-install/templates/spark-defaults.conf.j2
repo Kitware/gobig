@@ -1,0 +1,27 @@
+{% if spark_driver_cores != "" %}
+spark.driver.cores {{ spark_driver_cores }}
+{% endif %}
+{% if spark_driver_memory != "" %}
+spark.driver.memory {{ spark_driver_memory }}
+{% endif %}
+{% if spark_executor_memory != "" %}
+spark.executor.memory {{ spark_executor_memory }}
+{% endif %}
+{% if spark_local_dir != "" %}
+spark.local.dir {{ spark_local_dir }}
+{% endif %}
+{% if spark_log_conf != "" %}
+spark.logConf {{ spark_log_conf }}
+{% endif %}
+{% if spark_broadcast_compress != "" %}
+spark.broadcast.compress {{ spark_broadcast_compress }}
+{% endif %}
+{% if spark_rdd_compress != "" %}
+spark.rdd.compress {{ spark_rdd_compress }}
+{% endif %}
+{% if spark_webui_port != "" %}
+spark.ui.port {{ spark_webui_port }}
+{% endif -%}
+{% if spark_cores_max != "" %}
+spark.cores.max {{ spark_cores_max }}
+{% endif %}
