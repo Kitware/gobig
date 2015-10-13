@@ -51,13 +51,12 @@ Provisions and manages a spark node running over mesos
 
 #### Examples
 
-Install/Configure/Start
+##### Install/Configure/Start
 ```YAML
   - hosts: spark
     roles:
       - role: spark-standalone-install
-    tags:
-      - spark
+        hadoop_profile: "haddop2.6"
   
   - hosts: head
     roles:
@@ -72,8 +71,59 @@ contain the head node which will run the spark standalone service. Finally
 spark executors (Note this may be the same set as ```spark```). If not
 specified ```slave_group``` defaults to ```all```.
 
+To test this locally (with vagrant installed),  place the following YAML
+in ```dev/vagrant.local.yml``` and run ```vagrant up```
 
-Stop/Remove
+```YAML
+domain: "cluster.dev"
+ansible:
+  verbose: ""
+  plays:
+    - playbook: "playbooks/spark-standalone/site.yml"
+nodes:
+  head:
+    memory: 4096
+    cpus: 2
+    roles:
+      - head
+      - spark
+  data-01:
+    memory: 4096
+    cpus: 2
+    roles:
+      - spark
+      - spark-slaves
+
+```
+Once the vagrant up has completed, log into the box with
+```vagrant ssh head``` To test that the cluster is working
+You may then run:
+
+```
+$> /opt/spark/1.5.1/bin/pyspark --master spark://head:7077
+
+.... Output Omitted ....
+
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 1.5.1
+      /_/
+
+Using Python version 2.7.6 (default, Jun 22 2015 17:58:13)
+SparkContext available as sc, HiveContext available as sqlContext.
+
+>>> sc.parallelize([1, 2, 3, 4]).map(lambda x: x**2).collect()
+
+.... Output Omitted ....
+
+[1, 4, 9, 16]
+>>> 
+```
+
+
+##### Stop/Remove
 ```YAML
   - hosts: spark-nodes
     roles:

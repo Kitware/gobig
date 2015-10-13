@@ -1,0 +1,11 @@
+---
+
+- hosts: spark
+  roles:
+    - role: spark-standalone-install
+
+- hosts: head
+  roles:
+    - role: spark-standalone-service
+      slave_group: spark-slaves
+      state: started

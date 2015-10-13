@@ -1,0 +1,12 @@
+---
+
+- hosts: spark
+  roles:
+    - role: spark-standalone-install
+      hadoop_profile: "hadoop2.6"
+
+- hosts: head
+  roles:
+    - role: spark-standalone-service
+      slave_group: spark-slaves
+      state: started
