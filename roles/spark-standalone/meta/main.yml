@@ -1,8 +1,0 @@
----
-
-dependencies:
-  - role: hadoop-variables
-  - role: spark-standalone-variables
-  - role: spark-standalone-install
-  - role: spark-standalone-service-install
-  - role: spark-standalone-service
