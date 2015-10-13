@@ -122,10 +122,41 @@ SparkContext available as sc, HiveContext available as sqlContext.
 >>> 
 ```
 
+##### Spark Standalone custom Hadoop-HDFS
+You may also compile with a custom hadoop/hdfs installation as
+defined by the ```hadoop-hdfs-*``` roles.  For an example of this
+please see ```playbooks/spark-standalone/site-custom-hdfs.yml```.
+Again you may test by adding the following YAML to ```dev/vagrant.local.yml```
+and running ```vagrant up```
+
+```YAML
+domain: "cluster.dev"
+ansible:
+  verbose: ""
+  plays:
+    - playbook: "playbooks/spark-standalone/site-custom-hdfs.yml"
+nodes:
+  head:
+    memory: 4096
+    cpus: 2
+    roles:
+      - head
+      - namenodes
+      - datanodes
+      - spark
+  data-01:
+    memory: 4096
+    cpus: 2
+    roles:
+      - spark
+      - datanodes
+      - spark-slaves
+```
+
 
 ##### Stop/Remove
 ```YAML
-  - hosts: spark-nodes
+  - hosts: spark
     roles:
       - role: spark-standalone-install
         state: absent
