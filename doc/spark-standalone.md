@@ -1,6 +1,6 @@
 
 ### spark
-Provisions and manages a spark node running over mesos
+Provisions and manages a spark node running over the built in resource manager (Standalone Mode)
 
 #### Variables
 
@@ -97,7 +97,7 @@ nodes:
 ```
 Once the vagrant up has completed, log into the box with
 ```vagrant ssh head``` To test that the cluster is working
-You may then run:
+you may then run:
 
 ```
 $> /opt/spark/1.5.1/bin/pyspark --master spark://head:7077
@@ -122,7 +122,7 @@ SparkContext available as sc, HiveContext available as sqlContext.
 >>> 
 ```
 
-##### Spark Standalone custom Hadoop-HDFS
+##### Spark Standalone with custom Hadoop-HDFS
 You may also compile with a custom hadoop/hdfs installation as
 defined by the ```hadoop-hdfs-*``` roles.  For an example of this
 please see ```playbooks/spark-standalone/site-custom-hdfs.yml```.
