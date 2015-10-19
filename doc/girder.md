@@ -26,7 +26,7 @@ Provisions and manages a girder node
 |girder_password_description|(girder default)|error message to show users when entering an invalid password  |
 |girder_password_regex      |(girder default)|regex to use when checking for a valid password                |
 |girder_port                |9080            |port on which to listen for client connections                 |
-|girder_replica_set         |(empty)         |TODO                                                           |
+|girder_replica_set         |(girder default)|replica set to connect to                                      |
 |girder_static_root         |static          |root on which to mount girder's static assets                  |
 |girder_thread_pool         |100             |size of the girder thread pool                                 |
 |girder_user                |girder          |user to run the girder service as                              |
