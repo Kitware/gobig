@@ -89,3 +89,9 @@
       - role: rabbitmq
         state: started
 
+  - hosts: RM
+    roles:
+      - role: romanesco
+        rabbitmq_ansible_group: RQ
+        state: started
+
