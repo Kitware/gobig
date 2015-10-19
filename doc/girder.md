@@ -16,7 +16,7 @@ Provisions and manages a girder node
 |girder_crypt_pass          |(generated)     |hash of the password to use for the user                       |
 |girder_data_root           |(generated)     |root directory for the girder data files                       |
 |girder_email_regex         |(girder default)|regex to use when checking for a valid email address           |
-|girder_group               |romanesco       |group to run the girder service as                             |
+|girder_group               |girder          |group to run the girder service as                             |
 |girder_hash_algorithm      |bcrypt          |hashing algorithm to use                                       |
 |girder_install_root        |(generated)     |root directory to install girder under                         |
 |girder_login_description   |(girder default)|error message to show users when entering an invalid login name|
