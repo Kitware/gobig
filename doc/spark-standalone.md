@@ -56,7 +56,7 @@ Provisions and manages a spark node running over the built in resource manager (
   - hosts: spark
     roles:
       - role: spark-standalone-install
-        hadoop_profile: "haddop2.6"
+        hadoop_profile: "hadoop2.6"
   
   - hosts: head
     roles:
