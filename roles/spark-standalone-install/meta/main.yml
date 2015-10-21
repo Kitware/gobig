@@ -10,3 +10,5 @@ dependencies:
     system: true
     state: present
     when: do_install|bool
+  - role: ssh-key-exchange
+    user: "{{ spark_user }}"

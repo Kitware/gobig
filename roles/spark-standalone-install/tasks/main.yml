@@ -1,20 +1,4 @@
 ---
-  - name: spark | user | ssh-key | probe
-    become_user: "{{ spark_user }}"
-    shell: cat ~/.ssh/id_rsa.pub
-    register: ssh_key_probe
-
-  - name: spark | user | ssh-key | record
-    set_fact:
-      ssh_key: "{{ ssh_key_probe.stdout }}"
-
-  - name: spark | user | key exchange
-    become_user: "{{ spark_user }}"
-    authorized_key:
-      user: "{{ spark_user }}"
-      key: "{{ hostvars[item]['ssh_key'] }}"
-    with_items: "{{ play_hosts }}"
-
 
   - name: spark | deps | install
     apt: name={{ item }} state=present update_cache=yes

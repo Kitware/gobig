@@ -15,6 +15,7 @@
 - hosts: spark
   roles:
     - role: spark-standalone-install
+      ssh_key_exchange_ansible_group: spark
 
 - hosts: head
   roles:
