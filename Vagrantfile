@@ -57,8 +57,20 @@ Vagrant.configure(2) do |config|
       node.vm.network "private_network", ip: "192.168.33.2#{i}", netmask: "255.255.255.0"
       node.vm.hostname = "#{name}.#{domain}"
       node.vm.provider "virtualbox" do |vb|
+
         vb.memory = params["memory"] || 2048
         vb.cpus = params["cups"] || 2
+
+        if params.has_key?("mount")
+          mount = params['mount']
+          if mount.kind_of?(Array)
+            mount.each do |mnt|
+              config.vm.synced_folder mnt['src'], mnt['dest'], create: true
+            end
+          else
+            config.vm.synced_folder mount['src'], mount['dest'], create: true
+          end
+        end
       end
 
       # Only provision after all nodes have been spun up.
