@@ -1,0 +1,8 @@
+---
+
+dependencies:
+  - role: girder-variables
+  - role: girder-service
+    state: started
+    when: do_initialization|bool
+

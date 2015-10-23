@@ -1,0 +1,22 @@
+---
+
+dependencies:
+  - role: git-cache
+    repo: git://github.com/girder/girder.git
+    version: "{{ girder_version }}"
+    variable_prefix: girder
+    state: present
+  - role: git-cache
+    repo: git://github.com/zachmullen/climos_test.git
+    version: "{{ climos_test_version }}"
+    variable_prefix: climos_test
+    state: present
+  - role: git-cache
+    repo: git://github.com/zachmullen/sparktest.git
+    version: "{{ sparktest_version }}"
+    variable_prefix: sparktest
+    state: present
+  - role: nodejs-variables
+  - role: romanesco-variables
+  - role: hadoop-hdfs-variables
+

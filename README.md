@@ -9,6 +9,7 @@ Collection of Ansible roles useful for provisioning a variety of services over
 clusters for HPC and data-intensive applications.
 
 ### Roles
+  - [girder](doc/girder.md)
   - [hdfs-namenode](doc/hadoop.md)
   - [hdfs-datanode](doc/hadoop.md)
   - [mesos-master](doc/mesos.md)
