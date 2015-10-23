@@ -2,6 +2,10 @@
 ### girder
 Provisions and manages a girder node
 
+**Note**: This role is currently in a provisional state and is not appropriate
+for all use cases.  For more information, see issue
+    [#32](https://github.com/kitware/gobig/issues/32).
+
 #### Variables
 
 |Name                       |Default         |Description                                                    |
