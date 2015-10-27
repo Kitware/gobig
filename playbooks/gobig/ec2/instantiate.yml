@@ -1,0 +1,35 @@
+---
+
+  - hosts: localhost
+    connection: local
+    gather_facts: false
+    become: false
+    pre_tasks:
+      - include: pod_config.yml
+    roles:
+      - role: ec2-pod
+        default_ssh_key: "{{ ec2_pod_spec.key }}"
+        name: gobig
+        state: running
+        rules: "{{ ec2_pod_spec.rules }}"
+        hosts: "{{ ec2_pod_spec.hosts }}"
+
+  - hosts: gobig
+    tasks:
+      - name: filesystems | create
+        filesystem:
+            fstype: ext4
+            dev: /dev/{{ item }}
+        with_items:
+          - xvdb
+          - xvdc
+      - name: filesystems | mount
+        mount:
+            fstype: ext4
+            name: "{{ item.value }}"
+            src: /dev/{{ item.key }}
+            state: mounted
+        with_dict:
+            xvdb: /opt
+            xvdc: /data
+
