@@ -12,7 +12,7 @@ Provisions and manages a spark node running over the built in resource manager (
 |spark_cores_max                      |(sparkdefault)  |maximum limit of total CPU cores to request for an application               |
 |spark_crypt_pass                     |(generated)     |hash of the password to use for the user                                     |
 |spark_data_root                      |(generated)     |root directory for the spark data files                                      |
-|spark_dispatcher_port                |7077            |port on which the spark cluster dispatcher service should listen             |
+|spark_master_port                    |7077            |port on which the master spark cluster service should listen                 |
 |spark_driver_cores                   |(sparkdefault)  |number of cores to use for the driver process                                |
 |spark_driver_memory                  |(sparkdefault)  |amount of memory to use for the driver process                               |
 |spark_executor_memory                |(sparkdefault)  |amount of memory to use per executor process                                 |
