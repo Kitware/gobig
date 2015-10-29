@@ -12,6 +12,20 @@ nodes:
   head:
     memory: 8192
     cpus: 2
+# Nodes may mount local directories  by using the 'mount'
+# keyword.  This required either src and dest properties
+# Like so:
+#    mount:
+#      src: /home/user/src/repo/
+#      dest: /home/vagrant/src/repo
+#
+# Or a list of src and dest properties:
+#    mount:
+#      - src: /home/user/src/repo/
+#        dest: /home/vagrant/src/repo
+#      - src: /home/user/src/repo2/
+#        dest: /home/vagrant/src/repo2
+#      ....
     roles:
       - namenodes
       - datanodes
