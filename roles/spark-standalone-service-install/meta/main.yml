@@ -3,7 +3,7 @@
 dependencies:
   - role: spark-standalone-variables
   - role: upstart
-    name: spark-dispatcher
+    name: spark-master
     user: "{{ spark_user }}"
     group: "{{ spark_group }}"
     description: Spark Cluster Dispatcher Service

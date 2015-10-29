@@ -20,5 +20,5 @@
 - hosts: head
   roles:
     - role: spark-standalone-service
-      slave_group: spark-slaves
+      spark_slave_ansible_group: spark-slaves
       state: started

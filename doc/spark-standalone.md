@@ -7,7 +7,7 @@ Provisions and manages a spark node running over the built in resource manager (
 |Name                                 |Default         |Description                                                                  |
 |:------------------------------------|:--------------:|:----------------------------------------------------------------------------|
 |hadoop_profile                       |(without-hadoop)|Hadoop profile (e.g.,  hadoop2.4, hadoop2.6, etc)                            |
-|slave_group                          |(all)           |Hosts where executors will be launched                                       | 
+|spark_slave_ansible_group            |(all)           |Hosts where executors will be launched                                       | 
 |spark_broadcast_compress             |(sparkdefault)  |whether to compress broadcast variables before sending them                  |
 |spark_cores_max                      |(sparkdefault)  |maximum limit of total CPU cores to request for an application               |
 |spark_crypt_pass                     |(generated)     |hash of the password to use for the user                                     |
@@ -61,7 +61,7 @@ Provisions and manages a spark node running over the built in resource manager (
   - hosts: head
     roles:
       - role: spark-standalone-service
-        slave_group: spark-slaves
+        spark_slave_ansible_group: spark-slaves
         state: started
 ```
 In this example the ```spark``` group should contain all hosts that will
@@ -69,7 +69,7 @@ run spark code (e.g.,  masters and workers). The ```head``` group should
 contain the head node which will run the spark standalone service. Finally
 ```spark-slaves``` is a group that contains all the nodes that should run
 spark executors (Note this may be the same set as ```spark```). If not
-specified ```slave_group``` defaults to ```all```.
+specified ```spark_slave_ansible_group``` defaults to ```all```.
 
 To test this locally (with vagrant installed),  place the following YAML
 in ```dev/vagrant.local.yml``` and run ```vagrant up```

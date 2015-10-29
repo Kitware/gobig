@@ -21,7 +21,7 @@
 
   - name: spark | service | stop
     service:
-        name: spark
+        name: spark-master
         state: stopped
     ignore_errors: true
     when: stop_spark_services|bool
