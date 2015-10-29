@@ -1,0 +1,7 @@
+---
+
+  - name: spark-master | service
+    service:
+        name: spark-master
+        state: "{{ state }}"
+    when: notify_services|bool

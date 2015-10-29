@@ -21,7 +21,7 @@
 
   - name: spark | service | stop
     service:
-        name: spark
+        name: spark-master
         state: stopped
     ignore_errors: true
     when: stop_spark_services|bool
@@ -64,9 +64,9 @@
     get_url:
         url: "http://archive.apache.org/dist/spark/\
               spark-{{ spark_version }}/\
-              spark-{{ spark_version }}-bin-without-hadoop.tgz"
+              spark-{{ spark_version }}-bin-{{ hadoop_profile }}.tgz"
         dest: "{{ spark_install_parent }}/\
-               spark-{{ spark_version }}-bin-without-hadoop.tgz"
+               spark-{{ spark_version }}-bin-{{ hadoop_profile }}.tgz"
         force: no
     when: create_install_root|bool
 
@@ -74,23 +74,23 @@
     unarchive:
         copy: no
         creates: "{{ spark_install_parent }}/\
-                  spark-{{ spark_version }}-bin-without-hadoop"
+                  spark-{{ spark_version }}-bin-{{ hadoop_profile }}"
         dest: "{{ spark_install_parent }}"
         mode: 0755
         src: "{{ spark_install_parent }}/\
-              spark-{{ spark_version }}-bin-without-hadoop.tgz"
+              spark-{{ spark_version }}-bin-{{ hadoop_profile }}.tgz"
     when: create_install_root|bool
 
   - name: spark | pkg | unpack | rename
     shell: "mv \"{{ spark_install_parent }}/\
-        spark-{{ spark_version }}-bin-without-hadoop\" \
+        spark-{{ spark_version }}-bin-{{ hadoop_profile }}\" \
         \"{{ spark_install_root }}\""
     when: create_install_root|bool
     changed_when: >
         (spark_install_parent +
             "/spark-" +
             spark_version +
-            "-bin-without-hadoop") != spark_install_root
+            "-bin-{{ hadoop_profile }}") != spark_install_root
 
   - name: spark | log | perms | set
     file:
@@ -106,20 +106,6 @@
         group: "{{ spark_group }}"
         mode: 0775
         owner: "{{ spark_user }}"
-    when: do_install|bool
-
-  - name: spark | script | discover-ip | generate
-    template:
-        src: discover-ip.sh.j2
-        dest: "{{ spark_install_root }}/bin/discover-ip.sh"
-        mode: 0755
-    when: do_install|bool
-
-  - name: spark | script | spark-dispatcher | generate
-    template:
-        src: spark-dispatcher.sh.j2
-        dest: "{{ spark_install_root }}/bin/spark-dispatcher.sh"
-        mode: 0755
     when: do_install|bool
 
   - name: spark | conf | set

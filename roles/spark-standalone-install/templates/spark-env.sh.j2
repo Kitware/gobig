@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+{% if hadoop_profile == "without-hadoop" %}
+export HADOOP_HOME="{{ hadoop_install_root }}"
+{% endif %}
+
+export SPARK_HOME="{{ spark_install_root }}"
+
+export SPARK_LOCAL_IP="{{ hostvars[inventory_hostname]
+                                  ['ansible_' + spark_net_interface]
+                                  ['ipv4']
+                                  ['address'] }}"
+
+{% if hadoop_profile == "without-hadoop" %}
+export SPARK_CLASSPATH="$( "$HADOOP_HOME/bin/hadoop" classpath )"
+{% endif %}
+
+export SPARK_LOG_DIR="$SPARK_HOME/logs"
+export SPARK_PID_DIR="{{ spark_data_root }}/pids"

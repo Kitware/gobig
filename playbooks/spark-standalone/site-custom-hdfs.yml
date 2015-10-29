@@ -1,0 +1,24 @@
+---
+
+- hosts: namenodes
+  roles:
+    - role: hadoop-hdfs-namenode
+      hdfs_namenode_ansible_group: namenodes
+      state: started
+
+- hosts: datanodes
+  roles:
+    - role: hadoop-hdfs-datanode
+      hdfs_namenode_ansible_group: namenodes
+      state: started
+
+- hosts: spark
+  roles:
+    - role: spark-standalone-install
+      ssh_key_exchange_ansible_group: spark
+
+- hosts: head
+  roles:
+    - role: spark-standalone-service
+      spark_slave_ansible_group: spark-slaves
+      state: started

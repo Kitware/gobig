@@ -1,0 +1,15 @@
+---
+
+dependencies:
+  - role: hadoop-variables
+    when: hadoop_profile == 'without-hadoop'
+  - role: spark-standalone-variables
+  - role: user-generate
+    name: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+    crypt_pass: "{{ spark_crypt_pass }}"
+    system: true
+    state: present
+    when: do_install|bool
+  - role: ssh-key-exchange
+    user: "{{ spark_user }}"
