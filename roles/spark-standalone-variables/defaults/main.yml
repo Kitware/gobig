@@ -19,7 +19,7 @@
     spark_rdd_compress: ""
 
     spark_webui_port: ""
-    spark_dispatcher_port: 7077
+    spark_master_port: 7077
     spark_cores_max: ""
 
     state: started

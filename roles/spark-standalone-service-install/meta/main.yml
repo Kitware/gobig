@@ -6,6 +6,6 @@ dependencies:
     name: spark-master
     user: "{{ spark_user }}"
     group: "{{ spark_group }}"
-    description: Spark Cluster Dispatcher Service
+    description: Spark Standalone Cluster Service
     command: "{{ spark_install_root }}/sbin/start-all.sh"
     when: do_install|bool
