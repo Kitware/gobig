@@ -11,6 +11,6 @@ dependencies:
         "{{ mesos_install_root }}/build/bin/mesos-slave.sh"
         "--ip=$( {{ mesos_install_root }}/build/bin/discover-ip.sh )"
         "--switch_user=false"
-        "--master={{ mesos_zookeeper_url }}"
+        "--master={{ mesos_master_quorum }}"
     when: do_install|bool
 
