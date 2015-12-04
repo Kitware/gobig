@@ -4,6 +4,7 @@ def flatten_ec2_result(ec2_result):
     for entry in ec2_result["results"]:
         for instance in entry["tagged_instances"]:
             result.append({"hostname": instance["public_dns_name"],
+                           "ip": instance["public_ip"],
                            "id": instance["id"],
                            "groups": entry["item"]["value"]["groups"]})
 

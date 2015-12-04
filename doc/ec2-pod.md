@@ -13,17 +13,18 @@ inventory.
 
 #### Variables
 
-|Name                 |Default       |Description                                       |
-|:--------------------|:------------:|:-------------------------------------------------|
-|default_image        |ami-d05e75b8  |default ami image to use for instances            |
-|default_instance_type|t2.medium     |default instance type                             |
-|default_ssh_key      |ec2           |name of the default keypair to use                |
-|hosts                |(empty)       |hosts specification                               |
-|name                 |pod           |name of the pod to manage                         |
-|region               |us-east-1     |region to use for the pod's instances             |
-|rules                |(all open)    |firewall rules for the pod's security group       |
-|rules_egress         |(all open)    |firewall egress rules for the pod's security group|
-|state                |running       |state of the pod's instances                      |
+|Name                 |Default       |Description                                         |
+|:--------------------|:------------:|:---------------------------------------------------|
+|add_by_hostname      |false         |add managed hosts by hostname instead of IP address |
+|default_image        |ami-d05e75b8  |default ami image to use for instances              |
+|default_instance_type|t2.medium     |default instance type                               |
+|default_ssh_key      |ec2           |name of the default keypair to use                  |
+|hosts                |(empty)       |hosts specification                                 |
+|name                 |pod           |name of the pod to manage                           |
+|region               |us-east-1     |region to use for the pod's instances               |
+|rules                |(all open)    |firewall rules for the pod's security group         |
+|rules_egress         |(all open)    |firewall egress rules for the pod's security group  |
+|state                |running       |state of the pod's instances                        |
 
 #### Notes
 
