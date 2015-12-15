@@ -12,7 +12,7 @@ export SPARK_LOCAL_IP="{{ hostvars[inventory_hostname]
                                   ['address'] }}"
 
 {% if hadoop_profile == "without-hadoop" %}
-export SPARK_CLASSPATH="$( "$HADOOP_HOME/bin/hadoop" classpath )"
+export SPARK_DIST_CLASSPATH="$( "$HADOOP_HOME/bin/hadoop" classpath )"
 {% endif %}
 
 export SPARK_LOG_DIR="$SPARK_HOME/logs"

@@ -9,9 +9,8 @@ export SPARK_LOCAL_IP="{{ hostvars[inventory_hostname]
                                   ['ipv4']
                                   ['address'] }}"
 
-export SPARK_CLASSPATH="$( "$HADOOP_HOME/bin/hadoop" classpath )"
+export SPARK_DIST_CLASSPATH="$( "$HADOOP_HOME/bin/hadoop" classpath )"
 export MESOS_NATIVE_JAVA_LIBRARY="$MESOS_HOME/build/src/.libs/libmesos.so"
 
 export SPARK_LOG_DIR="$SPARK_HOME/logs"
 export SPARK_PID_DIR="{{ spark_data_root }}/pids"
-
