@@ -10,6 +10,9 @@
             {{ state == "absent" }}
         do_wait: >
             {{ state == "running" }}
+        host_key: >
+            {{ "hostname" if (add_by_hostname|bool) else "ip" }}
+
 
   - name: hosts spec | process
     set_fact:
@@ -107,7 +110,7 @@
 
   - name: instances | ansible groups | add
     add_host:
-        hostname: "{{ item.hostname }}"
+        hostname: "{{ item[host_key] }}"
         groups: >
             {{ item.groups|join(",") }}
     with_items: "{{ instances|default([None]) }}"

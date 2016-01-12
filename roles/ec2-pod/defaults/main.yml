@@ -20,6 +20,8 @@
           to_port: all
           cidr_ip: 0.0.0.0/0
 
+    add_by_hostname: false
+
     hosts: {}
 
     state: running
