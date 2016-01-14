@@ -16,9 +16,9 @@ Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
 
   if File.exists?("dev/vagrant.local.yml")
-    nc = YAML.load_file("dev/vagrant.local.yml")
+    nc = YAML.load_file(File.dirname(__FILE__) + "/dev/vagrant.local.yml")
   else
-    nc = YAML.load_file("dev/vagrant.dist.yml")
+    nc = YAML.load_file(File.dirname(__FILE__) + "/dev/vagrant.dist.yml")
   end
 
   # Ensure nodes and ansible config sections exist
