@@ -1,0 +1,11 @@
+
+if(db.isMaster().ismaster) {
+    {% for host in play_hosts -%}
+    {%- set ip=(hostvars[host]
+                        ["ansible_" + mongodb_net_interface]
+                        ["ipv4"]
+                        ["address"]) -%}
+    rs.remove("{{ ip }}:{{ mongodb_port }}");
+    {%- endfor %}
+}
+

@@ -1,0 +1,25 @@
+
+rs.initiate({
+    _id: "{{ mongodb_replica_set }}",
+
+    {% if (is_shard_config|bool) -%}
+    configsvr: true,
+    {%- endif -%}
+    members: [
+        {% for host in play_hosts -%}
+        {
+            _id: {{ loop.index0 }},
+            {% if loop.last and loop.index%2 == 0 -%}
+            arbiter: true,
+            {%- endif %}
+            {%- set ip=(hostvars[host]
+                                ["ansible_" + mongodb_net_interface]
+                                ["ipv4"]
+                                ["address"]) -%}
+            host: "{{ ip }}:{{ mongodb_port }}"
+        }{% if not loop.last %},{% endif %}
+        {%- endfor %}
+
+    ]
+});
+

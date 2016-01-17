@@ -2,4 +2,10 @@
 
 dependencies:
   - role: mongodb-variables
+  - role: user-generate
+    name: "{{ mongodb_user }}"
+    group: "{{ mongodb_group }}"
+    crypt_pass: "{{ mongodb_crypt_pass }}"
+    system: true
+    state: present
 

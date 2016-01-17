@@ -1,0 +1,62 @@
+---
+
+  - name: mongodb | replica set | state | probe
+    stat:
+        path: "{{ mongodb_data_root }}/replica-set-initialized"
+    register: initialize_probe
+
+  - name: mongodb | replica set | logic flags | compute
+    set_fact:
+      is_first_host: >
+          {{ inventory_hostname == play_hosts[0] }}
+
+  - name: mongodb | replica set | logic flags | compute
+    set_fact:
+        do_init: >
+            {{ state == "present" and
+                (not (initialize_probe.stat.exists|bool)) }}
+        do_deinit: >
+            {{ state == "absent" and
+                (initialize_probe.stat.exists|bool) }}
+
+  - name: mongodb | replica set | intialize script | generate
+    template:
+        src: replica-set-initialize.js.j2
+        dest: "{{ mongodb_data_root }}/replica-set-initialize.js"
+    when: (do_init|bool) and (is_first_host|bool)
+
+  - name: mongodb | replica set | deintialize script | generate
+    template:
+        src: replica-set-deinitialize.js.j2
+        dest: "{{ mongodb_data_root }}/replica-set-deinitialize.js"
+    when: do_deinit|bool
+
+  - name: mongodb | replica set | initialize
+    command: >
+        "{{ mongodb_install_root }}/bin/mongo"
+        "--host" "{{ hostvars[inventory_hostname]
+                             ['ansible_' + mongodb_net_interface]
+                             ['ipv4']
+                             ['address'] }}"
+        "--port" "{{ mongodb_port }}"
+        "{{ mongodb_data_root }}/replica-set-initialize.js"
+    when: (do_init|bool) and (is_first_host|bool)
+
+  - name: mongodb | replica set | deinitialize
+    command: >
+        "{{ mongodb_install_root }}/bin/mongo"
+        "--host" "{{ hostvars[inventory_hostname]
+                             ['ansible_' + mongodb_net_interface]
+                             ['ipv4']
+                             ['address'] }}"
+        "--port" "{{ mongodb_port }}"
+        "{{ mongodb_data_root }}/replica-set-deinitialize.js"
+    when: do_deinit|bool
+
+  - name: mongodb | replica set | state | record
+    file:
+        path: "{{ mongodb_data_root }}/replica-set-initialized"
+        state: >
+            {{ (do_init|bool) and "touch" or "absent" }}
+    when: (do_init|bool) or (do_deinit|bool)
+
