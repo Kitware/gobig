@@ -3,22 +3,20 @@
     {%- if shard is mapping -%}
         {%- set rs = shard["rs"] -%}
         {%- set group = shard["group"] -%}
-        {%- set port = 27018 -%}
         {%- set db = (groups[group] | mongodb_url(hostvars,
                                                   mongodb_net_interface,
-                                                  port,
+                                                  27018,
                                                   rs)) -%}
 
 sh.addShard("{{ db }}");
     {%- else -%}
         {%- set rs = "" -%}
         {%- set group = shard -%}
-        {%- set port = 27017 -%}
         {%- set hosts = groups[group] -%}
         {%- for host in hosts -%}
             {%- set db = ([host] | mongodb_url(hostvars,
                                                mongodb_net_interface,
-                                               port,
+                                               27018,
                                                rs)) -%}
 
 sh.addShard("{{ db }}");
