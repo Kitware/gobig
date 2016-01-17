@@ -9,14 +9,14 @@
 
   - name: mongodb | shard cluster | intialize script | generate
     template:
-        src: shard-set-initialize.js.j2
-        dest: "{{ mongodb_data_root }}/shard-set-initialize.js"
+        src: shard-cluster-initialize.js.j2
+        dest: "{{ mongodb_data_root }}/shard-cluster-initialize.js"
     when: do_init|bool
 
   - name: mongodb | shard cluster | deintialize script | generate
     template:
-        src: shard-set-deinitialize.js.j2
-        dest: "{{ mongodb_data_root }}/shard-set-deinitialize.js"
+        src: shard-cluster-deinitialize.js.j2
+        dest: "{{ mongodb_data_root }}/shard-cluster-deinitialize.js"
     when: do_deinit|bool
 
   - name: mongodb | shard cluster | service | wait
@@ -34,7 +34,7 @@
                              ['ipv4']
                              ['address'] }}"
         "--port" "27017"
-        "{{ mongodb_data_root }}/shard-set-initialize.js"
+        "{{ mongodb_data_root }}/shard-cluster-initialize.js"
     when: do_init|bool
 
   - name: mongodb | shard cluster | deinitialize
@@ -45,6 +45,6 @@
                              ['ipv4']
                              ['address'] }}"
         "--port" "27017"
-        "{{ mongodb_data_root }}/shard-set-deinitialize.js"
+        "{{ mongodb_data_root }}/shard-cluster-deinitialize.js"
     when: do_deinit|bool
 
