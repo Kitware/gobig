@@ -1,0 +1,53 @@
+---
+
+  - hosts: all
+    vars:
+        mongodb_set: >
+            {{       groups.get("mongodb-master"       , [])  |
+               union(groups.get("mongodb-shard-alpha"  , [])) |
+               union(groups.get("mongodb-shard-bravo"  , [])) |
+               union(groups.get("mongodb-shard-charlie", [])) |
+               union(groups.get("mongodb-config"       , [])) }}
+    tasks:
+      - group_by: key={{ inventory_hostname in mongodb_set and "MG" or "x" }}
+
+# remove shard cluster configuration
+  - hosts: mongodb-master
+    roles:
+      - role: mongodb-shard-cluster
+        state: absent
+
+# remove replica set (config)
+  - hosts: mongodb-config
+    roles:
+      - role: mongodb-replica-set
+        mongodb_replica_set: rsConfig
+        state: absent
+
+# remove replica set (alpha)
+  - hosts: mongodb-shard-alpha
+    roles:
+      - role: mongodb-replica-set
+        mongodb_replica_set: rsAlpha
+        state: absent
+
+# remove replica set (bravo)
+  - hosts: mongodb-shard-bravo
+    roles:
+      - role: mongodb-replica-set
+        mongodb_replica_set: rsBravo
+        state: absent
+
+# remove replica set (charlie)
+  - hosts: mongodb-shard-charlie
+    roles:
+      - role: mongodb-replica-set
+        mongodb_replica_set: rsCharlie
+        state: absent
+
+# uninstall mongodb (all hosts)
+  - hosts: MG
+    roles:
+      - role: mongodb
+        state: absent
+

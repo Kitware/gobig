@@ -1,0 +1,11 @@
+---
+
+  - hosts: mongodb
+    roles:
+      - role: mongodb-replica-set
+        mongodb_replica_set: rs0
+        state: absent
+
+      - role: mongodb
+        state: absent
+
