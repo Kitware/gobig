@@ -54,18 +54,18 @@ roles, respectively.
 |:------------:|:----------:|:------------------------------------------------------------------------------------------------------------|
 |standalone    |Y           |for a non-sharded database                                                                                   |
 |cluster-config|Y           |as in `standalone`, but specifically for serving the configuration data for a larger sharded database cluster|
-|shard         |Y           |as in `standalone`, but specifically for service the data for one shard in a larger sharded database cluster |
+|shard         |Y           |as in `standalone`, but specifically to serve the data for one shard in a larger sharded database cluster    |
 |router        |N           |for the query router service of a sharded database cluster                                                   |
 
   - `mongodb_sharding_config` represents the host specification for the config
     server of a sharded cluster.  Only has effect when
     `mongodb_mode == "router"`.
       - If set directly to a string, the value of `mongodb_sharding_config`
-        must be that of an ansible group in the current play.  It is then taken
-        to represent a non-replicated mongodb server hosted on the first host
-        listed as a member of the referenced group.  Users should fashion a
-        special-purpose group with only one member to ensure that host is
-        chosen as the config server.
+        must be that of an ansible group in the current playbook.  It is then
+        taken to represent a non-replicated mongodb server hosted on the first
+        host listed as a member of the referenced group.  Users should fashion a
+        special-purpose group with only one member to ensure that host is chosen
+        as the config server.
       - If set to a mapping, `mongodb_sharding_config` must map values to the
         `rs` and `group` keys.  It is then taken to represent a replicated
         mongodb server participating in the replica set identified by `rs` and
@@ -109,17 +109,15 @@ For initializing a shard cluster over multiple provisioned mongodb instances.
 #### Notes
 
   - Each entry in `shards` represents a subset of the shards participating in
-    the cluster, the union of which serve as the total set of all shards.
-
+    the cluster, the unions of which serve as the total set of all shards.
       - If an entry is a string, its value must be that of an ansible group in
-        the current play.  It is then taken to represent a set of hosts, which
-        are the members of the given group, each running a non-replicated
+        the current playbook.  It is then taken to represent a set of hosts,
+        which are the members of the given group, each running a non-replicated
         mongodb service to be used as a shard.  Note that the semantics for the
         shard entry's value in this case differ from that of the
         `mongodb_sharding_config` variable in that each host in the given
         ansible group is added to the cluster's shards, as opposed to only the
         first host being used for the sharding cluster's config database.
-
       - If an entry is a mapping, it must map values to the `rs` and `group`
         keys.  It is then taken to represent a replicated mongodb server
         participating in the replica set identified by `rs` and whose
