@@ -125,3 +125,30 @@
             {{ (do_install|bool) and
                (not (install_root_probe.stat.exists|bool)) }}
 
+  - name: mongodb | configuration | yaml | compute
+    set_fact:
+        mongodb_config_yaml: >
+            {{ ({"configdb_url": mongodb_configdb_url,
+                 "db": mongodb_db,
+                 "index_build_retry": (mongodb_index_build_retry|bool),
+                 "inventory_hostname": inventory_hostname,
+                 "ipv6": (mongodb_ipv6|bool),
+                 "is_replica_set": (is_replica_set|bool),
+                 "is_shard_config": (is_shard_config|bool),
+                 "is_shard_data": (is_shard_data|bool),
+                 "is_shard_router": (is_shard_router|bool),
+                 "journal_commit_interval": mongodb_journal_commit_interval,
+                 "journal_enabled": (mongodb_journal_enabled|bool),
+                 "max_connections": mongodb_max_connections,
+                 "port": mongodb_port,
+                 "replica_enable_majority_read":
+                     (mongodb_replica_enable_majority_read|bool),
+                 "replica_oplog_size": mongodb_replica_oplog_size,
+                 "replica_set": mongodb_replica_set,
+                 "sharding_cluster_role": mongodb_sharding_cluster_role,
+                 "storage_engine": mongodb_storage_engine,
+                 "sync_period": mongodb_sync_period,
+                 "verbosity": mongodb_verbosity,
+                 "wire_object_check": (mongodb_wire_object_check|bool)} |
+                    mongodb_config(hostvars, mongodb_net_interface)) }}
+
