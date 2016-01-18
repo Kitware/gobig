@@ -1,15 +1,154 @@
 ---
 
-  - name: mongodb | service | logic flags | compute
+  - name: mongodb | logic flags | compute
     set_fact:
         remove_data_root: "{{ state == 'absent' }}"
         remove_install_root: "{{ state == 'absent' }}"
-        stop_services: "{{ state == 'absent' }}"
+        stop_services: >
+            {{ state == 'absent' }}
         do_install: >
             {{ state == "present" or state == "stopped" or
                state == "started" or state == "restarted" or
                state == "reloaded" }}
         notify_services: >
-            {{ state == "stopped" or state == "started"
-            or state == "restarted" or state == "reloaded" }}
+            {{ state == "stopped" or state == "started" or
+               state == "restarted" or state == "reloaded" }}
+        is_shard_config: >
+            {{ mongodb_mode == "cluster-config" }}
+        is_shard_data: >
+            {{ mongodb_mode == "shard" }}
+        is_shard_router: >
+            {{ mongodb_mode == "router" }}
+        is_replica_set: >
+            {{ mongodb_replica_set != 0 }}
+
+  - name: mongodb | logic flags | compute
+    set_fact:
+        is_standalone: >
+            {{ not (is_shard_config|bool or
+                    is_shard_router|bool or
+                    is_shard_data  |bool) }}
+
+  - name: mongodb | logic variables | compute
+    set_fact:
+        mongodb_sharding_cluster_role: >
+            {{ ((is_shard_config|bool) and 'configsvr') or
+               ((is_shard_data  |bool) and 'shardsvr' ) or
+               'INVALID_MODE' }}
+        mongodb_port: >
+           {{ ((is_shard_config|bool) and 27019) or
+              ((is_shard_data  |bool) and 27018) or
+              ((is_shard_router|bool) and 27017) or
+              ((is_standalone  |bool) and 27017) or
+              'INVALID_MODE' }}
+        mongodb_configsvr_port: 27019
+        mongodb_service: >
+            {{ ((is_shard_config|bool) and "mongodb-cluster-config") or
+               ((is_shard_data  |bool) and "mongodb-cluster-shard" ) or
+               ((is_shard_router|bool) and "mongodb-cluster-router") or
+               ((is_standalone  |bool) and "mongodb"               ) or
+               "INVALID_MODE" }}
+        mongodb_service_description: >
+            {{ ((is_shard_config|bool) and "Cluster Configuration Database") or
+               ((is_shard_data  |bool) and "Shard Database"                ) or
+               ((is_shard_router|bool) and "Query Router"                  ) or
+               ((is_standalone  |bool) and "Document Database"             ) or
+               "INVALID_MODE" }}
+        mongodb_service_binary: >
+            {{ ((is_shard_config|bool) and "mongod") or
+               ((is_shard_data  |bool) and "mongod") or
+               ((is_shard_router|bool) and "mongos") or
+               ((is_standalone  |bool) and "mongod") or
+               "INVALID_MODE" }}
+        service_subdir: >
+            {{ ((is_shard_config|bool) and "config"    ) or
+               ((is_shard_data  |bool) and "shard"     ) or
+               ((is_shard_router|bool) and "router"    ) or
+               ((is_standalone  |bool) and "standalone") or
+               "INVALID_MODE" }}
+
+  - name: mongodb | config db | url | compute
+    set_fact:
+        mongodb_configdb_url: >
+            {{ (
+                mongodb_sharding_config is mapping
+
+               ) and (
+                groups[mongodb_sharding_config["group"]] | mongodb_url(
+                    hostvars,
+                    mongodb_net_interface,
+                    mongodb_configsvr_port,
+                    mongodb_sharding_config["rs"])
+
+               ) or (
+                groups[mongodb_sharding_config] | mongodb_url(
+                    hostvars,
+                    mongodb_net_interface,
+                    mongodb_configsvr_port,
+                    "")
+               ) }}
+    when: (is_shard_router|bool)
+
+  - name: mongodb | install root | default | set
+    set_fact:
+        mongodb_install_root: "/opt/mongodb/{{ mongodb_version }}"
+    when: mongodb_install_root == ""
+
+  - name: mongodb | install root | parent | probe
+    shell: dirname "{{ mongodb_install_root }}"
+    register: parent_probe
+
+  - name: mongodb | install root | parent | record
+    set_fact:
+        mongodb_install_parent: "{{ parent_probe.stdout }}"
+
+  - name: mongodb | data root | default | set
+    set_fact:
+        mongodb_data_root: "/data/mongodb/{{ mongodb_version }}"
+    when: mongodb_data_root == ""
+
+  - name: mongodb | database dir | set
+    set_fact:
+        mongodb_db: "{{ mongodb_data_root }}/{{ service_subdir }}/db"
+
+  - name: mongodb | conf | record
+    set_fact: mongodb_conf={{ mongodb_install_root }}
+
+  - name: mongodb | install root | probe
+    stat:
+        path: "{{ mongodb_install_root }}"
+    register: install_root_probe
+
+  - name: mongodb | install root | flag | record
+    set_fact:
+        create_install_root: >
+            {{ (do_install|bool) and
+               (not (install_root_probe.stat.exists|bool)) }}
+
+  - name: mongodb | configuration | yaml | compute
+    set_fact:
+        mongodb_config_yaml: >
+            {{ ({"configdb_url": mongodb_configdb_url,
+                 "db": mongodb_db,
+                 "index_build_retry": (mongodb_index_build_retry|bool),
+                 "inventory_hostname": inventory_hostname,
+                 "ipv6": (mongodb_ipv6|bool),
+                 "is_replica_set": (is_replica_set|bool),
+                 "is_shard_config": (is_shard_config|bool),
+                 "is_shard_data": (is_shard_data|bool),
+                 "is_shard_router": (is_shard_router|bool),
+                 "journal_commit_interval": mongodb_journal_commit_interval,
+                 "journal_enabled": (mongodb_journal_enabled|bool),
+                 "max_connections": mongodb_max_connections,
+                 "port": mongodb_port,
+                 "replica_enable_majority_read":
+                     (mongodb_replica_enable_majority_read|bool),
+                 "replica_oplog_size": mongodb_replica_oplog_size,
+                 "replica_set": mongodb_replica_set,
+                 "sharding_cluster_role": mongodb_sharding_cluster_role,
+                 "storage_engine": mongodb_storage_engine,
+                 "sync_period": mongodb_sync_period,
+                 "verbosity": mongodb_verbosity,
+                 "wire_object_check": (mongodb_wire_object_check|bool)} |
+                    mongodb_config(hostvars, mongodb_net_interface)) }}
 

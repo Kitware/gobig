@@ -3,5 +3,6 @@
 dependencies:
   - role: mongodb-variables
   - role: mongodb-install
+  - role: mongodb-service-install
   - role: mongodb-service
 

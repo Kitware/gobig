@@ -7,6 +7,7 @@ dependencies:
   - role: user-generate
     name: "{{ hdfs_user }}"
     group: "{{ hdfs_group }}"
+    crypt_pass: "{{ hdfs_crypt_pass }}"
     system: true
     state: present
 

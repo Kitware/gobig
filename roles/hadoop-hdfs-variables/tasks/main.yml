@@ -30,6 +30,7 @@
                    (format|bool) or
                    (not (hdfs_format_probe.stat.exists|bool))
                ) }}
+
   - name: hadoop | service | hdfs | logic flags | amend
     set_fact:
         remove_data_root: "{{ do_format }}"

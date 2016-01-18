@@ -1,0 +1,28 @@
+---
+
+  - hosts: mongodb-config
+    roles:
+      - role: mongodb
+        mongodb_mode: cluster-config
+        state: started
+
+  - hosts: mongodb-shard
+    roles:
+      - role: mongodb
+        mongodb_mode: shard
+        state: started
+
+  - hosts: mongodb-master
+    roles:
+      - role: mongodb
+        mongodb_mode: router
+        mongodb_sharding_config: mongodb-config
+        state: started
+
+  - hosts: mongodb-master
+    roles:
+      - role: mongodb-shard-cluster
+        shards:
+           - mongodb-shard
+        state: present
+
