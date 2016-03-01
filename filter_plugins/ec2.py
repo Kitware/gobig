@@ -142,11 +142,18 @@ def get_ec2_eips(instance_table):
         op.itemgetter("eip", "id"),
         filter(op.itemgetter("eip"), instance_table))
 
+def get_ec2_wait_list(instance_table, host_key):
+    import operator as op
+    return map(
+        op.itemgetter(host_key),
+        filter(op.itemgetter("wait"), instance_table))
+
 class FilterModule(object):
     def filters(self):
         return {"compute_ec2_update_lists": compute_ec2_update_lists,
                 "flatten_ec2_result": flatten_ec2_result,
                 "compute_ec2_ein_mapping": compute_ec2_ein_mapping,
+                "get_ec2_wait_list": get_ec2_wait_list,
                 "get_ec2_hosts": get_ec2_hosts,
                 "get_ec2_eips": get_ec2_eips}
 
