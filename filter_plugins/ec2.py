@@ -86,8 +86,51 @@ def compute_ec2_update_lists(pod_name,
         terminate_set |= set(stopped_list[num_to_start:])
         terminate_set |= set(running_list[num_to_keep:])
 
-    import pprint
     return {"start": list(start_set), "terminate": list(terminate_set)}
+
+def compute_ec2_ein_mapping(ec2_result, region, key_id, key):
+    from boto import ec2
+
+    conn = ec2.connect_to_region(region,
+                                 aws_access_key_id=key_id,
+                                 aws_secret_access_key=key)
+
+    if conn is None:
+        raise Exception(" ".join((
+            "region name:",
+            region,
+            "likely not supported, or AWS is down."
+            "connection to region failed.")))
+
+    reservations = conn.get_all_instances()
+
+    security_group_mapping = {
+        group.name: group.id
+        for group in conn.get_all_security_groups()
+    }
+
+    eni_mapping = {
+        eni.attachment.instance_id: eni.id
+        for eni in conn.get_all_network_interfaces()
+    }
+
+    result = {}
+    for entry in ec2_result["results"]:
+        groups = [
+            security_group_mapping.get(group, group)
+            for group in entry["item"]["value"]["group"]]
+
+        result.update({
+            eni_mapping[instance["id"]]: groups
+            for instance in entry["tagged_instances"]})
+
+    # TODO(opadron): need to remove this once we switch to Ansible 2.0
+    for eni_id, groups in result.items():
+        conn.modify_network_interface_attribute(interface_id=eni_id,
+                                                attr="groupSet",
+                                                value=groups)
+
+    return result
 
 def get_ec2_hosts(instance_table):
     import operator as op
@@ -97,5 +140,6 @@ class FilterModule(object):
     def filters(self):
         return {"compute_ec2_update_lists": compute_ec2_update_lists,
                 "flatten_ec2_result": flatten_ec2_result,
+                "compute_ec2_ein_mapping": compute_ec2_ein_mapping,
                 "get_ec2_hosts": get_ec2_hosts}
 
