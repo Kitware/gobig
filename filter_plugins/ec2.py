@@ -136,10 +136,17 @@ def get_ec2_hosts(instance_table):
     import operator as op
     return map(op.itemgetter("id"), instance_table)
 
+def get_ec2_eips(instance_table):
+    import operator as op
+    return map(
+        op.itemgetter("eip", "id"),
+        filter(op.itemgetter("eip"), instance_table))
+
 class FilterModule(object):
     def filters(self):
         return {"compute_ec2_update_lists": compute_ec2_update_lists,
                 "flatten_ec2_result": flatten_ec2_result,
                 "compute_ec2_ein_mapping": compute_ec2_ein_mapping,
-                "get_ec2_hosts": get_ec2_hosts}
+                "get_ec2_hosts": get_ec2_hosts,
+                "get_ec2_eips": get_ec2_eips}
 
