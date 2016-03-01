@@ -6,7 +6,9 @@ def flatten_ec2_result(ec2_result):
             result.append({"hostname": instance["public_dns_name"],
                            "ip": instance["public_ip"],
                            "id": instance["id"],
-                           "groups": entry["item"]["value"]["groups"]})
+                           "eip": entry["item"]["value"]["ip"],
+                           "wait": entry["item"]["value"]["wait"],
+                           "groups": entry["item"]["value"]["ansible_groups"]})
 
     return result
 
