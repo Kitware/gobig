@@ -10,25 +10,6 @@ def flatten_ec2_result(ec2_result):
 
     return result
 
-def process_hosts_spec(hosts_spec, pod_name):
-    result = {}
-    for key, value in hosts_spec.items():
-        value["groups"] = list(set(value.get("groups", ())) |
-                               set((pod_name,)))
-
-        if "volumes" in value:
-            new_volumes = []
-            for volume_name, volume_size in value["volumes"].items():
-                new_volumes.append({"delete_on_termination": True,
-                                    "device_name": "/dev/" + volume_name,
-                                    "volume_size": volume_size})
-
-            value["volumes"] = new_volumes
-
-        result[key] = value
-
-    return result
-
 def compute_ec2_update_lists(pod_name,
                              hosts_spec,
                              state,
@@ -116,6 +97,5 @@ class FilterModule(object):
     def filters(self):
         return {"compute_ec2_update_lists": compute_ec2_update_lists,
                 "flatten_ec2_result": flatten_ec2_result,
-                "get_ec2_hosts": get_ec2_hosts,
-                "process_hosts_spec": process_hosts_spec}
+                "get_ec2_hosts": get_ec2_hosts}
 
