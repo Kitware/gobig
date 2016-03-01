@@ -10,19 +10,15 @@ def flatten_ec2_result(ec2_result):
 
     return result
 
-def compute_ec2_update_lists(pod_name,
-                             hosts_spec,
-                             state,
-                             region,
-                             default_ssh_key,
-                             default_image,
-                             default_instance_type):
-
+def compute_ec2_update_lists(pod_name, instances, state, region, key_id, key):
     from collections import defaultdict
     from itertools import chain
     from boto import ec2
 
-    conn = ec2.connect_to_region(region)
+    conn = ec2.connect_to_region(region,
+                                 aws_access_key_id=key_id,
+                                 aws_secret_access_key=key)
+
     if conn is None:
         raise Exception(" ".join((
             "region name:",
@@ -59,12 +55,17 @@ def compute_ec2_update_lists(pod_name,
             ec2_host_table[composite_key][instance.state].add(instance.id)
 
     host_counter_table = dict(
-        ((unicode(key),
-          unicode(value.get("ssh_key", default_ssh_key)),
-          unicode(value.get("image", default_image)),
-          unicode(value.get("type", default_instance_type))),
-         value.get("count", 1))
-        for key, value in hosts_spec.items())
+        (
+            (
+                unicode(instance["count_tag"]["ec2_pod_instance_name"]),
+                unicode(instance["ssh_key"]),
+                unicode(instance["image"]),
+                unicode(instance["type"])
+            ),
+            instance.get("count", 1)
+        )
+        for instance in instances.values()
+    )
 
     start_set = set()
     terminate_set = set()
