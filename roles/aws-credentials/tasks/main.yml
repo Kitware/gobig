@@ -1,0 +1,19 @@
+---
+
+  - name: variable prefix | set
+    set_fact:
+        prefix: >
+            {{ variable_prefix + "_" if variable_prefix else "" }}
+
+  - name: aws configuration | process
+    set_fact:
+        result: >
+            {{ path | process_aws_credentials(profile,
+                                              access_key,
+                                              secret_key) }}
+
+  - name: output variables | set
+    set_fact: >
+        {{ prefix }}aws_access_key_id="{{ result.key_id }}"
+        {{ prefix }}aws_secret_key="{{ result.key }}"
+

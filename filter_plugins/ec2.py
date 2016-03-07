@@ -6,42 +6,21 @@ def flatten_ec2_result(ec2_result):
             result.append({"hostname": instance["public_dns_name"],
                            "ip": instance["public_ip"],
                            "id": instance["id"],
-                           "groups": entry["item"]["value"]["groups"]})
+                           "eip": entry["item"]["value"]["ip"],
+                           "wait": entry["item"]["value"]["wait"],
+                           "groups": entry["item"]["value"]["ansible_groups"]})
 
     return result
 
-def process_hosts_spec(hosts_spec, pod_name):
-    result = {}
-    for key, value in hosts_spec.items():
-        value["groups"] = list(set(value.get("groups", ())) |
-                               set((pod_name,)))
-
-        if "volumes" in value:
-            new_volumes = []
-            for volume_name, volume_size in value["volumes"].items():
-                new_volumes.append({"delete_on_termination": True,
-                                    "device_name": "/dev/" + volume_name,
-                                    "volume_size": volume_size})
-
-            value["volumes"] = new_volumes
-
-        result[key] = value
-
-    return result
-
-def compute_ec2_update_lists(pod_name,
-                             hosts_spec,
-                             state,
-                             region,
-                             default_ssh_key,
-                             default_image,
-                             default_instance_type):
-
+def compute_ec2_update_lists(pod_name, instances, state, region, key_id, key):
     from collections import defaultdict
     from itertools import chain
     from boto import ec2
 
-    conn = ec2.connect_to_region(region)
+    conn = ec2.connect_to_region(region,
+                                 aws_access_key_id=key_id,
+                                 aws_secret_access_key=key)
+
     if conn is None:
         raise Exception(" ".join((
             "region name:",
@@ -78,12 +57,17 @@ def compute_ec2_update_lists(pod_name,
             ec2_host_table[composite_key][instance.state].add(instance.id)
 
     host_counter_table = dict(
-        ((unicode(key),
-          unicode(value.get("ssh_key", default_ssh_key)),
-          unicode(value.get("image", default_image)),
-          unicode(value.get("type", default_instance_type))),
-         value.get("count", 1))
-        for key, value in hosts_spec.items())
+        (
+            (
+                unicode(instance["count_tag"]["ec2_pod_instance_name"]),
+                unicode(instance["ssh_key"]),
+                unicode(instance["image"]),
+                unicode(instance["type"])
+            ),
+            instance.get("count", 1)
+        )
+        for instance in instances.values()
+    )
 
     start_set = set()
     terminate_set = set()
@@ -105,17 +89,74 @@ def compute_ec2_update_lists(pod_name,
         terminate_set |= set(stopped_list[num_to_start:])
         terminate_set |= set(running_list[num_to_keep:])
 
-    import pprint
     return {"start": list(start_set), "terminate": list(terminate_set)}
+
+def compute_ec2_ein_mapping(ec2_result, region, key_id, key):
+    from boto import ec2
+
+    conn = ec2.connect_to_region(region,
+                                 aws_access_key_id=key_id,
+                                 aws_secret_access_key=key)
+
+    if conn is None:
+        raise Exception(" ".join((
+            "region name:",
+            region,
+            "likely not supported, or AWS is down."
+            "connection to region failed.")))
+
+    reservations = conn.get_all_instances()
+
+    security_group_mapping = {
+        group.name: group.id
+        for group in conn.get_all_security_groups()
+    }
+
+    eni_mapping = {
+        eni.attachment.instance_id: eni.id
+        for eni in conn.get_all_network_interfaces()
+    }
+
+    result = {}
+    for entry in ec2_result["results"]:
+        groups = [
+            security_group_mapping.get(group, group)
+            for group in entry["item"]["value"]["group"]]
+
+        result.update({
+            eni_mapping[instance["id"]]: groups
+            for instance in entry["tagged_instances"]})
+
+    # TODO(opadron): need to remove this once we switch to Ansible 2.0
+    for eni_id, groups in result.items():
+        conn.modify_network_interface_attribute(interface_id=eni_id,
+                                                attr="groupSet",
+                                                value=groups)
+
+    return result
 
 def get_ec2_hosts(instance_table):
     import operator as op
     return map(op.itemgetter("id"), instance_table)
 
+def get_ec2_eips(instance_table):
+    import operator as op
+    return map(
+        op.itemgetter("eip", "id"),
+        filter(op.itemgetter("eip"), instance_table))
+
+def get_ec2_wait_list(instance_table, host_key):
+    import operator as op
+    return map(
+        op.itemgetter(host_key),
+        filter(op.itemgetter("wait"), instance_table))
+
 class FilterModule(object):
     def filters(self):
         return {"compute_ec2_update_lists": compute_ec2_update_lists,
                 "flatten_ec2_result": flatten_ec2_result,
+                "compute_ec2_ein_mapping": compute_ec2_ein_mapping,
+                "get_ec2_wait_list": get_ec2_wait_list,
                 "get_ec2_hosts": get_ec2_hosts,
-                "process_hosts_spec": process_hosts_spec}
+                "get_ec2_eips": get_ec2_eips}
 

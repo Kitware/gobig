@@ -7,12 +7,17 @@
     pre_tasks:
       - include: pod_config.yml
     roles:
-      - role: ec2-pod
-        default_ssh_key: "{{ ec2_pod_spec.key }}"
-        name: gobig
+      - role: aws-credentials
+        profile: "{{ pod_config.profile }}"
+
+      - role: ec2-pod2
+        name: "{{ pod_config.name }}"
+        ssh_keys: "{{ pod_config.ssh_keys }}"
+        placement_groups: "{{ pod_config.placement_groups }}"
+        instances: "{{ pod_config.instances }}"
+        security_groups: "{{ pod_config.security_groups }}"
+        templates: "{{ pod_config.templates }}"
         state: running
-        rules: "{{ ec2_pod_spec.rules }}"
-        hosts: "{{ ec2_pod_spec.hosts }}"
 
   - hosts: gobig
     tasks:
@@ -27,7 +32,7 @@
         mount:
             fstype: ext4
             name: "{{ item.value }}"
-            src: /dev/{{ item.key }}
+            src: "/dev/{{ item.key }}"
             state: mounted
         with_dict:
             xvdb: /opt

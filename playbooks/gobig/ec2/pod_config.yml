@@ -2,131 +2,70 @@
 
   - name: set ec2 pod specification
     set_fact:
-        ec2_pod_spec:
-            key: gobig
-            rules:
-              - proto: icmp # ping
-                from_port: -1
-                to_port: -1
-                cidr_ip: 0.0.0.0/0
+        pod_config:
+            name: gobig
+            profile: gobig
+            ssh_keys: { main: "~/.ssh/gobig.pub" }
+            placement_groups: { main: {} }
+            instances:
+                worker:
+                    extends: common
+                    extra_ansible_groups: ["namenodes", "rabbitmq", "romanesco"]
 
-              - proto: tcp # ssh
-                from_port: 22
-                to_port: 22
-                cidr_ip: 0.0.0.0/0
+                db:
+                    extends: common
+                    extra_ansible_groups: ["mongodb"]
 
-              - proto: tcp # mongodb
-                from_port: 27017
-                to_port: 27017
-                cidr_ip: 0.0.0.0/0
+                web:
+                    extends: common
+                    security_groups: ["external"]
+                    extra_ansible_groups: ["girder"]
+            security_groups:
+                external:
+                  - { extends: "public", proto: "icmp" } # ping
+                  - { extends: "public", port: [
+                                22, # ssh
+                              9080  # girder http
+                    ] }
 
-              - proto: tcp # mongodb
-                from_port: 28017
-                to_port: 28017
-                cidr_ip: 0.0.0.0/0
+                internal:
+                  - { extends: "public", port: 22 } # public ssh
+                  - { extends: "private", proto: "icmp" } # ping
+                  - { extends: "private", port: [
+                      27017, 28017, # mongodb
+                              8020, # hdfs namenode
+                              3888, # hdfs datanode
+                             50010, # hdfs namenode webui
+                             50020, # hdfs datanode webui
+                             50080, # web hdfs
+                              2181, # zookeeper
+                              5050, # mesos master
+                              5051, # mesos slave
+                              7077, # spark dispatcher
+                             50081, # ???
+                              8081  # ???
+                    ] }
 
-              - proto: tcp # hdfs namenode
-                from_port: 8020
-                to_port: 8020
-                cidr_ip: 0.0.0.0/0
+            templates:
+                instances:
+                    common:
+                        ssh_key: main
+                        type: m4.xlarge
+                        image: ami-fce3c696
+                        volumes: [50, 50]
+                        placement_group: main
+                        security_groups: ["internal"]
+                        ansible_groups:
+                          - gobig
+                          - datanodes
+                          - zookeepers
+                          - masters
+                          - slaves
+                          - spark
+                          - uvcmetrics
+                rules:
+                    public:  { flow: "sym", proto: "tcp", cidr_ip: "0.0.0.0/0" }
+                    private: { flow: "sym", proto: "tcp", groups: ["internal",
+                                                                   "external"] }
 
-              - proto: tcp # hdfs datanode
-                from_port: 3888
-                to_port: 3888
-                cidr_ip: 0.0.0.0/0
-
-              - proto: tcp # hdfs namenode webui
-                from_port: 50010
-                to_port: 50010
-                cidr_ip: 0.0.0.0/0
-
-              - proto: tcp # hdfs datanode webui
-                from_port: 50020
-                to_port: 50020
-                cidr_ip: 0.0.0.0/0
-
-              - proto: tcp # webhdfs
-                from_port: 50080
-                to_port: 50080
-                cidr_ip: 0.0.0.0/0
-
-              - proto: tcp # zookeeper
-                from_port: 2181
-                to_port: 2181
-                cidr_ip: 0.0.0.0/0
-
-              - proto: tcp # mesos master
-                from_port: 5050
-                to_port: 5050
-                cidr_ip: 0.0.0.0/0
-
-              - proto: tcp # mesos slave
-                from_port: 5051
-                to_port: 5051
-                cidr_ip: 0.0.0.0/0
-
-              - proto: tcp # spark dispatcher
-                from_port: 7077
-                to_port: 7077
-                cidr_ip: 0.0.0.0/0
-
-              - proto: tcp
-                from_port: 9080 # girder http
-                to_port: 9080
-                cidr_ip: 0.0.0.0/0
-
-              - proto: tcp
-                from_port: 50081 # ???
-                to_port: 50081
-                cidr_ip: 0.0.0.0/0
-
-              - proto: tcp
-                from_port: 8081 # ???
-                to_port: 8081
-                cidr_ip: 0.0.0.0/0
-
-            hosts:
-                0:
-                    type: m4.xlarge
-                    groups:
-                      - datanodes
-                      - zookeepers
-                      - masters
-                      - slaves
-                      - spark
-                      - uvcmetrics
-                      - namenodes
-                      - rabbitmq
-                      - romanesco
-                    volumes:
-                        sdb: 50
-                        sdc: 50
-
-                1:
-                    type: m4.xlarge
-                    groups:
-                      - datanodes
-                      - zookeepers
-                      - masters
-                      - slaves
-                      - spark
-                      - uvcmetrics
-                      - mongodb
-                    volumes:
-                        sdb: 50
-                        sdc: 50
-
-                2:
-                    type: m4.xlarge
-                    groups:
-                      - datanodes
-                      - zookeepers
-                      - masters
-                      - slaves
-                      - spark
-                      - uvcmetrics
-                      - girder
-                    volumes:
-                        sdb: 50
-                        sdc: 50
 
