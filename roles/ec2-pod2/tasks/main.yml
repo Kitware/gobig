@@ -1,5 +1,10 @@
 ---
 
+- name: variables | options | process
+  set_fact:
+    processed_options: >-
+      {{ DEFAULT_OPTIONS | combine(options, recursive=True) }}
+
 - name: variables | control | compute
   set_fact:
     do_create: >-
@@ -12,13 +17,13 @@
 - name: variables | control | compute (2)
   set_fact:
     do_add: >-
-      {{ (do_create|bool) and (options.ansible_groups_amend|bool) }}
+      {{ (do_create|bool) and (processed_options.ansible_groups_amend|bool) }}
 
 - name: pod spec | process
   ec2_pod_process:
     instances: "{{ instances }}"
     name: "{{ name }}"
-    options: "{{ options }}"
+    options: "{{ processed_options }}"
     placement_groups: "{{ placement_groups }}"
     security_groups: "{{ security_groups }}"
     ssh_keys: "{{ ssh_keys }}"
@@ -153,7 +158,7 @@
 
 - name: instances | ansible groups | add
   add_host:
-    hostname: "{{ item[options.ansible_groups_amend_mode] }}"
+    hostname: "{{ item[processed_options.ansible_groups_amend_mode] }}"
     groups: "{{ item.groups | join(',') }}"
   with_items: "{{ flattened_instances }}"
   when: do_add|bool
@@ -166,7 +171,7 @@
     state: started
   with_items: >-
     {{ flattened_instances|get_ec2_wait_list(
-        options.ansible_groups_amend_mode) }}
+        processed_options.ansible_groups_amend_mode) }}
   when: do_wait|bool
 
 - name: instances | elastic ips | associate

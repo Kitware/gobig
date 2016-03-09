@@ -2,3 +2,6 @@
 
 EC2_TIMEOUT: 1800 # 1/2 hour
 SSH_TIMEOUT:  600 # 10 minutes
+DEFAULT_OPTIONS:
+    ansible_groups_amend: true
+    ansible_groups_amend_mode: ip

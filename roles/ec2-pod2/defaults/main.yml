@@ -1,10 +1,7 @@
 ---
-
 instances: {}
 name: default
-options:
-  ansible_groups_amend: true
-  ansible_groups_amend_mode: ip
+options: {}
 placement_groups: {}
 security_groups: {}
 ssh_keys: {}
