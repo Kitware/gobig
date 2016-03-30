@@ -1,11 +1,9 @@
 ---
 
-    profile: default
-    path: >
-        {{ ansible_env.HOME }}/.aws/credentials
-    access_key: >
-        {{ ansible_env.AWS_ACCESS_KEY_ID | default("") }}
-    secret_key: >
-        {{ ansible_env.AWS_SECRET_ACCESS_KEY | default("") }}
-    variable_prefix: ""
-
+profile: default
+path: >-
+  {{ ansible_env.HOME }}/.aws/credentials
+access_key: >-
+  {{ ansible_env.AWS_ACCESS_KEY_ID | default("") }}
+secret_key: >-
+  {{ ansible_env.AWS_SECRET_ACCESS_KEY | default("") }}

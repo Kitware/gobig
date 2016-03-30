@@ -1,7 +1,6 @@
 ---
 
-    aws_access_key_id: >
-        {{ ansible_env.AWS_ACCESS_KEY_ID | default("") }}
-    aws_secret_access_key: >
-        {{ ansible_env.AWS_SECRET_ACCESS_KEY | default("") }}
-
+aws_access_key_id: >-
+  {{ ansible_env.AWS_ACCESS_KEY_ID | default("") }}
+aws_secret_access_key: >-
+  {{ ansible_env.AWS_SECRET_ACCESS_KEY | default("") }}
