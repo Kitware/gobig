@@ -1,11 +1,11 @@
+---
 
-  - hosts: all
-    roles:
-      - role: upstart
-        name: dummy-service
-        user: ubuntu
-        group: ubuntu
-        description: Dummy service that does not actually do anything useful
-        command: >
-            python -c "from time import sleep ; while True: sleep(300)"
-
+- hosts: all
+  roles:
+    - role: upstart
+      name: dummy-service
+      user: ubuntu
+      group: ubuntu
+      description: Dummy service that does not actually do anything useful
+      command: >-
+        python -c "from time import sleep ; while True: sleep(300)"

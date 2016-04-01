@@ -1,5 +1,4 @@
 ---
 
-  - include: instantiate.yml
-  - include: ../restart.yml
-
+- include: instantiate.yml
+- include: ../restart.yml

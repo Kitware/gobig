@@ -1,5 +1,4 @@
 ---
 
-    EC2_TIMEOUT: 1800 # 1/2 hour
-    SSH_TIMEOUT:  600 # 10 minutes
-
+EC2_TIMEOUT: 1800 # 1/2 hour
+SSH_TIMEOUT:  600 # 10 minutes

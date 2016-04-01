@@ -1,9 +1,8 @@
 ---
 
-    hadoop_version: 2.7.1
-    hadoop_install_root: ""
-    hadoop_data_root: ""
+hadoop_version: 2.7.1
+hadoop_install_root: ""
+hadoop_data_root: ""
 
-    hadoop_user: hadoop
-    hadoop_group: hadoop
-
+hadoop_user: hadoop
+hadoop_group: hadoop

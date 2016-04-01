@@ -1,7 +1,7 @@
+---
 
-  - hosts: all
-    roles:
-      - role: hosts-file
-        hosts_file_ansible_group: all
-        hosts_file_clear_ansible_group: all
-
+- hosts: all
+  roles:
+    - role: hosts-file
+      hosts_file_ansible_group: all
+      hosts_file_clear_ansible_group: all

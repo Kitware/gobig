@@ -1,68 +1,67 @@
 ---
 
-  - include: assign-groups.yml
+- include: assign-groups.yml
 
-  - hosts: MC
-    roles:
-      - role: mesos-install
-        mesos_master_ansible_group: MM
-        zookeeper_ansible_group: ZK
-        state: absent
+- hosts: MC
+  roles:
+    - role: mesos-install
+      mesos_master_ansible_group: MM
+      zookeeper_ansible_group: ZK
+      state: absent
 
-  - hosts: HC
-    roles:
-      - role: hadoop-hdfs-install
-        hdfs_namenode_ansible_group: HN
-        state: absent
+- hosts: HC
+  roles:
+    - role: hadoop-hdfs-install
+      hdfs_namenode_ansible_group: HN
+      state: absent
 
-  - hosts: NJ
-    roles:
-      - role: nodejs
-        state: absent
+- hosts: NJ
+  roles:
+    - role: nodejs
+      state: absent
 
-  - hosts: UM
-    roles:
-      - role: uvcmetrics
-        state: absent
-        uvcdat_version: 3ff13b4c8834941ce3abf0b823e262a6cdccdae0
+- hosts: UM
+  roles:
+    - role: uvcmetrics
+      state: absent
+      uvcdat_version: 3ff13b4c8834941ce3abf0b823e262a6cdccdae0
 
-  - hosts: ZK
-    roles:
-      - role: zookeeper
-        zookeeper_ansible_group: ZK
-        state: absent
+- hosts: ZK
+  roles:
+    - role: zookeeper
+      zookeeper_ansible_group: ZK
+      state: absent
 
-  - hosts: SP
-    roles:
-      - role: spark
-        hdfs_namenode_ansible_group: HN
-        zookeeper_ansible_group: ZK
-        mesos_master_ansible_group: MM
-        state: absent
+- hosts: SP
+  roles:
+    - role: spark
+      hdfs_namenode_ansible_group: HN
+      zookeeper_ansible_group: ZK
+      mesos_master_ansible_group: MM
+      state: absent
 
-  - hosts: MG
-    roles:
-      - role: mongodb
-        state: absent
+- hosts: MG
+  roles:
+    - role: mongodb
+      state: absent
 
-  - hosts: RQ
-    roles:
-      - role: rabbitmq
-        state: absent
+- hosts: RQ
+  roles:
+    - role: rabbitmq
+      state: absent
 
-  - hosts: RM
-    roles:
-      - role: romanesco
-        rabbitmq_ansible_group: RQ
-        state: absent
+- hosts: RM
+  roles:
+    - role: romanesco
+      rabbitmq_ansible_group: RQ
+      state: absent
 
-  - hosts: GD
-    roles:
-      - role: girder
-        mongodb_ansible_group: MG
-        rabbitmq_ansible_group: RQ
-        hdfs_namenode_ansible_group: HN
-        girder_admin_user: girder
-        girder_admin_password: girder
-        state: absent
-
+- hosts: GD
+  roles:
+    - role: girder
+      mongodb_ansible_group: MG
+      rabbitmq_ansible_group: RQ
+      hdfs_namenode_ansible_group: HN
+      girder_admin_user: girder
+      girder_admin_password: girder
+      state: absent

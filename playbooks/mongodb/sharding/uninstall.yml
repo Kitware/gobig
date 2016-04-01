@@ -1,20 +1,20 @@
+---
 
-  - hosts: all
-    vars:
-        mongodb_set: >
-            {{       groups.get("mongodb-master", [])  |
-               union(groups.get("mongodb-shard" , [])) |
-               union(groups.get("mongodb-config", [])) }}
-    tasks:
-      - group_by: key={{ inventory_hostname in mongodb_set and "MG" or "x" }}
+- hosts: all
+  vars:
+    mongodb_set: >-
+      {{       groups.get("mongodb-master", [])  |
+         union(groups.get("mongodb-shard" , [])) |
+         union(groups.get("mongodb-config", [])) }}
+  tasks:
+    - group_by: key={{ inventory_hostname in mongodb_set and "MG" or "x" }}
 
-  - hosts: mongodb-master
-    roles:
-      - role: mongodb-shard-cluster
-        state: absent
+- hosts: mongodb-master
+  roles:
+    - role: mongodb-shard-cluster
+      state: absent
 
-  - hosts: MG
-    roles:
-      - role: mongodb
-        state: absent
-
+- hosts: MG
+  roles:
+    - role: mongodb
+      state: absent

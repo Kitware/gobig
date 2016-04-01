@@ -1,12 +1,11 @@
 ---
 
-  - name: daemontools | install
-    apt: name=daemontools state=present update_cache=yes
+- name: daemontools | install
+  apt: name=daemontools state=present update_cache=yes
 
-  - name: service | conf | generate
-    template:
-        src: service.conf.j2
-        dest: /etc/init/{{ name|mandatory }}.conf
-        backup: yes
-        mode: 0644
-
+- name: service | conf | generate
+  template:
+    src: service.conf.j2
+    dest: /etc/init/{{ name|mandatory }}.conf
+    backup: yes
+    mode: 0644

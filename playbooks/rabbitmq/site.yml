@@ -1,7 +1,6 @@
 ---
 
-  - hosts: rabbitmq
-    roles:
-      - role: rabbitmq
-        state: started
-
+- hosts: rabbitmq
+  roles:
+    - role: rabbitmq
+      state: started

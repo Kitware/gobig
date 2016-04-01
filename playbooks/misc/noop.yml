@@ -1,6 +1,5 @@
 ---
 
-  - hosts: all
-    roles:
-      - role: noop
-
+- hosts: all
+  roles:
+    - role: noop

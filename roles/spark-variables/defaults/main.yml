@@ -1,34 +1,33 @@
 ---
 
-    spark_version: 1.4.1
-    spark_install_root: ""
+spark_version: 1.4.1
+spark_install_root: ""
 
-    spark_user: spark
-    spark_group: spark
-    spark_crypt_pass: ""
-    spark_net_interface: eth0
+spark_user: spark
+spark_group: spark
+spark_crypt_pass: ""
+spark_net_interface: eth0
 
-    spark_data_root: ""
+spark_data_root: ""
 
-    spark_driver_cores: ""
-    spark_driver_memory: ""
-    spark_executor_memory: ""
-    spark_local_dir: ""
-    spark_log_conf: ""
-    spark_broadcast_compress: ""
-    spark_rdd_compress: ""
+spark_driver_cores: ""
+spark_driver_memory: ""
+spark_executor_memory: ""
+spark_local_dir: ""
+spark_log_conf: ""
+spark_broadcast_compress: ""
+spark_rdd_compress: ""
 
-    spark_webui_port: ""
-    spark_dispatcher_port: 7077
+spark_webui_port: ""
+spark_dispatcher_port: 7077
 
-    spark_mesos_mode: ""
-    spark_cores_max: ""
-    spark_mesos_extra_cores: ""
-    spark_mesos_executor_cores: ""
-    spark_mesos_executor_docker_image: ""
-    spark_mesos_executor_docker_volumes: ""
-    spark_mesos_executor_docker_portmaps: ""
-    spark_mesos_executor_home: ""
+spark_mesos_mode: ""
+spark_cores_max: ""
+spark_mesos_extra_cores: ""
+spark_mesos_executor_cores: ""
+spark_mesos_executor_docker_image: ""
+spark_mesos_executor_docker_volumes: ""
+spark_mesos_executor_docker_portmaps: ""
+spark_mesos_executor_home: ""
 
-    state: started
-
+state: started

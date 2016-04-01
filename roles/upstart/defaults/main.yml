@@ -1,5 +1,4 @@
 ---
 
-    user: root
-    group: root
-
+user: root
+group: root

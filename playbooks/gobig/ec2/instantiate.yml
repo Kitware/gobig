@@ -1,40 +1,39 @@
 ---
 
-  - hosts: localhost
-    connection: local
-    gather_facts: false
-    become: false
-    pre_tasks:
-      - include: pod_config.yml
-    roles:
-      - role: aws-credentials
-        profile: "{{ pod_config.profile }}"
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  pre_tasks:
+    - include: pod_config.yml
+  roles:
+    - role: aws-credentials
+      profile: "{{ pod_config.profile }}"
 
-      - role: ec2-pod2
-        name: "{{ pod_config.name }}"
-        ssh_keys: "{{ pod_config.ssh_keys }}"
-        placement_groups: "{{ pod_config.placement_groups }}"
-        instances: "{{ pod_config.instances }}"
-        security_groups: "{{ pod_config.security_groups }}"
-        templates: "{{ pod_config.templates }}"
-        state: running
+    - role: ec2-pod2
+      name: "{{ pod_config.name }}"
+      ssh_keys: "{{ pod_config.ssh_keys }}"
+      placement_groups: "{{ pod_config.placement_groups }}"
+      instances: "{{ pod_config.instances }}"
+      security_groups: "{{ pod_config.security_groups }}"
+      templates: "{{ pod_config.templates }}"
+      state: running
 
-  - hosts: gobig
-    tasks:
-      - name: filesystems | create
-        filesystem:
-            fstype: ext4
-            dev: /dev/{{ item }}
-        with_items:
-          - xvdb
-          - xvdc
-      - name: filesystems | mount
-        mount:
-            fstype: ext4
-            name: "{{ item.value }}"
-            src: "/dev/{{ item.key }}"
-            state: mounted
-        with_dict:
-            xvdb: /opt
-            xvdc: /data
-
+- hosts: gobig
+  tasks:
+    - name: filesystems | create
+      filesystem:
+        fstype: ext4
+        dev: /dev/{{ item }}
+      with_items:
+        - xvdb
+        - xvdc
+    - name: filesystems | mount
+      mount:
+        fstype: ext4
+        name: "{{ item.value }}"
+        src: "/dev/{{ item.key }}"
+        state: mounted
+      with_dict:
+        xvdb: /opt
+        xvdc: /data

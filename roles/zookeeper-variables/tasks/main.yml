@@ -1,89 +1,87 @@
 ---
 
-  - name: zookeeper | service | logic flags | compute
-    set_fact:
-        remove_data_root: "{{ state == 'absent' }}"
-        remove_install_root: "{{ state == 'absent' }}"
-        stop_services: "{{ state == 'absent' }}"
-        do_install: >
-            {{ state == "present" or state == "stopped" or
-               state == "started" or state == "restarted" or
-               state == "reloaded" }}
-        notify_services: >
-            {{ state == "stopped" or state == "started"
-            or state == "restarted" or state == "reloaded" }}
+- name: zookeeper | service | logic flags | compute
+  set_fact:
+    remove_data_root: "{{ state == 'absent' }}"
+    remove_install_root: "{{ state == 'absent' }}"
+    stop_services: "{{ state == 'absent' }}"
+    do_install: >-
+      {{ state == "present" or state == "stopped" or
+         state == "started" or state == "restarted" or
+         state == "reloaded" }}
+    notify_services: >-
+      {{ state == "stopped" or state == "started" or
+         state == "restarted" or state == "reloaded" }}
 
-  - name: zookeeper | install root | default | set
-    set_fact:
-        zookeeper_install_root: /opt/zookeeper/{{ zookeeper_version }}
-    when: zookeeper_install_root == ""
+- name: zookeeper | install root | default | set
+  set_fact:
+    zookeeper_install_root: /opt/zookeeper/{{ zookeeper_version }}
+  when: zookeeper_install_root == ""
 
-  - name: zookeeper | install root | parent | probe
-    shell: dirname "{{ zookeeper_install_root }}"
-    register: parent_probe
+- name: zookeeper | install root | parent | probe
+  shell: dirname "{{ zookeeper_install_root }}"
+  register: parent_probe
 
-  - name: zookeeper | install root | parent | record
-    set_fact:
-        zookeeper_install_parent: "{{ parent_probe.stdout }}"
+- name: zookeeper | install root | parent | record
+  set_fact:
+    zookeeper_install_parent: "{{ parent_probe.stdout }}"
 
-  - name: zookeeper | data root | default | set
-    set_fact:
-        zookeeper_data_root: /data/zookeeper/{{ zookeeper_version }}
-    when: zookeeper_data_root == ""
+- name: zookeeper | data root | default | set
+  set_fact:
+    zookeeper_data_root: /data/zookeeper/{{ zookeeper_version }}
+  when: zookeeper_data_root == ""
 
-  - name: zookeeper | conf | record
-    set_fact: zookeeper_conf={{ zookeeper_install_root }}/conf
+- name: zookeeper | conf | record
+  set_fact: zookeeper_conf={{ zookeeper_install_root }}/conf
 
-  - name: zookeeper | install root | probe
-    stat:
-        path: "{{ zookeeper_install_root }}"
-    register: install_root_probe
+- name: zookeeper | install root | probe
+  stat:
+    path: "{{ zookeeper_install_root }}"
+  register: install_root_probe
 
-  - name: zookeeper | install root | flag | record
-    set_fact:
-        create_install_root: >
-            {{ (do_install|bool) and
-                (not (install_root_probe.stat.exists|bool)) }}
+- name: zookeeper | install root | flag | record
+  set_fact:
+    create_install_root: >-
+      {{ (do_install|bool) and
+          (not (install_root_probe.stat.exists|bool)) }}
 
-  - name: zookeeper | build | probe
-    stat:
-        path: "{{ zookeeper_install_root }}/build"
-    register: build_probe
+- name: zookeeper | build | probe
+  stat:
+    path: "{{ zookeeper_install_root }}/build"
+  register: build_probe
 
-  - name: zookeeper | build | flag | compute
-    set_fact:
-        do_compile: >
-            {{ (do_install|bool) and
-                (not (build_probe.stat.exists|bool) or (recompile|bool)) }}
+- name: zookeeper | build | flag | compute
+  set_fact:
+    do_compile: >-
+      {{ (do_install|bool) and
+          (not (build_probe.stat.exists|bool) or (recompile|bool)) }}
 
-  - name: zookeeper | local ID | probe
-    shell: >
-        ([ -f "{{ zookeeper_data_root }}/myid" ] &&
-            cat "{{ zookeeper_data_root }}/myid") || true
-    register: local_id_probe
+- name: zookeeper | local ID | probe
+  shell: >-
+    ([ -f "{{ zookeeper_data_root }}/myid" ] &&
+        cat "{{ zookeeper_data_root }}/myid") || true
+  register: local_id_probe
 
-  - name: zookeeper | local ID | compute
-    set_fact:
-        local_zookeeper_id: >
-            {{  (local_id_probe.stdout|int)
-                    if (local_id_probe.stdout != "")
-                    else (( groups[zookeeper_ansible_group]|sort).index(
-                            inventory_hostname) + 1
-                                if inventory_hostname in
-                                    groups[zookeeper_ansible_group]
-                                else 255) }}
+- name: zookeeper | local ID | compute
+  set_fact:
+    local_zookeeper_id: >-
+      {{  (local_id_probe.stdout|int)
+            if (local_id_probe.stdout != "")
+            else (( groups[zookeeper_ansible_group]|sort).index(
+                    inventory_hostname) + 1
+                      if inventory_hostname in
+                        groups[zookeeper_ansible_group]
+                      else 255) }}
 
-  - name: zookeeper | quorum | url | compute
-    set_fact:
-        zookeeper_quorum_url: >
-            {{ groups[zookeeper_ansible_group] |
-                zk_url(hostvars,
-                       zookeeper_net_interface,
-                       zookeeper_client_port) }}
+- name: zookeeper | quorum | url | compute
+  set_fact:
+    zookeeper_quorum_url: >-
+      {{ groups[zookeeper_ansible_group] | zk_url(hostvars,
+                                                  zookeeper_net_interface,
+                                                  zookeeper_client_port) }}
 
-  - name: zookeeper | classpath | set
-    set_fact:
-        zookeeper_classpath: "{{ zookeeper_conf }}:\
-                              {{ zookeeper_install_root }}/dist-maven/*:\
-                              {{ zookeeper_install_root }}/lib/*"
-
+- name: zookeeper | classpath | set
+  set_fact:
+    zookeeper_classpath: "{{ zookeeper_conf }}:\
+                          {{ zookeeper_install_root }}/dist-maven/*:\
+                          {{ zookeeper_install_root }}/lib/*"

@@ -1,8 +1,7 @@
 ---
 
-  - hosts: zookeeper-nodes
-    roles:
-      - role: zookeeper
-        zookeeper_ansible_group: zookeeper-nodes
-        state: started
-
+- hosts: zookeeper-nodes
+  roles:
+    - role: zookeeper
+      zookeeper_ansible_group: zookeeper-nodes
+      state: started

@@ -1,38 +1,37 @@
 ---
 
-  - name: hadoop | service | hdfs | data root | default | set
-    set_fact:
-        hdfs_data_root: "{{ hadoop_data_root }}/hdfs"
-    when: hdfs_data_root == ""
+- name: hadoop | service | hdfs | data root | default | set
+  set_fact:
+    hdfs_data_root: "{{ hadoop_data_root }}/hdfs"
+  when: hdfs_data_root == ""
 
-  - name: hadoop | service | hdfs | format | probe
-    stat:
-        path: "{{ hdfs_data_root }}/namenode/formatted"
-    register: hdfs_format_probe
+- name: hadoop | service | hdfs | format | probe
+  stat:
+    path: "{{ hdfs_data_root }}/namenode/formatted"
+  register: hdfs_format_probe
 
-  - name: hadoop | service | hdfs | name node | mask | set
-    set_fact:
-        is_namenode: >
-            {{ inventory_hostname in groups[hdfs_namenode_ansible_group] }}
+- name: hadoop | service | hdfs | name node | mask | set
+  set_fact:
+    is_namenode: >-
+      {{ inventory_hostname in groups[hdfs_namenode_ansible_group] }}
 
-    # criteria for formatting
-    #
-    # must be a namenode and...
-    # must not be uninstalling and...
-    # must either
-    #   explicitly request a reformatting or...
-    #   be yet to have formatted
-  - name: hadoop | service | hdfs | flag | record
-    set_fact:
-        do_format: >
-            {{ (is_namenode|bool) and
-               (do_install|bool) and (
-                   (format|bool) or
-                   (not (hdfs_format_probe.stat.exists|bool))
-               ) }}
+  # criteria for formatting
+  #
+  # must be a namenode and...
+  # must not be uninstalling and...
+  # must either
+  #   explicitly request a reformatting or...
+  #   be yet to have formatted
+- name: hadoop | service | hdfs | flag | record
+  set_fact:
+    do_format: >-
+      {{ (is_namenode|bool) and
+         (do_install|bool) and (
+             (format|bool) or
+             (not (hdfs_format_probe.stat.exists|bool))
+         ) }}
 
-  - name: hadoop | service | hdfs | logic flags | amend
-    set_fact:
-        remove_data_root: "{{ do_format }}"
-    when: not (remove_data_root|bool)
-
+- name: hadoop | service | hdfs | logic flags | amend
+  set_fact:
+    remove_data_root: "{{ do_format }}"
+  when: not (remove_data_root|bool)

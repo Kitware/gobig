@@ -1,7 +1,6 @@
 ---
 
-  - hosts: mongodb
-    roles:
-      - role: mongodb
-        state: absent
-
+- hosts: mongodb
+  roles:
+    - role: mongodb
+      state: absent
