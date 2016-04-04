@@ -14,7 +14,6 @@ variables, and setting credentials explicitly in a playbook.
 |path           |"$HOME/.aws/credentials"|file path to the aws credentials file |
 |profile        |"default"               |aws credentials profile               |
 |secret_key     |(see notes)             |secret key                            |
-|variable_prefix|""                      |prefix to use for the output variables|
 
 #### Notes
 
@@ -27,11 +26,6 @@ variables, and setting credentials explicitly in a playbook.
     Otherwise, the `AWS_SECRET_ACCESS_KEY` environment variable is used.  If the
     environment variable is not set, `secret_key` is taken from the given
     `profile` in the aws credentials file given by `path`.
-
-  - If defined, an underscore (`_`) is appended to `variable_prefix`.  This role
-    sets the following variables after possibly adding the underscore:
-      - `{{ variable_prefix }}aws_access_key_id`: access key ID
-      - `{{ variable_prefix }}aws_secret_key`: secret key
 
 #### Examples
 
