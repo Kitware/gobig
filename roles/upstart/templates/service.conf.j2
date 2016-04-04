@@ -9,24 +9,11 @@ respawn limit 5 60 #try 5 times within 60 seconds, or giveup
 
 script
     echo $$ > /var/run/{{ name|mandatory }}.pid
-    exec sudo -u {{ user }} {{ command }} \
-        >> /var/log/{{ name|mandatory }}.log 2>&1
+    exec sudo -u {{ user }} {{ command }} 2>&1 \
+        | multilog s102400 -n10 /var/log/{{ name|mandatory }}
 end script
 
 pre-start script
-    mkdir -p /var/log
-    echo "\n[$( date -u +%Y-%m-%dT%T.%3NZ )] (sys) STARTING\n\n" \
-        >> /var/log/{{ name|mandatory }}.log
-end script
-
-pre-stop script
-    rm /var/run/{{ name|mandatory }}.pid
-    echo "\n[$( date -u +%Y-%m-%dT%T.%3NZ )] (sys) STOPPING\n\n" \
-        >> /var/log/{{ name|mandatory }}.log
-end script
-
-post-stop script
-    echo "\n[$( date -u +%Y-%m-%dT%T.%3NZ )] (sys) STOPPED\n" \
-        >> /var/log/{{ name|mandatory }}.log
+    mkdir -p /var/log/{{ name|mandatory }}
 end script
 

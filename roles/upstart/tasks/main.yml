@@ -1,5 +1,8 @@
 ---
 
+  - name: daemontools | install
+    apt: name=daemontools state=present update_cache=yes
+
   - name: service | conf | generate
     template:
         src: service.conf.j2
