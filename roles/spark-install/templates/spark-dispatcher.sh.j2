@@ -5,7 +5,7 @@
 
 "{{ spark_install_root }}/bin/spark-class"                      \
     org.apache.spark.deploy.mesos.MesosClusterDispatcher        \
-    --master "mesos://{{ mesos_zookeeper_url }}"                \
+    --master "{{ mesos_master_url }}"                           \
     --host "$( "{{ spark_install_root }}/bin/discover-ip.sh" )" \
     --port "{{ spark_dispatcher_port }}"
 

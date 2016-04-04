@@ -73,6 +73,14 @@
                                     groups[zookeeper_ansible_group]
                                 else 255) }}
 
+  - name: zookeeper | quorum | url | compute
+    set_fact:
+        zookeeper_quorum_url: >
+            {{ groups[zookeeper_ansible_group] |
+                zk_url(hostvars,
+                       zookeeper_net_interface,
+                       zookeeper_client_port) }}
+
   - name: zookeeper | classpath | set
     set_fact:
         zookeeper_classpath: "{{ zookeeper_conf }}:\

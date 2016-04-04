@@ -14,7 +14,7 @@
     mesos_cluster_name: mesos
     mesos_master_port: 5050
     mesos_slave_port: 5051
-    mesos_quorum: 0
+    mesos_master_quorum_min_size: 0
     mesos_containerizers: mesos
 
     mesos_allocation_interval: 1secs

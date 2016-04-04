@@ -1,5 +1,5 @@
 
-spark.master            mesos://{{ mesos_zookeeper_url }}
+spark.master            {{ mesos_master_url }}
 
 {% if spark_driver_cores != "" %}
 spark.driver.cores {{ spark_driver_cores }}

@@ -42,18 +42,21 @@
             {{ (do_install|bool) and
                 (not (install_root_probe.stat.exists|bool)) }}
 
-  - name: mesos | quorum | url | compute
+  - name: mesos | master | quorum | compute
     set_fact:
-        mesos_zookeeper_url: >
-            {{ groups[zookeeper_ansible_group] |
-                zk_url(hostvars, zookeeper_net_interface, zookeeper_client_port)
-                }}/{{ mesos_cluster_name }}
+        mesos_master_quorum: >
+            {{ zookeeper_quorum_url }}/{{ mesos_cluster_name }}
 
-  - name: mesos | quorum | count | compute
+  - name: mesos | master | url | compute
     set_fact:
-        mesos_quorum: >
+        mesos_master_url: >
+            mesos://{{ mesos_master_quorum }}
+
+  - name: mesos | quorum | minimum size | compute
+    set_fact:
+        mesos_master_quorum_min_size: >
             {{ (groups[zookeeper_ansible_group]|length)//2 + 1 }}
-    when: mesos_quorum == 0
+    when: mesos_master_quorum_min_size == 0
 
   - name: mesos | build | probe
     stat:
