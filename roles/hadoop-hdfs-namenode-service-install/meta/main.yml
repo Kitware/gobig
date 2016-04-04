@@ -8,8 +8,7 @@ dependencies:
     user: "{{ hdfs_user }}"
     group: "{{ hdfs_group }}"
     description: Hadoop Distributed Filesystem Name Node Service
-    command: >
-        "{{ hadoop_install_root }}/bin/hdfs"
-        --config "{{ hadoop_conf }}" namenode
+    command: >-
+      "{{ hadoop_install_root }}/bin/hdfs"
+      --config "{{ hadoop_conf }}" namenode
     when: do_install|bool
-

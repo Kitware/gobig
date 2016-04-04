@@ -1,135 +1,135 @@
 ---
 
-  - name: spark | deps | install
-    apt: name={{ item }} state=present update_cache=yes
-    with_items:
-      - python-setuptools
-      - python-dev
-      - python-boto
-      - openjdk-7-jre-headless
-      - openjdk-7-jdk
-      - openssh-client
-      - openssh-server
-      - rsync
-      - sudo
-      - tar
-      - gzip
-      - wget
-      - curl
-      - unzip
-    when: do_install|bool
+- name: spark | deps | install
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - python-setuptools
+    - python-dev
+    - python-boto
+    - openjdk-7-jre-headless
+    - openjdk-7-jdk
+    - openssh-client
+    - openssh-server
+    - rsync
+    - sudo
+    - tar
+    - gzip
+    - wget
+    - curl
+    - unzip
+  when: do_install|bool
 
-  - name: spark | service | stop
-    service:
-        name: spark
-        state: stopped
-    ignore_errors: true
-    when: stop_spark_services|bool
+- name: spark | service | stop
+  service:
+    name: spark
+    state: stopped
+  ignore_errors: true
+  when: stop_spark_services|bool
 
-  - name: spark | install root | delete
-    file:
-        path: "{{ spark_install_root }}"
-        state: absent
-    when: remove_install_root|bool
+- name: spark | install root | delete
+  file:
+    path: "{{ spark_install_root }}"
+    state: absent
+  when: remove_install_root|bool
 
-  - name: spark | data root | delete
-    file:
-        path: "{{ spark_data_root }}"
-        state: absent
-    when: remove_data_root|bool
+- name: spark | data root | delete
+  file:
+    path: "{{ spark_data_root }}"
+    state: absent
+  when: remove_data_root|bool
 
-  - name: spark | install parent | create
-    file:
-        path: "{{ spark_install_parent }}"
-        state: directory
-    when: do_install|bool
+- name: spark | install parent | create
+  file:
+    path: "{{ spark_install_parent }}"
+    state: directory
+  when: do_install|bool
 
-  - name: spark | data root | create
-    file:
-        path: "{{ spark_data_root }}"
-        state: directory
-        mode: 0755
-    when: do_install|bool
+- name: spark | data root | create
+  file:
+    path: "{{ spark_data_root }}"
+    state: directory
+    mode: 0755
+  when: do_install|bool
 
-  - name: spark | data root | owner | set
-    file:
-        path: "{{ spark_data_root }}"
-        state: directory
-        group: "{{ spark_group }}"
-        owner: "{{ spark_user }}"
-        mode: 0775
-    when: do_install|bool
+- name: spark | data root | owner | set
+  file:
+    path: "{{ spark_data_root }}"
+    state: directory
+    group: "{{ spark_group }}"
+    owner: "{{ spark_user }}"
+    mode: 0775
+  when: do_install|bool
 
-  - name: spark | pkg | download
-    get_url:
-        url: "http://archive.apache.org/dist/spark/\
-              spark-{{ spark_version }}/\
-              spark-{{ spark_version }}-bin-without-hadoop.tgz"
-        dest: "{{ spark_install_parent }}/\
-               spark-{{ spark_version }}-bin-without-hadoop.tgz"
-        force: no
-    when: create_install_root|bool
+- name: spark | pkg | download
+  get_url:
+    url: "http://archive.apache.org/dist/spark/\
+          spark-{{ spark_version }}/\
+          spark-{{ spark_version }}-bin-without-hadoop.tgz"
+    dest: "{{ spark_install_parent }}/\
+           spark-{{ spark_version }}-bin-without-hadoop.tgz"
+    force: no
+  when: create_install_root|bool
 
-  - name: spark | pkg | unpack
-    unarchive:
-        copy: no
-        creates: "{{ spark_install_parent }}/\
-                  spark-{{ spark_version }}-bin-without-hadoop"
-        dest: "{{ spark_install_parent }}"
-        mode: 0755
-        src: "{{ spark_install_parent }}/\
-              spark-{{ spark_version }}-bin-without-hadoop.tgz"
-    when: create_install_root|bool
+- name: spark | pkg | unpack
+  unarchive:
+    copy: no
+    creates: "{{ spark_install_parent }}/\
+              spark-{{ spark_version }}-bin-without-hadoop"
+    dest: "{{ spark_install_parent }}"
+    mode: 0755
+    src: "{{ spark_install_parent }}/\
+          spark-{{ spark_version }}-bin-without-hadoop.tgz"
+  when: create_install_root|bool
 
-  - name: spark | pkg | unpack | rename
-    shell: "mv \"{{ spark_install_parent }}/\
-        spark-{{ spark_version }}-bin-without-hadoop\" \
-        \"{{ spark_install_root }}\""
-    when: create_install_root|bool
-    changed_when: >
-        (spark_install_parent +
-            "/spark-" +
-            spark_version +
-            "-bin-without-hadoop") != spark_install_root
+- name: spark | pkg | unpack | rename
+  shell: "mv \"{{ spark_install_parent }}/\
+    spark-{{ spark_version }}-bin-without-hadoop\" \
+    \"{{ spark_install_root }}\""
+  when: create_install_root|bool
+  changed_when: >-
+    (spark_install_parent +
+      "/spark-" +
+      spark_version +
+      "-bin-without-hadoop") != spark_install_root
 
-  - name: spark | log | perms | set
-    file:
-        path: "{{ spark_install_root }}/logs"
-        mode: 0755
-        state: directory
-    when: do_install|bool
+- name: spark | log | perms | set
+  file:
+    path: "{{ spark_install_root }}/logs"
+    mode: 0755
+    state: directory
+  when: do_install|bool
 
-  - name: spark | conf | owner | set
-    file:
-        recurse: yes
-        path: "{{ spark_install_root }}"
-        group: "{{ spark_group }}"
-        mode: 0775
-        owner: "{{ spark_user }}"
-    when: do_install|bool
+- name: spark | conf | owner | set
+  file:
+    recurse: yes
+    path: "{{ spark_install_root }}"
+    group: "{{ spark_group }}"
+    mode: 0775
+    owner: "{{ spark_user }}"
+  when: do_install|bool
 
-  - name: spark | script | discover-ip | generate
-    template:
-        src: discover-ip.sh.j2
-        dest: "{{ spark_install_root }}/bin/discover-ip.sh"
-        mode: 0755
-    when: do_install|bool
+- name: spark | script | discover-ip | generate
+  template:
+    src: discover-ip.sh.j2
+    dest: "{{ spark_install_root }}/bin/discover-ip.sh"
+    mode: 0755
+  when: do_install|bool
 
-  - name: spark | script | spark-dispatcher | generate
-    template:
-        src: spark-dispatcher.sh.j2
-        dest: "{{ spark_install_root }}/bin/spark-dispatcher.sh"
-        mode: 0755
-    when: do_install|bool
+- name: spark | script | spark-dispatcher | generate
+  template:
+    src: spark-dispatcher.sh.j2
+    dest: "{{ spark_install_root }}/bin/spark-dispatcher.sh"
+    mode: 0755
+  when: do_install|bool
 
-  - name: spark | conf | set
-    template:
-        src: "{{ item.name }}.j2"
-        dest: "{{ spark_conf }}/{{ item.name }}"
-        mode: "{{ item.mode }}"
-    with_items:
-      - name: spark-env.sh
-        mode: "0755"
-      - name: spark-defaults.conf
-        mode: "0644"
-    when: do_install|bool
+- name: spark | conf | set
+  template:
+    src: "{{ item.name }}.j2"
+    dest: "{{ spark_conf }}/{{ item.name }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - name: spark-env.sh
+      mode: "0755"
+    - name: spark-defaults.conf
+      mode: "0644"
+  when: do_install|bool

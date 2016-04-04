@@ -5,4 +5,3 @@ dependencies:
   - role: spark-install
   - role: spark-service-install
   - role: spark-service
-

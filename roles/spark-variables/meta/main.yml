@@ -4,4 +4,3 @@ dependencies:
   - role: hadoop-variables
   - role: zookeeper-variables
   - role: mesos-variables
-

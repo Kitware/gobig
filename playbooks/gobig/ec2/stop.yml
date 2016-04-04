@@ -1,21 +1,20 @@
 ---
 
-  - hosts: localhost
-    connection: local
-    gather_facts: false
-    become: false
-    pre_tasks:
-      - include: pod_config.yml
-    roles:
-      - role: aws-credentials
-        profile: "{{ pod_config.profile }}"
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  pre_tasks:
+    - include: pod_config.yml
+  roles:
+    - role: aws-credentials
+      profile: "{{ pod_config.profile }}"
 
-      - role: ec2-pod2
-        name: "{{ pod_config.name }}"
-        ssh_keys: "{{ pod_config.ssh_keys }}"
-        placement_groups: "{{ pod_config.placement_groups }}"
-        instances: "{{ pod_config.instances }}"
-        security_groups: "{{ pod_config.security_groups }}"
-        templates: "{{ pod_config.templates }}"
-        state: stopped
-
+    - role: ec2-pod2
+      name: "{{ pod_config.name }}"
+      ssh_keys: "{{ pod_config.ssh_keys }}"
+      placement_groups: "{{ pod_config.placement_groups }}"
+      instances: "{{ pod_config.instances }}"
+      security_groups: "{{ pod_config.security_groups }}"
+      templates: "{{ pod_config.templates }}"
+      state: stopped

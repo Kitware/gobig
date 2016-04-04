@@ -7,10 +7,9 @@ dependencies:
     user: "{{ mesos_user }}"
     group: "{{ mesos_group }}"
     description: Mesos Distributed Systems Kernel Slave Service
-    command: >
-        "{{ mesos_install_root }}/build/bin/mesos-slave.sh"
-        "--ip=$( {{ mesos_install_root }}/build/bin/discover-ip.sh )"
-        "--switch_user=false"
-        "--master={{ mesos_master_quorum }}"
+    command: >-
+      "{{ mesos_install_root }}/build/bin/mesos-slave.sh"
+      "--ip=$( {{ mesos_install_root }}/build/bin/discover-ip.sh )"
+      "--switch_user=false"
+      "--master={{ mesos_master_quorum }}"
     when: do_install|bool
-

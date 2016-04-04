@@ -7,4 +7,3 @@ dependencies:
     variable_prefix: romanesco
     state: present
   - role: nodejs-variables
-

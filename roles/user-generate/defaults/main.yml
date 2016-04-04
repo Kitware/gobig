@@ -1,8 +1,7 @@
 ---
 
-    crypt_pass: ""
-    state: present
-    system: false
-    local_ssh_key: ""
-    force: false
-
+crypt_pass: ""
+state: present
+system: false
+local_ssh_key: ""
+force: false

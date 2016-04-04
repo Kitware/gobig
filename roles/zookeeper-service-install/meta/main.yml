@@ -7,11 +7,10 @@ dependencies:
     user: "{{ zookeeper_user }}"
     group: "{{ zookeeper_group }}"
     description: Zookeeper High-Reliability Distributed Coordination Service
-    command: >
-        java -cp "{{ zookeeper_classpath }}"
-        "-Dzookeeper.log.dir={{ zookeeper_install_root }}/logs"
-        "-Dzookeeper.root.logger=INFO,CONSOLE,ROLLINGFILE"
-        org.apache.zookeeper.server.quorum.QuorumPeerMain
-        "{{ zookeeper_conf }}/zoo.cfg"
+    command: >-
+      java -cp "{{ zookeeper_classpath }}"
+      "-Dzookeeper.log.dir={{ zookeeper_install_root }}/logs"
+      "-Dzookeeper.root.logger=INFO,CONSOLE,ROLLINGFILE"
+      org.apache.zookeeper.server.quorum.QuorumPeerMain
+      "{{ zookeeper_conf }}/zoo.cfg"
     when: do_install|bool
-

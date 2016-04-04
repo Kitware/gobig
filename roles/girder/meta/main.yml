@@ -6,4 +6,3 @@ dependencies:
   - role: girder-service-install
   - role: girder-post-install
   - role: girder-service
-

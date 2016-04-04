@@ -1,205 +1,204 @@
 ---
 
-  - name: variables | control | compute
-    set_fact:
-        do_create: >
-            {{ state == "running" or state == "stopped" }}
-        do_destroy: >
-            {{ state == "absent" }}
-        do_wait: >
-            {{ state == "running" }}
+- name: variables | control | compute
+  set_fact:
+    do_create: >-
+      {{ state == "running" or state == "stopped" }}
+    do_destroy: >-
+      {{ state == "absent" }}
+    do_wait: >-
+      {{ state == "running" }}
 
-  - name: variables | control | compute (2)
-    set_fact:
-        do_add: >
-            {{ (do_create|bool) and (options.ansible_groups_amend|bool) }}
+- name: variables | control | compute (2)
+  set_fact:
+    do_add: >-
+      {{ (do_create|bool) and (options.ansible_groups_amend|bool) }}
 
-  - name: pod spec | process
-    ec2_pod_process:
-        instances: "{{ instances }}"
-        name: "{{ name }}"
-        options: "{{ options }}"
-        placement_groups: "{{ placement_groups }}"
-        security_groups: "{{ security_groups }}"
-        ssh_keys: "{{ ssh_keys }}"
-        state: "{{ state }}"
-        region: "{{ region }}"
-        templates: "{{ templates }}"
-    register: pod_spec
+- name: pod spec | process
+  ec2_pod_process:
+    instances: "{{ instances }}"
+    name: "{{ name }}"
+    options: "{{ options }}"
+    placement_groups: "{{ placement_groups }}"
+    security_groups: "{{ security_groups }}"
+    ssh_keys: "{{ ssh_keys }}"
+    state: "{{ state }}"
+    region: "{{ region }}"
+    templates: "{{ templates }}"
+  register: pod_spec
 
-  - name: instances | update lists | compute
-    set_fact:
-        update_lists: >
-            {{ pod_spec.name|compute_ec2_update_lists(pod_spec.instances,
-                                                      pod_spec.state,
-                                                      pod_spec.region,
-                                                      aws_access_key_id,
-                                                      aws_secret_key) }}
+- name: instances | update lists | compute
+  set_fact:
+    update_lists: >-
+      {{ pod_spec.name|compute_ec2_update_lists(pod_spec.instances,
+                                                pod_spec.state,
+                                                pod_spec.region,
+                                                aws_access_key_id,
+                                                aws_secret_key) }}
 
-  - name: instances | ssh keys | create
-    ec2_key:
-        name: "{{ item.key }}"
-        key_material: "{{ lookup('file', item.value) }}"
-        region: "{{ pod_spec.region }}"
-        state: present
-        wait: yes
-        wait_timeout: 300 # five minutes
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-    with_dict: "{{ pod_spec.ssh_keys }}"
-    when: do_create|bool
+- name: instances | ssh keys | create
+  ec2_key:
+    name: "{{ item.key }}"
+    key_material: "{{ lookup('file', item.value) }}"
+    region: "{{ pod_spec.region }}"
+    state: present
+    wait: yes
+    wait_timeout: 300 # five minutes
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  with_dict: "{{ pod_spec.ssh_keys }}"
+  when: do_create|bool
 
-  - name: instances | terminate set | compute
-    set_fact:
-        terminate_set: >
-            {{ (update_lists.terminate
-                if (update_lists.terminate|length > 0)
-                else [])|union(update_lists.start
-                               if ((do_destroy|bool) and
-                                   (update_lists.start|length) > 0)
-                               else []) }}
+- name: instances | terminate set | compute
+  set_fact:
+    terminate_set: >-
+      {{ (update_lists.terminate
+          if (update_lists.terminate|length > 0)
+          else [])|union(update_lists.start
+                         if ((do_destroy|bool) and
+                             (update_lists.start|length) > 0)
+                         else []) }}
 
-  - name: security groups | create
-    ec2_group:
-        name: "{{ item.key }}"
-        description: "{{ item.value.description }}"
-        region: "{{ pod_spec.region }}"
-        rules: "{{ item.value.rules }}"
-        rules_egress: "{{ item.value.rules_egress }}"
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-    when: do_create|bool
-    with_dict: "{{ pod_spec.security_groups }}"
+- name: security groups | create
+  ec2_group:
+    name: "{{ item.key }}"
+    description: "{{ item.value.description }}"
+    region: "{{ pod_spec.region }}"
+    rules: "{{ item.value.rules }}"
+    rules_egress: "{{ item.value.rules_egress }}"
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  when: do_create|bool
+  with_dict: "{{ pod_spec.security_groups }}"
 
-  - name: instances | terminate set | terminate
-    ec2:
-        instance_ids: "{{ terminate_set }}"
-        region: "{{ region }}"
-        state: absent
-        wait: yes
-        wait_timeout: 300 # five minutes
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-    ignore_errors: true
-    when: (terminate_set|length > 0)|bool
+- name: instances | terminate set | terminate
+  ec2:
+    instance_ids: "{{ terminate_set }}"
+    region: "{{ region }}"
+    state: absent
+    wait: yes
+    wait_timeout: 300 # five minutes
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  ignore_errors: true
+  when: (terminate_set|length > 0)|bool
 
-  - name: instances | start set | start
-    ec2:
-        instance_ids: "{{ update_lists.start }}"
-        region: "{{ region }}"
-        state: running
-        wait: yes
-        wait_timeout: "{{ EC2_TIMEOUT }}"
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-    when: ((do_create|bool) and (update_lists.start|length) > 0)|bool
+- name: instances | start set | start
+  ec2:
+    instance_ids: "{{ update_lists.start }}"
+    region: "{{ region }}"
+    state: running
+    wait: yes
+    wait_timeout: "{{ EC2_TIMEOUT }}"
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  when: ((do_create|bool) and (update_lists.start|length) > 0)|bool
 
-  - name: instances | create
-    ec2:
-        count_tag: "{{ item.value.count_tag }}"
-        exact_count: "{{ item.value.count }}"
-        group: "{{ item.value.group }}"
-        image: "{{ item.value.image }}"
-        instance_tags: "{{ item.value.count_tag }}"
-        instance_type: "{{ item.value.type }}"
-        key_name: "{{ item.value.ssh_key }}"
-        region: "{{ pod_spec.region }}"
-        volumes: "{{ item.value.volumes }}"
-        wait: yes
-        wait_timeout: "{{ EC2_TIMEOUT }}"
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-    with_dict: "{{ pod_spec.instances }}"
-    when: do_create|bool
-    register: ec2_result
+- name: instances | create
+  ec2:
+    count_tag: "{{ item.value.count_tag }}"
+    exact_count: "{{ item.value.count }}"
+    group: "{{ item.value.group }}"
+    image: "{{ item.value.image }}"
+    instance_tags: "{{ item.value.count_tag }}"
+    instance_type: "{{ item.value.type }}"
+    key_name: "{{ item.value.ssh_key }}"
+    region: "{{ pod_spec.region }}"
+    volumes: "{{ item.value.volumes }}"
+    wait: yes
+    wait_timeout: "{{ EC2_TIMEOUT }}"
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  with_dict: "{{ pod_spec.instances }}"
+  when: do_create|bool
+  register: ec2_result
 
-  - name: instances | ein mapping | compute
-    set_fact:
-        ein_mapping: >
-            {{ ec2_result|compute_ec2_ein_mapping(pod_spec.region,
-                                                  aws_access_key_id,
-                                                  aws_secret_key) }}
-    when: do_create|bool
+- name: instances | ein mapping | compute
+  set_fact:
+    ein_mapping: >-
+      {{ ec2_result|compute_ec2_ein_mapping(pod_spec.region,
+                                            aws_access_key_id,
+                                            aws_secret_key) }}
+  when: do_create|bool
 
 # TODO(opadron): uncomment this section once we move to Ansible 2.0
 # See filter_plugins/ec2.py for other sections in need of updating.
 
 #  - name: instances | security groups | assign
 #    ec2_eni:
-#        eni_id: "{{ item.key }}"
-#        state: present
-#        security_groups: "{{ item.value }}"
-#        region: "{{ pod_spec.region }}"
-#        aws_access_key: "{{ aws_access_key_id }}"
-#        aws_secret_key: "{{ aws_secret_key }}"
+#      eni_id: "{{ item.key }}"
+#      state: present
+#      security_groups: "{{ item.value }}"
+#      region: "{{ pod_spec.region }}"
+#      aws_access_key: "{{ aws_access_key_id }}"
+#      aws_secret_key: "{{ aws_secret_key }}"
 #    with_dict: "{{ ein_mapping }}"
 #    when: do_create|bool
 
-  - name: instances | collection | flatten
-    set_fact:
-        flattened_instances: >
-            {{ (ec2_result|flatten_ec2_result) if (do_create|bool) else [] }}
+- name: instances | collection | flatten
+  set_fact:
+    flattened_instances: >-
+      {{ (ec2_result|flatten_ec2_result) if (do_create|bool) else [] }}
 
-  - name: instances | state | set
-    ec2:
-        instance_ids: "{{ flattened_instances|get_ec2_hosts }}"
-        region: "{{ region }}"
-        state: "{{ state }}"
-        wait: yes
-        wait_timeout: "{{ EC2_TIMEOUT }}"
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-    when: do_create|bool
+- name: instances | state | set
+  ec2:
+    instance_ids: "{{ flattened_instances|get_ec2_hosts }}"
+    region: "{{ region }}"
+    state: "{{ state }}"
+    wait: yes
+    wait_timeout: "{{ EC2_TIMEOUT }}"
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  when: do_create|bool
 
-  - name: instances | ansible groups | add
-    add_host:
-        hostname: "{{ item[options.ansible_groups_amend_mode] }}"
-        groups: "{{ item.groups | join(',') }}"
-    with_items: "{{ flattened_instances }}"
-    when: do_add|bool
+- name: instances | ansible groups | add
+  add_host:
+    hostname: "{{ item[options.ansible_groups_amend_mode] }}"
+    groups: "{{ item.groups | join(',') }}"
+  with_items: "{{ flattened_instances }}"
+  when: do_add|bool
 
-  - name: instances | ssh | wait
-    wait_for:
-        host: "{{ item }}"
-        port: 22
-        timeout: "{{ SSH_TIMEOUT }}"
-        state: started
-    with_items: >
-        {{ flattened_instances|get_ec2_wait_list(
-            options.ansible_groups_amend_mode) }}
-    when: do_wait|bool
+- name: instances | ssh | wait
+  wait_for:
+    host: "{{ item }}"
+    port: 22
+    timeout: "{{ SSH_TIMEOUT }}"
+    state: started
+  with_items: >-
+    {{ flattened_instances|get_ec2_wait_list(
+        options.ansible_groups_amend_mode) }}
+  when: do_wait|bool
 
-  - name: instances | elastic ips | associate
-    ec2_eip:
-        public_ip: "{{ item[0] }}"
-        instance_id: "{{ item[1] }}"
-        region: "{{ pod_spec.region }}"
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        state: present
-    with_items: "{{ flattened_instances|get_ec2_eips }}"
-    when: do_create|bool
+- name: instances | elastic ips | associate
+  ec2_eip:
+    public_ip: "{{ item[0] }}"
+    instance_id: "{{ item[1] }}"
+    region: "{{ pod_spec.region }}"
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: present
+  with_items: "{{ flattened_instances|get_ec2_eips }}"
+  when: do_create|bool
 
-  - name: security groups | destroy
-    ec2_group:
-        name: "{{ item.key }}"
-        description: "{{ item.value.description }}"
-        region: "{{ pod_spec.region }}"
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        state: absent
-    when: do_destroy|bool
-    with_dict: "{{ pod_spec.security_groups }}"
+- name: security groups | destroy
+  ec2_group:
+    name: "{{ item.key }}"
+    description: "{{ item.value.description }}"
+    region: "{{ pod_spec.region }}"
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    state: absent
+  when: do_destroy|bool
+  with_dict: "{{ pod_spec.security_groups }}"
 
-  - name: instances | ssh keys | destroy
-    ec2_key:
-        name: "{{ item.key }}"
-        region: "{{ pod_spec.region }}"
-        state: absent
-        wait: yes
-        wait_timeout: 300 # five minutes
-        aws_access_key: "{{ aws_access_key_id }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-    with_dict: "{{ pod_spec.ssh_keys }}"
-    when: do_destroy|bool
-
+- name: instances | ssh keys | destroy
+  ec2_key:
+    name: "{{ item.key }}"
+    region: "{{ pod_spec.region }}"
+    state: absent
+    wait: yes
+    wait_timeout: 300 # five minutes
+    aws_access_key: "{{ aws_access_key_id }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+  with_dict: "{{ pod_spec.ssh_keys }}"
+  when: do_destroy|bool

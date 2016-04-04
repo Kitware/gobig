@@ -7,7 +7,6 @@ dependencies:
     user: "{{ girder_user }}"
     group: "{{ girder_group }}"
     description: Girder Data Management Platform -- Web Service
-    command: >
-        bash -c "cd {{ girder_install_root }} && python -m girder"
+    command: >-
+      bash -c "cd {{ girder_install_root }} && python -m girder"
     when: do_install|bool
-

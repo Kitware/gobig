@@ -1,71 +1,68 @@
 ---
 
-  - name: set ec2 pod specification
-    set_fact:
-        pod_config:
-            name: gobig
-            profile: gobig
-            ssh_keys: { main: "~/.ssh/gobig.pub" }
-            placement_groups: { main: {} }
-            instances:
-                worker:
-                    extends: common
-                    extra_ansible_groups: ["namenodes", "rabbitmq", "romanesco"]
+- name: set ec2 pod specification
+  set_fact:
+    pod_config:
+      name: gobig
+      profile: gobig
+      ssh_keys: { main: "~/.ssh/gobig.pub" }
+      placement_groups: { main: {} }
 
-                db:
-                    extends: common
-                    extra_ansible_groups: ["mongodb"]
+      instances:
+        worker:
+          extends: common
+          extra_ansible_groups: ["namenodes", "rabbitmq", "romanesco"]
+        db:
+          extends: common
+          extra_ansible_groups: ["mongodb"]
+        web:
+          extends: common
+          security_groups: ["external"]
+          extra_ansible_groups: ["girder"]
 
-                web:
-                    extends: common
-                    security_groups: ["external"]
-                    extra_ansible_groups: ["girder"]
-            security_groups:
-                external:
-                  - { extends: "public", proto: "icmp" } # ping
-                  - { extends: "public", port: [
-                                22, # ssh
-                              9080  # girder http
-                    ] }
+      security_groups:
+        external:
+          - { extends: "public", proto: "icmp" } # ping
+          - { extends: "public", port: [
+                        22, # ssh
+                      9080  # girder http
+            ] }
+        internal:
+          - { extends: "public", port: 22 } # public ssh
+          - { extends: "private", proto: "icmp" } # ping
+          - { extends: "private", port: [
+              27017, 28017, # mongodb
+                      8020, # hdfs namenode
+                      3888, # hdfs datanode
+                     50010, # hdfs namenode webui
+                     50020, # hdfs datanode webui
+                     50080, # web hdfs
+                      2181, # zookeeper
+                      5050, # mesos master
+                      5051, # mesos slave
+                      7077, # spark dispatcher
+                     50081, # ???
+                      8081  # ???
+            ] }
 
-                internal:
-                  - { extends: "public", port: 22 } # public ssh
-                  - { extends: "private", proto: "icmp" } # ping
-                  - { extends: "private", port: [
-                      27017, 28017, # mongodb
-                              8020, # hdfs namenode
-                              3888, # hdfs datanode
-                             50010, # hdfs namenode webui
-                             50020, # hdfs datanode webui
-                             50080, # web hdfs
-                              2181, # zookeeper
-                              5050, # mesos master
-                              5051, # mesos slave
-                              7077, # spark dispatcher
-                             50081, # ???
-                              8081  # ???
-                    ] }
-
-            templates:
-                instances:
-                    common:
-                        ssh_key: main
-                        type: m4.xlarge
-                        image: ami-fce3c696
-                        volumes: [50, 50]
-                        placement_group: main
-                        security_groups: ["internal"]
-                        ansible_groups:
-                          - gobig
-                          - datanodes
-                          - zookeepers
-                          - masters
-                          - slaves
-                          - spark
-                          - uvcmetrics
-                rules:
-                    public:  { flow: "sym", proto: "tcp", cidr_ip: "0.0.0.0/0" }
-                    private: { flow: "sym", proto: "tcp", groups: ["internal",
-                                                                   "external"] }
-
-
+        templates:
+          instances:
+            common:
+              ssh_key: main
+              type: m4.xlarge
+              image: ami-fce3c696
+              volumes: [50, 50]
+              placement_group: main
+              security_groups: ["internal"]
+              ansible_groups:
+                - gobig
+                - datanodes
+                - zookeepers
+                - masters
+                - slaves
+                - spark
+                - uvcmetrics
+          rules:
+            public:  { flow: "sym", proto: "tcp", cidr_ip: "0.0.0.0/0" }
+            private: { flow: "sym", proto: "tcp", groups: ["internal",
+                                                           "external"] }

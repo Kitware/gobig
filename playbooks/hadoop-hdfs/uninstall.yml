@@ -1,14 +1,13 @@
 ---
 
-  - hosts: namenodes
-    roles:
-      - role: hadoop-hdfs-namenode
-        hdfs_namenode_ansible_group: namenodes
-        state: absent
+- hosts: namenodes
+  roles:
+    - role: hadoop-hdfs-namenode
+      hdfs_namenode_ansible_group: namenodes
+      state: absent
 
-  - hosts: datanodes
-    roles:
-      - role: hadoop-hdfs-datanode
-        hdfs_namenode_ansible_group: namenodes
-        state: absent
-
+- hosts: datanodes
+  roles:
+    - role: hadoop-hdfs-datanode
+      hdfs_namenode_ansible_group: namenodes
+      state: absent

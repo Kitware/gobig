@@ -1,6 +1,6 @@
 ---
 
-  - hosts: uvcmetrics
-    roles:
-      - role: uvcmetrics
-        state: present
+- hosts: uvcmetrics
+  roles:
+    - role: uvcmetrics
+      state: present

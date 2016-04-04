@@ -1,5 +1,4 @@
 ---
 
-  - include: instantiate.yml
-  - include: ../uninstall.yml
-
+- include: instantiate.yml
+- include: ../uninstall.yml

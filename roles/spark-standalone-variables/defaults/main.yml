@@ -1,27 +1,27 @@
 ---
 
-    spark_version: 1.5.1
-    spark_install_root: ""
+spark_version: 1.5.1
+spark_install_root: ""
 
-    spark_user: spark
-    spark_group: spark
-    spark_crypt_pass: ""
-    spark_net_interface: eth0
+spark_user: spark
+spark_group: spark
+spark_crypt_pass: ""
+spark_net_interface: eth0
 
-    spark_data_root: ""
+spark_data_root: ""
 
-    spark_driver_cores: ""
-    spark_driver_memory: ""
-    spark_executor_memory: ""
-    spark_local_dir: ""
-    spark_log_conf: ""
-    spark_broadcast_compress: ""
-    spark_rdd_compress: ""
+spark_driver_cores: ""
+spark_driver_memory: ""
+spark_executor_memory: ""
+spark_local_dir: ""
+spark_log_conf: ""
+spark_broadcast_compress: ""
+spark_rdd_compress: ""
 
-    spark_webui_port: ""
-    spark_master_port: 7077
-    spark_cores_max: ""
+spark_webui_port: ""
+spark_master_port: 7077
+spark_cores_max: ""
 
-    state: started
+state: started
 
-    hadoop_profile: "without-hadoop"
+hadoop_profile: "without-hadoop"

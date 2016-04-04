@@ -1,8 +1,7 @@
 ---
 
-  - name: mongodb | service
-    service:
-        name: "{{ mongodb_service }}"
-        state: "{{ state }}"
-    when: notify_services|bool
-
+- name: mongodb | service
+  service:
+    name: "{{ mongodb_service }}"
+    state: "{{ state }}"
+  when: notify_services|bool

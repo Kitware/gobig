@@ -1,206 +1,204 @@
 ---
 
-  - name: mesos | deps | install
-    apt: name={{ item }} state=present update_cache=yes
-    with_items:
-      - adduser
-      - apt-utils
-      - build-essential
-      - python-setuptools
-      - python-dev
-      - python-boto
-      - libcurl4-nss-dev
-      - libsasl2-dev
-      - maven
-      - libapr1-dev
-      - libsvn-dev
-      - openjdk-7-jre-headless
-      - openjdk-7-jdk
-      - openssh-client
-      - openssh-server
-      - rsync
-      - sudo
-      - tar
-      - gzip
-      - wget
-      - curl
-      - unzip
-    when: do_install|bool
+- name: mesos | deps | install
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - adduser
+    - apt-utils
+    - build-essential
+    - python-setuptools
+    - python-dev
+    - python-boto
+    - libcurl4-nss-dev
+    - libsasl2-dev
+    - maven
+    - libapr1-dev
+    - libsvn-dev
+    - openjdk-7-jre-headless
+    - openjdk-7-jdk
+    - openssh-client
+    - openssh-server
+    - rsync
+    - sudo
+    - tar
+    - gzip
+    - wget
+    - curl
+    - unzip
+  when: do_install|bool
 
-  - name: mesos | service | slave | stop
-    service:
-        name: mesos-slave
-        state: stopped
-    ignore_errors: true
-    when: stop_services|bool
+- name: mesos | service | slave | stop
+  service:
+    name: mesos-slave
+    state: stopped
+  ignore_errors: true
+  when: stop_services|bool
 
-  - name: mesos | service | master | stop
-    service:
-        name: mesos-master
-        state: stopped
-    ignore_errors: true
-    when: stop_services|bool
+- name: mesos | service | master | stop
+  service:
+    name: mesos-master
+    state: stopped
+  ignore_errors: true
+  when: stop_services|bool
 
-  - name: mesos | install root | delete
-    file:
-        path: "{{ mesos_install_root }}"
-        state: absent
-    when: remove_install_root|bool
+- name: mesos | install root | delete
+  file:
+    path: "{{ mesos_install_root }}"
+    state: absent
+  when: remove_install_root|bool
 
-  - name: mesos | data root | delete
-    file:
-        path: "{{ mesos_data_root }}"
-        state: absent
-    when: remove_data_root|bool
-    with_items:
-      - master
-      - slave
+- name: mesos | data root | delete
+  file:
+    path: "{{ mesos_data_root }}"
+    state: absent
+  when: remove_data_root|bool
+  with_items:
+    - master
+    - slave
 
-  - name: mesos | install parent | create
-    file:
-        path: "{{ mesos_install_parent }}"
-        state: directory
-    when: do_install|bool
+- name: mesos | install parent | create
+  file:
+    path: "{{ mesos_install_parent }}"
+    state: directory
+  when: do_install|bool
 
-  - name: mesos | data root | create
-    file:
-        path: "{{ mesos_data_root }}"
-        state: directory
-        mode: 0755
-    when: do_install|bool
+- name: mesos | data root | create
+  file:
+    path: "{{ mesos_data_root }}"
+    state: directory
+    mode: 0755
+  when: do_install|bool
 
-  - name: mesos | data root | owner | set
-    file:
-        path: "{{ mesos_data_root }}"
-        state: directory
-        group: "{{ mesos_group }}"
-        owner: "{{ mesos_user }}"
-        mode: 0775
-    when: do_install|bool
+- name: mesos | data root | owner | set
+  file:
+    path: "{{ mesos_data_root }}"
+    state: directory
+    group: "{{ mesos_group }}"
+    owner: "{{ mesos_user }}"
+    mode: 0775
+  when: do_install|bool
 
-  - name: mesos | data root | subdirs | create
-    file:
-        path: "{{ mesos_data_root }}/{{ item }}"
-        state: directory
-        mode: 0755
-    when: do_install|bool
-    with_items:
-      - master
-      - slave
+- name: mesos | data root | subdirs | create
+  file:
+    path: "{{ mesos_data_root }}/{{ item }}"
+    state: directory
+    mode: 0755
+  when: do_install|bool
+  with_items:
+    - master
+    - slave
 
-  - name: mesos | data root | subdirs | owner | set
-    file:
-        path: "{{ mesos_data_root }}/{{ item }}"
-        state: directory
-        group: "{{ mesos_group }}"
-        owner: "{{ mesos_user }}"
-        mode: 0775
-    when: do_install|bool
-    with_items:
-      - master
-      - slave
+- name: mesos | data root | subdirs | owner | set
+  file:
+    path: "{{ mesos_data_root }}/{{ item }}"
+    state: directory
+    group: "{{ mesos_group }}"
+    owner: "{{ mesos_user }}"
+    mode: 0775
+  when: do_install|bool
+  with_items:
+    - master
+    - slave
 
-  - name: mesos | pkg | download
-    get_url:
-        url: "http://archive.apache.org/dist/mesos/\
-              {{ mesos_version }}/\
-              mesos-{{ mesos_version }}.tar.gz"
-        dest: "{{ mesos_install_parent }}/\
-               mesos-{{ mesos_version }}.tar.gz"
-        force: no
-    when: create_install_root|bool
+- name: mesos | pkg | download
+  get_url:
+    url: "http://archive.apache.org/dist/mesos/\
+          {{ mesos_version }}/\
+          mesos-{{ mesos_version }}.tar.gz"
+    dest: "{{ mesos_install_parent }}/\
+           mesos-{{ mesos_version }}.tar.gz"
+    force: no
+  when: create_install_root|bool
 
-  - name: mesos | pkg | unpack
-    unarchive:
-        copy: no
-        creates: "{{ mesos_install_parent }}/\
-                  mesos-{{ mesos_version }}"
-        dest: "{{ mesos_install_parent }}"
-        mode: 0755
-        src: "{{ mesos_install_parent }}/\
-              mesos-{{ mesos_version }}.tar.gz"
-    when: create_install_root|bool
+- name: mesos | pkg | unpack
+  unarchive:
+    copy: no
+    creates: "{{ mesos_install_parent }}/\
+              mesos-{{ mesos_version }}"
+    dest: "{{ mesos_install_parent }}"
+    mode: 0755
+    src: "{{ mesos_install_parent }}/\
+          mesos-{{ mesos_version }}.tar.gz"
+  when: create_install_root|bool
 
-  - name: mesos | pkg | unpack | rename
-    shell: >
-        mv
-        "{{ mesos_install_parent }}/mesos-{{ mesos_version }}"
-        "{{ mesos_install_root }}"
-    when: create_install_root|bool
-    changed_when: >
-        (mesos_install_parent + "/mesos-" + mesos_version) !=
-        mesos_install_root
+- name: mesos | pkg | unpack | rename
+  shell: >-
+    mv
+    "{{ mesos_install_parent }}/mesos-{{ mesos_version }}"
+    "{{ mesos_install_root }}"
+  when: create_install_root|bool
+  changed_when: >-
+    (mesos_install_parent + "/mesos-" + mesos_version) != mesos_install_root
 
-  - name: mesos | build | dir | create
-    file:
-        path: "{{ mesos_install_root }}/build"
-        mode: 0755
-        state: directory
-    when: do_compile|bool
+- name: mesos | build | dir | create
+  file:
+    path: "{{ mesos_install_root }}/build"
+    mode: 0755
+    state: directory
+  when: do_compile|bool
 
-  - name: mesos | build | configure
-    shell: >
-        JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
-        ../configure "--with-zookeeper={{ zookeeper_install_root }}"
-    args:
-        chdir: "{{ mesos_install_root }}/build"
-    when: do_compile|bool
+- name: mesos | build | configure
+  shell: >-
+    JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+    ../configure "--with-zookeeper={{ zookeeper_install_root }}"
+  args:
+    chdir: "{{ mesos_install_root }}/build"
+  when: do_compile|bool
 
-  - name: mesos | build | compile
-    shell: >
-        make -j $(  cat /proc/cpuinfo |
-                    egrep 'processor\s*:\s[0-9]+$' |
-                    sort -u |
-                    wc -l ) V=0
-    args:
-        chdir: "{{ mesos_install_root }}/build"
-    when: do_compile|bool
+- name: mesos | build | compile
+  shell: >-
+    make -j $(  cat /proc/cpuinfo |
+                egrep 'processor\s*:\s[0-9]+$' |
+                sort -u |
+                wc -l ) V=0
+  args:
+    chdir: "{{ mesos_install_root }}/build"
+  when: do_compile|bool
 
-  - name: mesos | log | perms | set
-    file:
-        path: "{{ mesos_install_root }}/logs"
-        mode: 0755
-        state: directory
-    when: do_install|bool
+- name: mesos | log | perms | set
+  file:
+    path: "{{ mesos_install_root }}/logs"
+    mode: 0755
+    state: directory
+  when: do_install|bool
 
-  - name: mesos | conf | owner | set
-    file:
-        recurse: yes
-        path: "{{ mesos_install_root }}"
-        group: "{{ mesos_group }}"
-        mode: 0775
-        owner: "{{ mesos_user }}"
-    when: do_install|bool
+- name: mesos | conf | owner | set
+  file:
+    recurse: yes
+    path: "{{ mesos_install_root }}"
+    group: "{{ mesos_group }}"
+    mode: 0775
+    owner: "{{ mesos_user }}"
+  when: do_install|bool
 
-  - name: mesos | script | discover-ip | generate
-    template:
-        src: discover-ip.sh.j2
-        dest: "{{ mesos_install_root }}/build/bin/discover-ip.sh"
-        mode: 0755
-    when: do_install|bool
+- name: mesos | script | discover-ip | generate
+  template:
+    src: discover-ip.sh.j2
+    dest: "{{ mesos_install_root }}/build/bin/discover-ip.sh"
+    mode: 0755
+  when: do_install|bool
 
-  - name: mesos | conf | set
-    template:
-        src: "mesos-{{ item }}-site-flags.sh.j2"
-        dest: >
-            {{ mesos_install_root }}/build/bin/mesos-{{ item }}-site-flags.sh
-    with_items:
-      - master
-      - slave
-    when: do_install|bool
+- name: mesos | conf | set
+  template:
+    src: "mesos-{{ item }}-site-flags.sh.j2"
+    dest: >-
+        {{ mesos_install_root }}/build/bin/mesos-{{ item }}-site-flags.sh
+  with_items:
+    - master
+    - slave
+  when: do_install|bool
 
-  - name: mesos | conf | hooks | add
-    lineinfile:
-        dest: "{{ mesos_install_root }}/build/bin/mesos-{{ item }}-flags.sh"
-        regexp: >
-            ^source
-            "{{ mesos_install_root }}/build/bin/mesos-{{ item }}-site-flags.sh"
-        line: >
-            source
-            "{{ mesos_install_root }}/build/bin/mesos-{{ item }}-site-flags.sh"
-        state: present
-    with_items:
-      - master
-      - slave
-    when: do_install|bool
-
+- name: mesos | conf | hooks | add
+  lineinfile:
+    dest: "{{ mesos_install_root }}/build/bin/mesos-{{ item }}-flags.sh"
+    regexp: >-
+      ^source
+      "{{ mesos_install_root }}/build/bin/mesos-{{ item }}-site-flags.sh"
+    line: >-
+      source
+      "{{ mesos_install_root }}/build/bin/mesos-{{ item }}-site-flags.sh"
+    state: present
+  with_items:
+    - master
+    - slave
+  when: do_install|bool

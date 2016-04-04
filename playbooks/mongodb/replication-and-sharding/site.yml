@@ -1,71 +1,70 @@
 ---
 
-  # configuration replica set
-  - hosts: mongodb-config
-    roles:
-      - role: mongodb
-        mongodb_replica_set: rsConfig
-        mongodb_mode: cluster-config
-        state: started
+# configuration replica set
+- hosts: mongodb-config
+  roles:
+    - role: mongodb
+      mongodb_replica_set: rsConfig
+      mongodb_mode: cluster-config
+      state: started
 
-      - role: mongodb-replica-set
-        mongodb_replica_set: rsConfig
-
-
-  # three shards, each a replica set
-  - hosts: mongodb-shard-alpha
-    roles:
-      - role: mongodb
-        mongodb_replica_set: rsAlpha
-        mongodb_mode: shard
-        state: started
-
-      - role: mongodb-replica-set
-        mongodb_replica_set: rsAlpha
-
-  - hosts: mongodb-shard-bravo
-    roles:
-      - role: mongodb
-        mongodb_replica_set: rsBravo
-        mongodb_mode: shard
-        state: started
-
-      - role: mongodb-replica-set
-        mongodb_replica_set: rsBravo
+    - role: mongodb-replica-set
+      mongodb_replica_set: rsConfig
 
 
-  - hosts: mongodb-shard-charlie
-    roles:
-      - role: mongodb
-        mongodb_replica_set: rsCharlie
-        mongodb_mode: shard
-        state: started
+# three shards, each a replica set
+- hosts: mongodb-shard-alpha
+  roles:
+    - role: mongodb
+      mongodb_replica_set: rsAlpha
+      mongodb_mode: shard
+      state: started
 
-      - role: mongodb-replica-set
-        mongodb_replica_set: rsCharlie
+    - role: mongodb-replica-set
+      mongodb_replica_set: rsAlpha
+
+- hosts: mongodb-shard-bravo
+  roles:
+    - role: mongodb
+      mongodb_replica_set: rsBravo
+      mongodb_mode: shard
+      state: started
+
+    - role: mongodb-replica-set
+      mongodb_replica_set: rsBravo
 
 
-  # master router server
-  #
-  # Note the use of mappings for each of the shard and config entries
-  - hosts: mongodb-master
-    roles:
-      - role: mongodb
-        mongodb_mode: router
-        mongodb_sharding_config:
-            rs: rsConfig
-            group: mongodb-config
-        state: restarted
+- hosts: mongodb-shard-charlie
+  roles:
+    - role: mongodb
+      mongodb_replica_set: rsCharlie
+      mongodb_mode: shard
+      state: started
 
-  - hosts: mongodb-master
-    roles:
-      - role: mongodb-shard-cluster
-        shards:
-          - rs: rsAlpha
-            group: mongodb-shard-alpha
-          - rs: rsBravo
-            group: mongodb-shard-bravo
-          - rs: rsCharlie
-            group: mongodb-shard-charlie
-        state: present
+    - role: mongodb-replica-set
+      mongodb_replica_set: rsCharlie
 
+
+# master router server
+#
+# Note the use of mappings for each of the shard and config entries
+- hosts: mongodb-master
+  roles:
+    - role: mongodb
+      mongodb_mode: router
+      mongodb_sharding_config:
+        rs: rsConfig
+        group: mongodb-config
+      state: restarted
+
+- hosts: mongodb-master
+  roles:
+    - role: mongodb-shard-cluster
+      shards:
+        - rs: rsAlpha
+          group: mongodb-shard-alpha
+        - rs: rsBravo
+          group: mongodb-shard-bravo
+        - rs: rsCharlie
+          group: mongodb-shard-charlie
+      state: present

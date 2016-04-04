@@ -1,32 +1,32 @@
 ---
 
-    mongodb_crypt_pass: ""
+mongodb_crypt_pass: ""
 
-    mongodb_index_build_retry: true
-    mongodb_ipv6: false
-    mongodb_journal_commit_interval: 100
-    mongodb_journal_enabled: true
-    mongodb_max_connections: 65536
-    mongodb_net_interface: eth0
+mongodb_index_build_retry: true
+mongodb_ipv6: false
+mongodb_journal_commit_interval: 100
+mongodb_journal_enabled: true
+mongodb_max_connections: 65536
+mongodb_net_interface: eth0
 
-    mongodb_user: mongodb
-    mongodb_group: mongodb
+mongodb_user: mongodb
+mongodb_group: mongodb
 
-    mongodb_verbosity: 0
-    mongodb_version: 3.2.0
-    mongodb_wire_object_check: true
-    mongodb_storage_engine: 0
-    mongodb_sync_period: 0
+mongodb_verbosity: 0
+mongodb_version: 3.2.0
+mongodb_wire_object_check: true
+mongodb_storage_engine: 0
+mongodb_sync_period: 0
 
-    mongodb_replica_set: 0
-    mongodb_replica_oplog_size: 0
-    mongodb_replica_enable_majority_read: 0
+mongodb_replica_set: 0
+mongodb_replica_oplog_size: 0
+mongodb_replica_enable_majority_read: 0
 
-    mongodb_sharding_config: ""
+mongodb_sharding_config: ""
 
-    mongodb_mode: standalone
+mongodb_mode: standalone
 
-    mongodb_install_root: ""
-    mongodb_data_root: ""
+mongodb_install_root: ""
+mongodb_data_root: ""
 
-    state: started
+state: started

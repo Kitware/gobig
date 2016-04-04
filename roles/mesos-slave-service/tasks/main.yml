@@ -1,8 +1,7 @@
 ---
 
-  - name: mesos | service | slave
-    service:
-        name: mesos-slave
-        state: "{{ state }}"
-    when: notify_services|bool
-
+- name: mesos | service | slave
+  service:
+    name: mesos-slave
+    state: "{{ state }}"
+  when: notify_services|bool
