@@ -1,7 +1,6 @@
 ---
 
-  - name: hadoop | service | hdfs | namenode
-    service:
-        name: hdfs-namenode
-        state: "{{ state }}"
-
+- name: hadoop | service | hdfs | namenode
+  service:
+    name: hdfs-namenode
+    state: "{{ state }}"

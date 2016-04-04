@@ -1,6 +1,6 @@
+---
 
-  - hosts: all
-    roles:
-      - role: ssh-known-hosts
-        ssh_known_hosts_ansible_group: all
-
+- hosts: all
+  roles:
+    - role: ssh-known-hosts
+      ssh_known_hosts_ansible_group: all

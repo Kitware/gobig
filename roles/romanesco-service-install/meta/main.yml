@@ -9,4 +9,3 @@ dependencies:
     description: Romanesco Execution Engine Service
     command: "{{ romanesco_install_root }}/run-service"
     when: do_install|bool
-

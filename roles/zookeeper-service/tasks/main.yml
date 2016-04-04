@@ -1,8 +1,7 @@
 ---
 
-  - name: zookeeper | service
-    service:
-        name: zookeeper
-        state: "{{ state }}"
-    when: notify_services|bool
-
+- name: zookeeper | service
+  service:
+    name: zookeeper
+    state: "{{ state }}"
+  when: notify_services|bool

@@ -1,7 +1,6 @@
 ---
 
-  - hosts: nodejs
-    roles:
-      - role: nodejs
-        state: absent
-
+- hosts: nodejs
+  roles:
+    - role: nodejs
+      state: absent

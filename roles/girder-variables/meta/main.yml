@@ -19,4 +19,3 @@ dependencies:
   - role: nodejs-variables
   - role: romanesco-variables
   - role: hadoop-hdfs-variables
-

@@ -1,5 +1,4 @@
 ---
 
-  - include: instantiate.yml
-  - include: ../site.yml
-
+- include: instantiate.yml
+- include: ../site.yml

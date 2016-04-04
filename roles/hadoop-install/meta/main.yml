@@ -7,4 +7,3 @@ dependencies:
     group: "{{ hadoop_group }}"
     system: true
     state: present
-

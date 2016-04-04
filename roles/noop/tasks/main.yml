@@ -1,5 +1,4 @@
 ---
 
-  - name: dummy
-    shell: "true"
-
+- name: dummy
+  shell: "true"

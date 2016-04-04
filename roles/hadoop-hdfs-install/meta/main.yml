@@ -10,4 +10,3 @@ dependencies:
     crypt_pass: "{{ hdfs_crypt_pass }}"
     system: true
     state: present
-

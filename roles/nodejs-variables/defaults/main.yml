@@ -1,8 +1,7 @@
 ---
 
-    nodejs_version: v4.0.0
-    nodejs_install_root: ""
+nodejs_version: v4.0.0
+nodejs_install_root: ""
 
-    state: present
-    recompile: false
-
+state: present
+recompile: false

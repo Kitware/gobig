@@ -8,4 +8,3 @@ dependencies:
     crypt_pass: "{{ mongodb_crypt_pass }}"
     system: true
     state: present
-

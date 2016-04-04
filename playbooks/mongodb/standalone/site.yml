@@ -1,7 +1,6 @@
 ---
 
-  - hosts: mongodb
-    roles:
-      - role: mongodb
-        state: started
-
+- hosts: mongodb
+  roles:
+    - role: mongodb
+      state: started

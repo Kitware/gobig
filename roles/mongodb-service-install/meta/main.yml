@@ -7,7 +7,7 @@ dependencies:
     user: "{{ mongodb_user }}"
     group: "{{ mongodb_group }}"
     description: "MongoDB {{ mongodb_service_description }} Service"
-    command: >
+    command: >-
       {{ mongodb_install_root }}/bin/{{ mongodb_service_binary }}
       --config {{ mongodb_conf }}/{{ service_subdir }}.conf
     when: do_install|bool

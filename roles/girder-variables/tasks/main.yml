@@ -1,83 +1,82 @@
 ---
 
-  - name: girder | service | logic flags | compute
-    set_fact:
-        remove_data_root: "{{ state == 'absent' }}"
-        remove_install_root: "{{ state == 'absent' }}"
-        stop_services: "{{ state == 'absent' }}"
-        do_install: >
-            {{ state == "present" or state == "stopped" or
-               state == "started" or state == "restarted" or
-               state == "reloaded" }}
-        notify_services: >
-            {{ state == "stopped" or state == "started" or
-               state == "restarted" or state == "reloaded" }}
+- name: girder | service | logic flags | compute
+  set_fact:
+    remove_data_root: "{{ state == 'absent' }}"
+    remove_install_root: "{{ state == 'absent' }}"
+    stop_services: "{{ state == 'absent' }}"
+    do_install: >-
+      {{ state == "present" or state == "stopped" or
+         state == "started" or state == "restarted" or
+         state == "reloaded" }}
+    notify_services: >-
+      {{ state == "stopped" or state == "started" or
+         state == "restarted" or state == "reloaded" }}
 
-  - name: girder | install root | default | set
-    set_fact:
-        girder_install_root: /opt/girder/{{ girder_git_version }}
-    when: girder_install_root == ""
+- name: girder | install root | default | set
+  set_fact:
+    girder_install_root: /opt/girder/{{ girder_git_version }}
+  when: girder_install_root == ""
 
-  - name: girder | install root | parent | probe
-    shell: dirname "{{ girder_install_root }}"
-    register: parent_probe
+- name: girder | install root | parent | probe
+  shell: dirname "{{ girder_install_root }}"
+  register: parent_probe
 
-  - name: girder | install root | parent | record
-    set_fact:
-        girder_install_parent: "{{ parent_probe.stdout }}"
+- name: girder | install root | parent | record
+  set_fact:
+    girder_install_parent: "{{ parent_probe.stdout }}"
 
-  - name: girder | data root | default | set
-    set_fact:
-        girder_data_root: /data/girder/{{ girder_git_version }}
-    when: girder_data_root == ""
+- name: girder | data root | default | set
+  set_fact:
+    girder_data_root: /data/girder/{{ girder_git_version }}
+  when: girder_data_root == ""
 
-  - name: girder | install root | probe
-    stat:
-        path: "{{ girder_install_root }}"
-    register: install_root_probe
+- name: girder | install root | probe
+  stat:
+    path: "{{ girder_install_root }}"
+  register: install_root_probe
 
-  - name: girder | install root | flag | record
-    set_fact:
-        create_install_root: >
-            {{ (do_install|bool) and
-                (not (install_root_probe.stat.exists|bool)) }}
+- name: girder | install root | flag | record
+  set_fact:
+    create_install_root: >-
+      {{ (do_install|bool) and
+         (not (install_root_probe.stat.exists|bool)) }}
 
-  - name: girder | initialized | probe
-    stat:
-        path: "{{ girder_data_root }}/.initialized"
-    register: initialized_probe
+- name: girder | initialized | probe
+  stat:
+    path: "{{ girder_data_root }}/.initialized"
+  register: initialized_probe
 
-  - name: girder | initialized | flag | record
-    set_fact:
-        do_initialization: >
-            {{ (do_install|bool) and
-                (not (initialized_probe.stat.exists|bool)) }}
-
-
-  - name: climos_test | install root | default | set
-    set_fact:
-        climos_test_install_root: /opt/climos_test/{{ climos_test_git_version }}
-    when: climos_test_install_root == ""
-
-  - name: climos_test | install root | parent | probe
-    shell: dirname "{{ climos_test_install_root }}"
-    register: parent_probe
-
-  - name: climos_test | install root | parent | record
-    set_fact:
-        climos_test_install_parent: "{{ parent_probe.stdout }}"
+- name: girder | initialized | flag | record
+  set_fact:
+    do_initialization: >-
+      {{ (do_install|bool) and
+         (not (initialized_probe.stat.exists|bool)) }}
 
 
-  - name: sparktest | install root | default | set
-    set_fact:
-        sparktest_install_root: /opt/sparktest/{{ sparktest_git_version }}
-    when: sparktest_install_root == ""
+- name: climos_test | install root | default | set
+  set_fact:
+    climos_test_install_root: /opt/climos_test/{{ climos_test_git_version }}
+  when: climos_test_install_root == ""
 
-  - name: sparktest | install root | parent | probe
-    shell: dirname "{{ sparktest_install_root }}"
-    register: parent_probe
+- name: climos_test | install root | parent | probe
+  shell: dirname "{{ climos_test_install_root }}"
+  register: parent_probe
 
-  - name: sparktest | install root | parent | record
-    set_fact:
-        sparktest_install_parent: "{{ parent_probe.stdout }}"
+- name: climos_test | install root | parent | record
+  set_fact:
+    climos_test_install_parent: "{{ parent_probe.stdout }}"
 
+
+- name: sparktest | install root | default | set
+  set_fact:
+    sparktest_install_root: /opt/sparktest/{{ sparktest_git_version }}
+  when: sparktest_install_root == ""
+
+- name: sparktest | install root | parent | probe
+  shell: dirname "{{ sparktest_install_root }}"
+  register: parent_probe
+
+- name: sparktest | install root | parent | record
+  set_fact:
+    sparktest_install_parent: "{{ parent_probe.stdout }}"

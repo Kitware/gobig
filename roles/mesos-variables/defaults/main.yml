@@ -1,57 +1,56 @@
 ---
 
-    mesos_version: 0.21.0
-    mesos_install_root: ""
+mesos_version: 0.21.0
+mesos_install_root: ""
 
-    mesos_user: mesos
-    mesos_group: mesos
-    mesos_crypt_pass: ""
-    mesos_net_interface: eth0
+mesos_user: mesos
+mesos_group: mesos
+mesos_crypt_pass: ""
+mesos_net_interface: eth0
 
-    mesos_data_root: ""
-    recompile: false
+mesos_data_root: ""
+recompile: false
 
-    mesos_cluster_name: mesos
-    mesos_master_port: 5050
-    mesos_slave_port: 5051
-    mesos_quorum: 0
-    mesos_containerizers: mesos
+mesos_cluster_name: mesos
+mesos_master_port: 5050
+mesos_slave_port: 5051
+mesos_master_quorum_min_size: 0
+mesos_containerizers: mesos
 
-    mesos_allocation_interval: 1secs
-    mesos_allocator: HierarchicalDRF
+mesos_allocation_interval: 1secs
+mesos_allocator: HierarchicalDRF
 
-    mesos_max_slave_ping_timeouts: 5
-    mesos_slave_ping_timeout: 15secs
+mesos_max_slave_ping_timeouts: 5
+mesos_slave_ping_timeout: 15secs
 
-    mesos_offer_timeout: 30secs
-    mesos_registry_fetch_timeout: 1mins
-    mesos_registry_store_timeout: 5secs
-    mesos_slave_reregister_timeout: 10mins
+mesos_offer_timeout: 30secs
+mesos_registry_fetch_timeout: 1mins
+mesos_registry_store_timeout: 5secs
+mesos_slave_reregister_timeout: 10mins
 
-    mesos_default_container_image: ""
-    mesos_default_container_info: ""
+mesos_default_container_image: ""
+mesos_default_container_info: ""
 
-    mesos_zookeeper_session_timeout: 10secs
+mesos_zookeeper_session_timeout: 10secs
 
-    mesos_disk_watch_interval: 1mins
-    mesos_docker_remove_delay: 6hrs
-    mesos_docker_mesos_image: ""
-    mesos_docker_stop_timeout: 0secs
-    mesos_sandbox_directory: /mnt/mesos/sandbox
-    mesos_executor_registration_timeout: 1mins
-    mesos_executor_shutdown_grace_period: 5secs
-    mesos_gc_delay: 1weeks
-    mesos_hadoop_home: ""
-    mesos_oversubscribed_resources_interval: 15secs
-    mesos_perf_duration: 10secs
-    mesos_perf_interval: 1mins
-    mesos_qos_correction_interval_min: 0secs
-    mesos_recovery_timeout: 15mins
-    mesos_registration_backoff_factor: 1secs
-    mesos_resource_monitoring_interval: 1secs
-    mesos_fetcher_cache_size: 2147483648
-    mesos_fetcher_cache_dir: /tmp/mesos/fetch
+mesos_disk_watch_interval: 1mins
+mesos_docker_remove_delay: 6hrs
+mesos_docker_mesos_image: ""
+mesos_docker_stop_timeout: 0secs
+mesos_sandbox_directory: /mnt/mesos/sandbox
+mesos_executor_registration_timeout: 1mins
+mesos_executor_shutdown_grace_period: 5secs
+mesos_gc_delay: 1weeks
+mesos_hadoop_home: ""
+mesos_oversubscribed_resources_interval: 15secs
+mesos_perf_duration: 10secs
+mesos_perf_interval: 1mins
+mesos_qos_correction_interval_min: 0secs
+mesos_recovery_timeout: 15mins
+mesos_registration_backoff_factor: 1secs
+mesos_resource_monitoring_interval: 1secs
+mesos_fetcher_cache_size: 2147483648
+mesos_fetcher_cache_dir: /tmp/mesos/fetch
 
-    state: started
-    recompile: false
-
+state: started
+recompile: false

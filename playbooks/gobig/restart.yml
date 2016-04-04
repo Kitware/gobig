@@ -1,108 +1,107 @@
 ---
 
-  - include: assign-groups.yml
+- include: assign-groups.yml
 
-  - hosts: HC
-    roles:
-      - role: hadoop-hdfs-install
-        hdfs_namenode_ansible_group: HN
-        state: present
+- hosts: HC
+  roles:
+    - role: hadoop-hdfs-install
+      hdfs_namenode_ansible_group: HN
+      state: present
 
-  - hosts: ZK
-    roles:
-      - role: zookeeper-install
-        zookeeper_ansible_group: ZK
-        state: present
+- hosts: ZK
+  roles:
+    - role: zookeeper-install
+      zookeeper_ansible_group: ZK
+      state: present
 
-  - hosts: MC
-    roles:
-      - role: mesos-install
-        mesos_master_ansible_group: MM
-        zookeeper_ansible_group: ZK
-        state: present
-      - role: ssh-known-hosts
-        ssh_known_hosts_ansible_group: MC
-      - role: user-generate
-        name: ubuntu
-      - role: ssh-key-exchange
-        user: ubuntu
-        ssh_key_exchange_ansible_group: MC
+- hosts: MC
+  roles:
+    - role: mesos-install
+      mesos_master_ansible_group: MM
+      zookeeper_ansible_group: ZK
+      state: present
+    - role: ssh-known-hosts
+      ssh_known_hosts_ansible_group: MC
+    - role: user-generate
+      name: ubuntu
+    - role: ssh-key-exchange
+      user: ubuntu
+      ssh_key_exchange_ansible_group: MC
 
-  - hosts: NJ
-    roles:
-      - role: nodejs
-        state: present
+- hosts: NJ
+  roles:
+    - role: nodejs
+      state: present
 
-  - hosts: UM
-    roles:
-      - role: uvcmetrics
-        state: present
-        uvcdat_version: 3ff13b4c8834941ce3abf0b823e262a6cdccdae0
+- hosts: UM
+  roles:
+    - role: uvcmetrics
+      state: present
+      uvcdat_version: 3ff13b4c8834941ce3abf0b823e262a6cdccdae0
 
 
-  - hosts: HN
-    roles:
-      - role: hadoop-hdfs-namenode
-        hdfs_namenode_ansible_group: HN
-        state: restarted
+- hosts: HN
+  roles:
+    - role: hadoop-hdfs-namenode
+      hdfs_namenode_ansible_group: HN
+      state: restarted
 
-  - hosts: HD
-    roles:
-      - role: hadoop-hdfs-datanode
-        hdfs_namenode_ansible_group: HN
-        state: restarted
+- hosts: HD
+  roles:
+    - role: hadoop-hdfs-datanode
+      hdfs_namenode_ansible_group: HN
+      state: restarted
 
-  - hosts: ZK
-    roles:
-      - role: zookeeper
-        zookeeper_ansible_group: ZK
-        state: restarted
+- hosts: ZK
+  roles:
+    - role: zookeeper
+      zookeeper_ansible_group: ZK
+      state: restarted
 
-  - hosts: MM
-    roles:
-      - role: mesos-master
-        zookeeper_ansible_group: ZK
-        mesos_master_ansible_group: MM
-        state: restarted
+- hosts: MM
+  roles:
+    - role: mesos-master
+      zookeeper_ansible_group: ZK
+      mesos_master_ansible_group: MM
+      state: restarted
 
-  - hosts: MS
-    roles:
-      - role: mesos-slave
-        zookeeper_ansible_group: ZK
-        mesos_master_ansible_group: MM
-        state: restarted
+- hosts: MS
+  roles:
+    - role: mesos-slave
+      zookeeper_ansible_group: ZK
+      mesos_master_ansible_group: MM
+      state: restarted
 
-  - hosts: SP
-    roles:
-      - role: spark
-        hdfs_namenode_ansible_group: HN
-        zookeeper_ansible_group: ZK
-        mesos_master_ansible_group: MM
-        state: restarted
+- hosts: SP
+  roles:
+    - role: spark
+      hdfs_namenode_ansible_group: HN
+      zookeeper_ansible_group: ZK
+      mesos_master_ansible_group: MM
+      state: restarted
 
-  - hosts: MG
-    roles:
-      - role: mongodb
-        state: restarted
+- hosts: MG
+  roles:
+    - role: mongodb
+      state: restarted
 
-  - hosts: RQ
-    roles:
-      - role: rabbitmq
-        state: restarted
+- hosts: RQ
+  roles:
+    - role: rabbitmq
+      state: restarted
 
-  - hosts: RM
-    roles:
-      - role: romanesco
-        rabbitmq_ansible_group: RQ
-        state: restarted
+- hosts: RM
+  roles:
+    - role: romanesco
+      rabbitmq_ansible_group: RQ
+      state: restarted
 
-  - hosts: GD
-    roles:
-      - role: girder
-        mongodb_ansible_group: MG
-        rabbitmq_ansible_group: RQ
-        hdfs_namenode_ansible_group: HN
-        girder_admin_user: girder
-        girder_admin_password: girder
-        state: restarted
-
+- hosts: GD
+  roles:
+    - role: girder
+      mongodb_ansible_group: MG
+      rabbitmq_ansible_group: RQ
+      hdfs_namenode_ansible_group: HN
+      girder_admin_user: girder
+      girder_admin_password: girder
+      state: restarted

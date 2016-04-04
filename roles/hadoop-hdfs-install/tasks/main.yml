@@ -1,82 +1,81 @@
 ---
 
-  - name: hadoop | hdfs | conf | owner | set
-    file:
-        recurse: yes
-        path: "{{ hadoop_install_root }}"
-        group: "{{ hdfs_group }}"
-        mode: 0775
-        owner: "{{ hdfs_user }}"
-    when: do_install|bool
+- name: hadoop | hdfs | conf | owner | set
+  file:
+    recurse: yes
+    path: "{{ hadoop_install_root }}"
+    group: "{{ hdfs_group }}"
+    mode: 0775
+    owner: "{{ hdfs_user }}"
+  when: do_install|bool
 
-  - name: hadoop | hdfs | conf | xml | set
-    template:
-        src: "{{ item }}.xml.j2"
-        dest: "{{ hadoop_conf }}/{{ item }}.xml"
-    with_items:
-      - core-site
-      - hdfs-site
-    when: do_install|bool
+- name: hadoop | hdfs | conf | xml | set
+  template:
+    src: "{{ item }}.xml.j2"
+    dest: "{{ hadoop_conf }}/{{ item }}.xml"
+  with_items:
+    - core-site
+    - hdfs-site
+  when: do_install|bool
 
-  - name: hadoop | hdfs | conf | env | set
-    lineinfile:
-        dest: "{{ hadoop_conf }}/hadoop-env.sh"
-        regexp: "^(export )?{{ item.key }}"
-        line: "export {{ item.key }}=\"{{ item.value }}\""
-        state: present
-    with_items:
-      - key: HADOOP_CONF_DIR
-        value: "{{ hadoop_conf }}"
-      - key: JAVA_HOME
-        value: /usr/lib/jvm/java-7-openjdk-amd64
-    when: do_install|bool
+- name: hadoop | hdfs | conf | env | set
+  lineinfile:
+    dest: "{{ hadoop_conf }}/hadoop-env.sh"
+    regexp: "^(export )?{{ item.key }}"
+    line: "export {{ item.key }}=\"{{ item.value }}\""
+    state: present
+  with_items:
+    - key: HADOOP_CONF_DIR
+      value: "{{ hadoop_conf }}"
+    - key: JAVA_HOME
+      value: /usr/lib/jvm/java-7-openjdk-amd64
+  when: do_install|bool
 
-  - name: hadoop | hdfs | fs | root | delete
-    file:
-        path: "{{ hdfs_data_root }}/{{ item }}"
-        state: absent
-    with_items:
-      - namenode
-      - datanode
-    when: remove_data_root|bool
+- name: hadoop | hdfs | fs | root | delete
+  file:
+    path: "{{ hdfs_data_root }}/{{ item }}"
+    state: absent
+  with_items:
+    - namenode
+    - datanode
+  when: remove_data_root|bool
 
-  - name: hadoop | hdfs | fs | root | create
-    file:
-        path: "{{ hdfs_data_root }}/{{ item }}"
-        state: directory
-        mode: 0755
-    with_items:
-      - namenode
-      - datanode
-    when: do_install|bool
+- name: hadoop | hdfs | fs | root | create
+  file:
+    path: "{{ hdfs_data_root }}/{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - namenode
+    - datanode
+  when: do_install|bool
 
-  - name: hadoop | hdfs | fs | root | owner | set
-    file:
-        path: "{{ hdfs_data_root }}/{{ item }}"
-        state: directory
-        group: "{{ hdfs_group }}"
-        owner: "{{ hdfs_user }}"
-        mode: 0775
-    with_items:
-      - namenode
-      - datanode
-    when: do_install|bool
+- name: hadoop | hdfs | fs | root | owner | set
+  file:
+    path: "{{ hdfs_data_root }}/{{ item }}"
+    state: directory
+    group: "{{ hdfs_group }}"
+    owner: "{{ hdfs_user }}"
+    mode: 0775
+  with_items:
+    - namenode
+    - datanode
+  when: do_install|bool
 
-  - name: hadoop | hdfs | fs | format
-    become_user: "{{ hdfs_user }}"
-    shell: >
-        {{ hadoop_install_root }}/bin/hdfs namenode -format
-        {{ '-force' if (format|bool) else '-nonInteractive' }}
-    ignore_errors: true
-    register: format_result
-    failed_when: >
-        'Error' in format_result.stderr
-    when: do_format
+- name: hadoop | hdfs | fs | format
+  become_user: "{{ hdfs_user }}"
+  shell: >-
+    {{ hadoop_install_root }}/bin/hdfs namenode -format
+    {{ '-force' if (format|bool) else '-nonInteractive' }}
+  ignore_errors: true
+  register: format_result
+  failed_when: >-
+    'Error' in format_result.stderr
+  when: do_format
 
-  - name: hadoop | hdfs | fs | format | record
-    become_user: "{{ hdfs_user }}"
-    file:
-        path: "{{ hdfs_data_root }}/namenode/formatted"
-        state: touch
-    when: do_format
-
+- name: hadoop | hdfs | fs | format | record
+  become_user: "{{ hdfs_user }}"
+  file:
+    path: "{{ hdfs_data_root }}/namenode/formatted"
+    state: touch
+  when: do_format

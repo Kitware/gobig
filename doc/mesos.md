@@ -37,7 +37,7 @@ This section applies to the `mesos-master` and `mesos-slave` roles.
 |mesos_perf_duration                    |10secs            |duration of a perf stat sample                                                                  |
 |mesos_perf_interval                    |1mins             |frequency with which a perf stat sample is obtained                                             |
 |mesos_qos_correction_interval_min      |0secs             |maximum frequency with which slaves poll and carry out QoS corrections                          |
-|mesos_quorum                           |(computed)        |minimum size of a mesos quorum                                                                  |
+|mesos_master_quorum_min_size           |(computed)        |minimum size of a mesos quorum                                                                  |
 |mesos_recovery_timeout                 |15mins            |duration within which a slave must recover                                                      |
 |mesos_registration_backoff_factor      |1secs             |backoff factor at which slaves attempt to re-register with a newly-elected master leader        |
 |mesos_registry_fetch_timeout           |1mins             |duration within which a registry fetch must complete                                            |
@@ -73,13 +73,14 @@ This section applies to the `mesos-master` and `mesos-slave` roles.
     knowledge of which zookeeper nodes to use for leader election.
 
   - The zookeeper registry information for the mesos cluster is stored under
-    `mesos_zookeeper_url`/`mesos_cluster_name`.
+    `zookeeper_quorum_url`/`mesos_cluster_name`.
 
-  - If not provided, `mesos_quorum` is set to the smallest integer value that is
-    greater than half the number of mesos master nodes, i.e.:
-    `mesos_quorum = floor(N/2) + 1` where `N` is the number of mesos master
-    nodes.  It is highly recommended that a mesos cluster be deployed with a
-    number of mesos master nodes that is odd and at least three.
+  - If not provided, `mesos_master_quorum_min_size` is set to the smallest
+    integer value that is greater than half the number of mesos master nodes,
+    i.e.: `mesos_master_quorum_min_size = floor(N/2) + 1` where `N` is the
+    number of mesos master nodes.  It is highly recommended that a mesos cluster
+    be deployed with a number of mesos master nodes that is odd and at least
+    three.
 
   - All the options that control containerization and use docker are not
     currently supported by these roles.

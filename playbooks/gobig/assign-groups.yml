@@ -1,58 +1,57 @@
 ---
 
-  - hosts: all
-    vars:
-        girder: girder
-        hdfs_datanodes: datanodes
-        hdfs_namenodes: namenodes
-        mesos_masters: masters
-        mesos_slaves: slaves
-        mongodb: mongodb
-        romanesco: romanesco
-        rabbitmq: rabbitmq
-        spark: spark
-        uvcmetrics: uvcmetrics
-        zookeepers: zookeepers
+- hosts: all
+  vars:
+    girder: girder
+    hdfs_datanodes: datanodes
+    hdfs_namenodes: namenodes
+    mesos_masters: masters
+    mesos_slaves: slaves
+    mongodb: mongodb
+    romanesco: romanesco
+    rabbitmq: rabbitmq
+    spark: spark
+    uvcmetrics: uvcmetrics
+    zookeepers: zookeepers
 
 
-        girder_set: "{{ groups.get(girder, []) }}"
-        datanode_set: "{{ groups.get(hdfs_datanodes, []) }}"
-        namenode_set: "{{ groups.get(hdfs_namenodes, []) }}"
+    girder_set: "{{ groups.get(girder, []) }}"
+    datanode_set: "{{ groups.get(hdfs_datanodes, []) }}"
+    namenode_set: "{{ groups.get(hdfs_namenodes, []) }}"
 
-        hadoop_set: "{{ namenode_set | union(datanode_set) }}"
+    hadoop_set: "{{ namenode_set | union(datanode_set) }}"
 
-        master_set: "{{ groups.get(mesos_masters, []) }}"
-        slave_set: "{{ groups.get(mesos_slaves, []) }}"
+    master_set: "{{ groups.get(mesos_masters, []) }}"
+    slave_set: "{{ groups.get(mesos_slaves, []) }}"
 
-        mesos_set: "{{ master_set | union(slave_set) }}"
+    mesos_set: "{{ master_set | union(slave_set) }}"
 
-        mongodb_set: "{{ groups.get(mongodb, []) }}"
-        romanesco_set: "{{ groups.get(romanesco, []) }}"
-        rabbitmq_set: "{{ groups.get(rabbitmq, []) }}"
-        spark_set: "{{ groups.get(spark, []) | union(mesos_set) }}"
-        uvcmetrics_set: "{{ groups.get(uvcmetrics, []) }}"
-        zookeeper_set: "{{ groups.get(zookeepers, []) | union(mesos_set) }}"
+    mongodb_set: "{{ groups.get(mongodb, []) }}"
+    romanesco_set: "{{ groups.get(romanesco, []) }}"
+    rabbitmq_set: "{{ groups.get(rabbitmq, []) }}"
+    spark_set: "{{ groups.get(spark, []) | union(mesos_set) }}"
+    uvcmetrics_set: "{{ groups.get(uvcmetrics, []) }}"
+    zookeeper_set: "{{ groups.get(zookeepers, []) | union(mesos_set) }}"
 
-        nodejs_set: "{{ romanesco_set | union(girder_set) }}"
+    nodejs_set: "{{ romanesco_set | union(girder_set) }}"
 
-    tasks:
-      - group_by: key={{ inventory_hostname in girder_set     and "GD" or "x" }}
-      - group_by: key={{ inventory_hostname in datanode_set   and "HD" or "x" }}
-      - group_by: key={{ inventory_hostname in namenode_set   and "HN" or "x" }}
+  tasks:
+    - group_by: key={{ inventory_hostname in girder_set     and "GD" or "x" }}
+    - group_by: key={{ inventory_hostname in datanode_set   and "HD" or "x" }}
+    - group_by: key={{ inventory_hostname in namenode_set   and "HN" or "x" }}
 
-      - group_by: key={{ inventory_hostname in hadoop_set     and "HC" or "x" }}
+    - group_by: key={{ inventory_hostname in hadoop_set     and "HC" or "x" }}
 
-      - group_by: key={{ inventory_hostname in master_set     and "MM" or "x" }}
-      - group_by: key={{ inventory_hostname in slave_set      and "MS" or "x" }}
+    - group_by: key={{ inventory_hostname in master_set     and "MM" or "x" }}
+    - group_by: key={{ inventory_hostname in slave_set      and "MS" or "x" }}
 
-      - group_by: key={{ inventory_hostname in mesos_set      and "MC" or "x" }}
+    - group_by: key={{ inventory_hostname in mesos_set      and "MC" or "x" }}
 
-      - group_by: key={{ inventory_hostname in mongodb_set    and "MG" or "x" }}
-      - group_by: key={{ inventory_hostname in romanesco_set  and "RM" or "x" }}
-      - group_by: key={{ inventory_hostname in rabbitmq_set   and "RQ" or "x" }}
-      - group_by: key={{ inventory_hostname in spark_set      and "SP" or "x" }}
-      - group_by: key={{ inventory_hostname in uvcmetrics_set and "UM" or "x" }}
-      - group_by: key={{ inventory_hostname in zookeeper_set  and "ZK" or "x" }}
+    - group_by: key={{ inventory_hostname in mongodb_set    and "MG" or "x" }}
+    - group_by: key={{ inventory_hostname in romanesco_set  and "RM" or "x" }}
+    - group_by: key={{ inventory_hostname in rabbitmq_set   and "RQ" or "x" }}
+    - group_by: key={{ inventory_hostname in spark_set      and "SP" or "x" }}
+    - group_by: key={{ inventory_hostname in uvcmetrics_set and "UM" or "x" }}
+    - group_by: key={{ inventory_hostname in zookeeper_set  and "ZK" or "x" }}
 
-      - group_by: key={{ inventory_hostname in nodejs_set     and "NJ" or "x" }}
-
+    - group_by: key={{ inventory_hostname in nodejs_set     and "NJ" or "x" }}

@@ -6,4 +6,3 @@ dependencies:
     version: "{{ nodejs_version }}"
     variable_prefix: nodejs
     state: present
-

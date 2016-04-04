@@ -1,24 +1,23 @@
 ---
 
-    zookeeper_version: 3.4.6
-    zookeeper_install_root: ""
+zookeeper_version: 3.4.6
+zookeeper_install_root: ""
 
-    zookeeper_user: zookeeper
-    zookeeper_group: zookeeper
-    zookeeper_crypt_pass: ""
-    zookeeper_net_interface: eth0
+zookeeper_user: zookeeper
+zookeeper_group: zookeeper
+zookeeper_crypt_pass: ""
+zookeeper_net_interface: eth0
 
-    zookeeper_data_root: ""
+zookeeper_data_root: ""
 
-    zookeeper_tick_time: 2000
-    zookeeper_init_limit: 10
-    zookeeper_sync_limit: 5
-    zookeeper_client_port: 2181
-    zookeeper_max_client_connections: 128
-    zookeeper_autopurge: false
-    zookeeper_autopurge_retain: 3
-    zookeeper_autopurge_interval: 1
+zookeeper_tick_time: 2000
+zookeeper_init_limit: 10
+zookeeper_sync_limit: 5
+zookeeper_client_port: 2181
+zookeeper_max_client_connections: 128
+zookeeper_autopurge: false
+zookeeper_autopurge_retain: 3
+zookeeper_autopurge_interval: 1
 
-    state: started
-    recompile: false
-
+state: started
+recompile: false

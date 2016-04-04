@@ -7,4 +7,3 @@ dependencies:
   - role: hadoop-hdfs-install
   - role: hadoop-hdfs-datanode-service-install
   - role: hadoop-hdfs-datanode-service
-

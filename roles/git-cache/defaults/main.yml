@@ -1,7 +1,6 @@
 ---
 
-    version: master
-    key_file: ""
-    variable_prefix: ""
-    state: present
-
+version: master
+key_file: ""
+variable_prefix: ""
+state: present

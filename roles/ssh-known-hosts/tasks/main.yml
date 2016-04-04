@@ -1,24 +1,22 @@
 ---
 
-  - name: target | set
-    set_fact:
-        target_file: >
-            {{  "~" + user + "/.ssh/known_hosts"
-                if user != "" else
-                "/etc/ssh/ssh_known_hosts" }}
+- name: target | set
+  set_fact:
+    target_file: >-
+      {{  "~" + user + "/.ssh/known_hosts"
+          if user != "" else
+          "/etc/ssh/ssh_known_hosts" }}
 
-  - name: known-hosts | clear
-    file:
-        path: "{{ target_file }}"
-        state: absent
+- name: known-hosts | clear
+  file:
+    path: "{{ target_file }}"
+    state: absent
 
-  - name: known-hosts | generate
-    shell: >
-        ssh-keyscan
-        "{{ hostvars[item]
-                    ['ansible_' + ssh_known_hosts_net_interface]
-                    ['ipv4']
-                    ['address'] }}" >> "{{ target_file }}"
-    with_items: "{{ groups[ssh_known_hosts_ansible_group] }}"
-
-
+- name: known-hosts | generate
+  shell: >-
+    ssh-keyscan
+    "{{ hostvars[item]
+                ['ansible_' + ssh_known_hosts_net_interface]
+                ['ipv4']
+                ['address'] }}" >> "{{ target_file }}"
+  with_items: "{{ groups[ssh_known_hosts_ansible_group] }}"

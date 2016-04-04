@@ -1,92 +1,91 @@
 ---
 
-  - name: mongodb | services | stop
-    service:
-        name: "{{ item }}"
-        state: stopped
-    ignore_errors: true
-    with_items:
-      - mongodb
-      - mongodb-cluster-config
-      - mongodb-cluster-shard
-      - mongodb-cluster-router
-    when: stop_services|bool
+- name: mongodb | services | stop
+  service:
+    name: "{{ item }}"
+    state: stopped
+  ignore_errors: true
+  with_items:
+    - mongodb
+    - mongodb-cluster-config
+    - mongodb-cluster-shard
+    - mongodb-cluster-router
+  when: stop_services|bool
 
-  - name: mongodb | install root | delete
-    file:
-        path: "{{ mongodb_install_root }}"
-        state: absent
-    when: remove_install_root|bool
+- name: mongodb | install root | delete
+  file:
+    path: "{{ mongodb_install_root }}"
+    state: absent
+  when: remove_install_root|bool
 
-  - name: mongodb | install parent | create
-    file:
-        path: "{{ mongodb_install_parent }}"
-        state: directory
-    when: do_install|bool
+- name: mongodb | install parent | create
+  file:
+    path: "{{ mongodb_install_parent }}"
+    state: directory
+  when: do_install|bool
 
-  - name: mongodb | data root | create
-    file:
-        path: "{{ mongodb_data_root }}"
-        state: directory
-        mode: 0755
-    when: do_install|bool
+- name: mongodb | data root | create
+  file:
+    path: "{{ mongodb_data_root }}"
+    state: directory
+    mode: 0755
+  when: do_install|bool
 
-  - name: mongodb | data root | owner | set
-    file:
-        path: "{{ mongodb_data_root }}"
-        state: directory
-        owner: "{{ mongodb_user }}"
-        group: "{{ mongodb_group }}"
-        mode: 0775
-    when: do_install|bool
+- name: mongodb | data root | owner | set
+  file:
+    path: "{{ mongodb_data_root }}"
+    state: directory
+    owner: "{{ mongodb_user }}"
+    group: "{{ mongodb_group }}"
+    mode: 0775
+  when: do_install|bool
 
-  - name: mongodb | pkg | download
-    command: >
-        curl -o
-        "{{ mongodb_install_parent }}/mongodb-{{ mongodb_version }}.tar.gz"
-        "{{ MONGO_DOWNLOAD_URL_PREFIX }}{{ mongodb_version }}.tgz"
-    args:
-        creates: >
-            {{ mongodb_install_parent }}/mongodb-{{ mongodb_version }}.tar.gz
-    when: create_install_root|bool
+- name: mongodb | pkg | download
+  command: >-
+    curl -o
+    "{{ mongodb_install_parent }}/mongodb-{{ mongodb_version }}.tar.gz"
+    "{{ MONGO_DOWNLOAD_URL_PREFIX }}{{ mongodb_version }}.tgz"
+  args:
+    creates: >-
+      {{ mongodb_install_parent }}/mongodb-{{ mongodb_version }}.tar.gz
+  when: create_install_root|bool
 
-  - name: mongodb | pkg | unpack
-    unarchive:
-        copy: no
-        creates: "{{ mongodb_install_parent }}/\
-                  mongodb-linux-x86_64-{{ mongodb_version }}"
-        dest: "{{ mongodb_install_parent }}"
-        src: "{{ mongodb_install_parent }}/mongodb-{{ mongodb_version }}.tar.gz"
-    when: create_install_root|bool
+- name: mongodb | pkg | unpack
+  unarchive:
+    copy: no
+    creates: "{{ mongodb_install_parent }}/\
+              mongodb-linux-x86_64-{{ mongodb_version }}"
+    dest: "{{ mongodb_install_parent }}"
+    src: "{{ mongodb_install_parent }}/mongodb-{{ mongodb_version }}.tar.gz"
+  when: create_install_root|bool
 
-  - name: mongodb | pkg | unpack | rename
-    command: "mv \"{{ mongodb_install_parent }}/\
-                       mongodb-linux-x86_64-{{ mongodb_version }}\" \
-                 \"{{ mongodb_install_root }}\""
-    when: create_install_root|bool
-    changed_when: >
-        (mongodb_install_parent + "/mongodb-linux-x86_64-" + mongodb_version) !=
-        mongodb_install_root
+- name: mongodb | pkg | unpack | rename
+  command: "mv \"{{ mongodb_install_parent }}/\
+                     mongodb-linux-x86_64-{{ mongodb_version }}\" \
+               \"{{ mongodb_install_root }}\""
+  when: create_install_root|bool
+  changed_when: >-
+    (mongodb_install_parent + "/mongodb-linux-x86_64-" + mongodb_version) !=
+    mongodb_install_root
 
-  - name: mongodb | log | perms | set
-    file:
-        path: "{{ mongodb_install_root }}/logs"
-        mode: 0755
-        state: directory
-    when: do_install|bool
+- name: mongodb | log | perms | set
+  file:
+    path: "{{ mongodb_install_root }}/logs"
+    mode: 0755
+    state: directory
+  when: do_install|bool
 
-  - name: mongodb | configuration | set
-    template:
-        src: mongodb.conf.j2
-        dest: "{{ mongodb_conf }}/{{ service_subdir }}.conf"
-    when: do_install|bool
+- name: mongodb | configuration | set
+  template:
+    src: mongodb.conf.j2
+    dest: "{{ mongodb_conf }}/{{ service_subdir }}.conf"
+  when: do_install|bool
 
-  - name: mongodb | db | create
-    file:
-        path: "{{ mongodb_db }}"
-        state: directory
-        mode: 0755
-        owner: "{{ mongodb_user }}"
-        group: "{{ mongodb_group }}"
-    when: do_install|bool
-
+- name: mongodb | db | create
+  file:
+    path: "{{ mongodb_db }}"
+    state: directory
+    mode: 0755
+    owner: "{{ mongodb_user }}"
+    group: "{{ mongodb_group }}"
+  when: do_install|bool

@@ -1,8 +1,7 @@
 ---
 
-  - name: spark-dispatcher | service
-    service:
-        name: spark-dispatcher
-        state: "{{ state }}"
-    when: notify_services|bool
-
+- name: spark-dispatcher | service
+  service:
+    name: spark-dispatcher
+    state: "{{ state }}"
+  when: notify_services|bool
