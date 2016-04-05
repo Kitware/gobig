@@ -15,7 +15,10 @@ def main(DEVNULL):
         "key_file": { "type": "str", "required": False,                     },
         "repo"    : { "type": "str", "required": True ,                     },
         "state"   : { "type": "str", "required": True , "choices": states   },
-        "version" : { "type": "str",                    "default": "master" },
+
+        "version"  : { "type": "str" , "default" : "master" },
+        "recursive": { "type": "bool", "default" : False    },
+        "dest"     : { "type": "str" , "required": True     },
     }
 
     module = AnsibleModule(argument_spec=arg_spec)
@@ -23,10 +26,12 @@ def main(DEVNULL):
     exit = module.exit_json
     fail = module.fail_json
 
-    key_file = get("key_file")
-    repo     = get("repo")
-    version  = get("version")
-    state    = get("state")
+    key_file         = get("key_file")
+    repo             = get("repo")
+    version          = get("version")
+    state            = get("state")
+    recursive        = get("recursive")
+    target_base_path = get("dest")
 
     try:
         sp.check_call(["which", "git"], stdout=DEVNULL, stderr=DEVNULL)
@@ -36,9 +41,9 @@ def main(DEVNULL):
 
     repo_hash = hashlib.sha1()
     repo_hash.update(repo)
-    repo_hash = "".join("%02x" % ord(char) for char in repo_hash.digest())
+    repo_hash = repo_hash.hexdigest()
 
-    base_dir = path.join(
+    repo_base_path = path.join(
         "/repo",
         path.join(*tuple(
             tok for tok in
@@ -47,12 +52,12 @@ def main(DEVNULL):
         ))
     )
 
-    repo_path = path.join(base_dir, "git")
-    work_path = path.join(base_dir, "work")
+    repo_path = path.join(repo_base_path, "git")
+    work_path = path.join(repo_base_path, "work")
 
     if state == "present":
         try:
-            try: os.makedirs(base_dir)
+            try: os.makedirs(repo_base_path)
             except OSError: pass
 
             old_rev = None
@@ -87,8 +92,6 @@ def main(DEVNULL):
                 cwd=work_path
             )[:-1]
 
-            changed = (old_rev != new_rev)
-
             rev_path = path.join(*tuple(
                 tok for tok in
                 (new_rev[:2], new_rev[2:4], new_rev[4:])
@@ -107,17 +110,49 @@ def main(DEVNULL):
                 tag = "-".join(("untagged", new_rev))
                 tag_path = path.join("untagged", rev_path)
 
+            target_path = path.join(target_base_path, tag_path)
+
+            old_hash = None
+            if path.exists(target_path):
+                try:
+                    old_hash = sp.check_output(
+                        "find . -type f -exec sha1sum '{}' \\; | sha1sum",
+                        stderr=DEVNULL,
+                        shell=True,
+                        cwd=target_path
+                    ).split()[0]
+                except CalledProcessError:
+                    pass
+
+                sp.check_call(
+                    ["rsync", "-acvz", "--exclude=.git/", "./", target_path],
+                    stderr=DEVNULL,
+                    cwd=work_path
+                )
+
+                new_hash = sp.check_output(
+                    "find . -type f -exec sha1sum '{}' \\; | sha1sum",
+                    stderr=DEVNULL,
+                    shell=True,
+                    cwd=target_path
+                ).split()[0]
+
+            changed = (old_hash != new_hash)
+
             exit(
                 msg=("repository fetched successfully" if changed else
                      "repository revision already present"),
                 changed=changed,
                 old_revision=old_rev,
+                old_checksum=old_hash,
                 revision=new_rev,
                 tag=tag,
                 revision_path=rev_path,
                 tag_path=tag_path,
                 repo_path=repo_path,
                 work_path=work_path,
+                checksum=new_hash,
+                destination=target_path
             )
         except sp.CalledProcessError as e:
             fail(msg="command execution failed", error=tb.format_exc())
@@ -128,6 +163,10 @@ def main(DEVNULL):
 
     else: # state == "absent"
         changed = False
+        try: shutil.rmtree(target_base_path)
+        except OSError: pass
+        else: changed = True
+
         try: shutil.rmtree(repo_path)
         except OSError: pass
         else: changed = True
@@ -136,7 +175,7 @@ def main(DEVNULL):
         except OSError: pass
         else: changed = True
 
-        try: os.removedirs(base_dir)
+        try: os.removedirs(repo_base_path)
         except OSError: pass
 
         exit(
