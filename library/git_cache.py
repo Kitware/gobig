@@ -73,18 +73,32 @@ def main(DEVNULL):
                     stderr=DEVNULL,
                     cwd=work_path
                 )
-            else:
+
                 sp.check_call(
-                    [
-                        "git",
-                        "clone",
-                        "-b", version,
-                        "=".join(("--separate-git-dir", repo_path)),
-                        repo,
-                        work_path
-                    ],
-                    stderr=DEVNULL
+                    ["git", "pull"],
+                    stderr=DEVNULL,
+                    cwd=work_path
                 )
+
+                if recursive:
+                    sp.check_call(
+                        ["git", "submodule", "update", "--init", "--recursive"],
+                        stderr=DEVNULL,
+                        cwd=work_path
+                    )
+            else:
+                git_clone_command = ["git", "clone"]
+                if recursive:
+                    git_clone_command.append("--recursive")
+
+                git_clone_command.extend([
+                    "-b", version,
+                    "=".join(("--separate-git-dir", repo_path)),
+                    repo,
+                    work_path
+                ])
+
+                sp.check_call(git_clone_command, stderr=DEVNULL)
 
             new_rev = sp.check_output(
                 ["git", "rev-parse", "--no-flags", "HEAD"],
@@ -123,19 +137,30 @@ def main(DEVNULL):
                     ).split()[0]
                 except CalledProcessError:
                     pass
+            else:
+                os.makedirs(target_path)
 
-                sp.check_call(
-                    ["rsync", "-acvz", "--exclude=.git/", "./", target_path],
-                    stderr=DEVNULL,
-                    cwd=work_path
-                )
+            sp.check_call(
+                [
+                    "rsync",
+                    "-acvz",
+                    "--exclude=.git/",
+                    "--exclude=.git",
+                    "--delete-after",
+                    "--delete-excluded",
+                    "./",
+                    target_path
+                ],
+                stderr=DEVNULL,
+                cwd=work_path
+            )
 
-                new_hash = sp.check_output(
-                    "find . -type f -exec sha1sum '{}' \\; | sha1sum",
-                    stderr=DEVNULL,
-                    shell=True,
-                    cwd=target_path
-                ).split()[0]
+            new_hash = sp.check_output(
+                "find . -type f -exec sha1sum '{}' \\; | sha1sum",
+                stderr=DEVNULL,
+                shell=True,
+                cwd=target_path
+            ).split()[0]
 
             changed = (old_hash != new_hash)
 

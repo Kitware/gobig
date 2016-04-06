@@ -4,10 +4,10 @@ import os
 import traceback as tb
 
 try:
-    from configparser import SafeConfigParser as ConfigParser,
+    from configparser import SafeConfigParser as ConfigParser, \
                              NoSectionError, NoOptionError
 except ImportError:
-    from ConfigParser import SafeConfigParser as ConfigParser,
+    from ConfigParser import SafeConfigParser as ConfigParser, \
                              NoSectionError, NoOptionError
 
 def get_profile_value(parser, profile, key, default=None):
@@ -90,6 +90,13 @@ def main():
             "aws_access_key_id": result_data["access_key_id"],
             "aws_secret_key": result_data["secret_key"],
         }
+
+    # NOTE(opadron): Ansible 2 decided "aws_access_key_id" is too verbose.
+    result_data["access_key"] = result_data["access_key_id"]
+
+    if set_facts:
+        result_data["ansible_facts"]["aws_access_key"] = (
+            result_data["ansible_facts"]["aws_access_key_id"])
 
     result(**result_data)
 
