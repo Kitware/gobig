@@ -10,4 +10,4 @@ dependencies:
     command: >-
       {{ mongodb_install_root }}/bin/{{ mongodb_service_binary }}
       --config {{ mongodb_conf }}/{{ service_subdir }}.conf
-    when: do_install|bool
+    # when: do_install|bool

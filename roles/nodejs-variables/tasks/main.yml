@@ -6,10 +6,19 @@
     do_install: >-
       {{ state == "present" }}
 
+- name: nodejs | repo | fetch
+  git_cache:
+    repo: "git://github.com/nodejs/node.git"
+    dest: /opt/nodejs-src
+    version: "{{ nodejs_version }}"
+    recursive: yes
+    state: present
+  register: nodejs_repo
+
 - name: nodejs | install root | default | set
   set_fact:
-    nodejs_install_root: /opt/nodejs/{{ nodejs_git_version }}
-  when: nodejs_install_root == ""
+    nodejs_src_dir: "{{ nodejs_repo.destination }}"
+    nodejs_install_root: "/opt/nodejs/{{ nodejs_version }}"
 
 - name: nodejs | install root | parent | probe
   shell: dirname "{{ nodejs_install_root }}"

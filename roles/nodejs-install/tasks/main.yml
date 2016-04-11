@@ -29,30 +29,17 @@
     state: directory
   when: do_install|bool
 
-- name: nodejs | source | dir | create
-  file:
-    path: "{{ nodejs_install_root }}/src"
-    state: directory
-  when: create_install_root|bool
-
-- name: nodejs | repo | sync
-  command: >-
-    rsync -avz --exclude=.git
-    "{{ nodejs_git_work_dir }}/"
-    "{{ nodejs_install_root }}/src"
-  when: create_install_root|bool
-
 - name: nodejs | build | configure
   shell: >-
     ./configure "--prefix={{ nodejs_install_root }}"
   args:
-    chdir: "{{ nodejs_install_root }}/src"
+    chdir: "{{ nodejs_src_dir }}"
   when: do_compile|bool
 
 - name: nodejs | build | compile
   shell: make && make install
   args:
-    chdir: "{{ nodejs_install_root }}/src"
+    chdir: "{{ nodejs_src_dir }}"
   when: do_compile|bool
 
 - name: nodejs | binaries | rename
