@@ -1,7 +1,7 @@
 
 # GoBig
 
-Provisioning big data applications with Resonant
+Provisioning big data applications with [Resonant](http://resonant.kitware.com).
 
 ## GoBig Cluster
 
